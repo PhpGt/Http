@@ -1,5 +1,5 @@
 <?php
 namespace Gt\Http;
 
-class RequestHeaders extends AbstractHeaders {
+class RequestHeaders extends Headers {
 }

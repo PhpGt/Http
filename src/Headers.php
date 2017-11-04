@@ -1,7 +1,7 @@
 <?php
 namespace Gt\Http;
 
-abstract class AbstractHeaders {
+abstract class Headers {
 	public function __construct(array $headerArray) {
 
 	}
