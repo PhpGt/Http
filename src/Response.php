@@ -1,18 +1,10 @@
 <?php
 namespace Gt\Http;
 
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
 
-trait Message {
-	/** @var array */
-	private $headers = [];
-	/** @var array Map of lowercase header name => original name */
-	private $headerNames = [];
-	/** @var string */
-	private $protocol;
-	/** @var StreamInterface */
-	private $stream;
-
+class Response implements ResponseInterface {
 	/**
 	 * Retrieves the HTTP protocol version as a string.
 	 *
@@ -21,7 +13,7 @@ trait Message {
 	 * @return string HTTP protocol version.
 	 */
 	public function getProtocolVersion() {
-		return $this->protocol;
+		// TODO: Implement getProtocolVersion() method.
 	}
 
 	/**
@@ -38,12 +30,7 @@ trait Message {
 	 * @return static
 	 */
 	public function withProtocolVersion($version) {
-		if($this->protocol === $version) {
-			return $this;
-		}
-		$new = clone $this;
-		$new->protocol = $version;
-		return $new;
+		// TODO: Implement withProtocolVersion() method.
 	}
 
 	/**
@@ -72,7 +59,7 @@ trait Message {
 	 *     for that header.
 	 */
 	public function getHeaders() {
-		return $this->headers;
+		// TODO: Implement getHeaders() method.
 	}
 
 	/**
@@ -84,7 +71,7 @@ trait Message {
 	 *     no matching header name is found in the message.
 	 */
 	public function hasHeader($name) {
-		return isset($this->headerNames[strtolower($name)]);
+		// TODO: Implement hasHeader() method.
 	}
 
 	/**
@@ -102,12 +89,7 @@ trait Message {
 	 *    return an empty array.
 	 */
 	public function getHeader($name) {
-		$name = strtolower($name);
-		if(!$this->hasHeader($name)) {
-			return [];
-		}
-		$name = $this->headerNames[$name];
-		return $this->headers[$name];
+		// TODO: Implement getHeader() method.
 	}
 
 	/**
@@ -130,7 +112,7 @@ trait Message {
 	 *    the message, this method MUST return an empty string.
 	 */
 	public function getHeaderLine($name) {
-		return implode(", ", $this->getHeader($name));
+		// TODO: Implement getHeaderLine() method.
 	}
 
 	/**
@@ -149,18 +131,7 @@ trait Message {
 	 * @throws \InvalidArgumentException for invalid header names or values.
 	 */
 	public function withHeader($name, $value) {
-		if(!is_array($value)) {
-			$value = [$value];
-		}
-		$value = $this->trimHeaderValues($value);
-		$normalised = strtolower($name);
-		$new = clone $this;
-		if($new->hasHeader($name)) {
-			unset($new->headers[$new->headerNames[$normalised]]);
-		}
-		$new->headerNames[$normalised] = $name;
-		$new->headers[$name] = $value;
-		return $new;
+		// TODO: Implement withHeader() method.
 	}
 
 	/**
@@ -180,21 +151,7 @@ trait Message {
 	 * @throws \InvalidArgumentException for invalid header names or values.
 	 */
 	public function withAddedHeader($name, $value) {
-		if(!is_array($value)) {
-			$value = [$value];
-		}
-		$value = $this->trimHeaderValues($value);
-		$normalised = strtolower($name);
-		$new = clone $this;
-		if($new->hasHeader($name)) {
-			$name = $this->headerNames[$normalised];
-			$new->headers[$name] = array_merge($this->headers[$name], $value);
-		}
-		else {
-			$new->headerNames[$normalised] = $name;
-			$new->headers[$name] = $value;
-		}
-		return $new;
+		// TODO: Implement withAddedHeader() method.
 	}
 
 	/**
@@ -210,37 +167,7 @@ trait Message {
 	 * @return static
 	 */
 	public function withoutHeader($name) {
-		if(!$this->hasHeader($name)) {
-			return $this;
-		}
-		$normalised = strtolower($name);
-		$name = $this->headerNames[$normalised];
-		$new = clone $this;
-		unset($new->headers[$name], $new->headerNames[$normalised]);
-		return $new;
-	}
-
-	public function setHeaders(array $headers) {
-		$this->headers = [];
-		$this->headerNames = [];
-		foreach($headers as $header => $value) {
-			if(!is_array($value)) {
-				$value = [$value];
-			}
-			$value = $this->trimHeaderValues($value);
-			$normalised = strtolower($header);
-			if($this->hasHeader($header)) {
-				$header = $this->headerNames[$normalised];
-				$this->headers[$header] = array_merge(
-					$this->headers[$header],
-					$value
-				);
-			}
-			else {
-				$this->headerNames[$normalised] = $header;
-				$this->headers[$header] = $value;
-			}
-		}
+		// TODO: Implement withoutHeader() method.
 	}
 
 	/**
@@ -249,10 +176,7 @@ trait Message {
 	 * @return StreamInterface Returns the body as a stream.
 	 */
 	public function getBody() {
-		if(!$this->stream) {
-			$this->stream = new Stream("");
-		}
-		return $this->stream;
+		// TODO: Implement getBody() method.
 	}
 
 	/**
@@ -269,18 +193,59 @@ trait Message {
 	 * @throws \InvalidArgumentException When the body is not valid.
 	 */
 	public function withBody(StreamInterface $body) {
-		if($body === $this->stream) {
-			return $this;
-		}
-		$new = clone $this;
-		$new->stream = $body;
-		return $new;
+		// TODO: Implement withBody() method.
 	}
 
-	private function trimHeaderValues(array $valueArray) {
-		return array_map(function($value) {
-			return trim($value, " \t");
-		}, $valueArray);
+	/**
+	 * Gets the response status code.
+	 *
+	 * The status code is a 3-digit integer result code of the server's attempt
+	 * to understand and satisfy the request.
+	 *
+	 * @return int Status code.
+	 */
+	public function getStatusCode() {
+		// TODO: Implement getStatusCode() method.
 	}
 
+	/**
+	 * Return an instance with the specified status code and, optionally, reason phrase.
+	 *
+	 * If no reason phrase is specified, implementations MAY choose to default
+	 * to the RFC 7231 or IANA recommended reason phrase for the response's
+	 * status code.
+	 *
+	 * This method MUST be implemented in such a way as to retain the
+	 * immutability of the message, and MUST return an instance that has the
+	 * updated status and reason phrase.
+	 *
+	 * @link http://tools.ietf.org/html/rfc7231#section-6
+	 * @link http://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml
+	 * @param int $code The 3-digit integer result code to set.
+	 * @param string $reasonPhrase The reason phrase to use with the
+	 *     provided status code; if none is provided, implementations MAY
+	 *     use the defaults as suggested in the HTTP specification.
+	 * @return static
+	 * @throws \InvalidArgumentException For invalid status code arguments.
+	 */
+	public function withStatus($code, $reasonPhrase = '') {
+		// TODO: Implement withStatus() method.
+	}
+
+	/**
+	 * Gets the response reason phrase associated with the status code.
+	 *
+	 * Because a reason phrase is not a required element in a response
+	 * status line, the reason phrase value MAY be null. Implementations MAY
+	 * choose to return the default RFC 7231 recommended reason phrase (or those
+	 * listed in the IANA HTTP Status Code Registry) for the response's
+	 * status code.
+	 *
+	 * @link http://tools.ietf.org/html/rfc7231#section-6
+	 * @link http://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml
+	 * @return string Reason phrase; must return an empty string if none present.
+	 */
+	public function getReasonPhrase() {
+		// TODO: Implement getReasonPhrase() method.
+	}
 }
