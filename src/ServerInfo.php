@@ -8,7 +8,15 @@ class ServerInfo {
 	/** @var array */
 	protected $server;
 
-	public function __construct(array $server) {
+	/**
+	 * Construct with an optionally provided array of information, defaulting to PHP's
+	 * inbuilt $_SERVER superglobal.
+	 */
+	public function __construct(array $server = null) {
+		if(is_null($server)) {
+			$server = $_SERVER;
+		}
+
 		$this->server = $server;
 	}
 
