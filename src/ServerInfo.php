@@ -49,6 +49,15 @@ class ServerInfo {
 		return $this->server["SERVER_PROTOCOL"];
 	}
 
+	public function getServerProtocolVersion():float {
+		$version = filter_var(
+			$this->getServerProtocol(),
+			FILTER_SANITIZE_NUMBER_FLOAT,
+			FILTER_FLAG_ALLOW_FRACTION
+		);
+		return $version;
+	}
+
 	/**
 	 * The timestamp of the start of the request, with microsecond precision
 	 */
