@@ -7,12 +7,21 @@ use Psr\Http\Message\UriInterface;
 class Request implements RequestInterface {
 	use Message;
 
+	/** @var string */
+	protected $method;
+	/** @var Uri */
+	protected $uri;
+	/** @var string */
+	protected $requestTarget;
+
 	public function __construct(
 		string $method,
 		Uri $uri,
 		RequestHeaders $headers
 	) {
-
+		$this->method = RequestMethod::filterMethodName($method);
+		$this->uri = $uri;
+		$this->headers = $headers;
 	}
 
 	/**
@@ -32,7 +41,23 @@ class Request implements RequestInterface {
 	 * @return string
 	 */
 	public function getRequestTarget() {
-		// TODO: Implement getRequestTarget() method.
+		if(!is_null($this->requestTarget)) {
+			return $this->requestTarget;
+		}
+
+		$uri = $this->getUri();
+		$requestTarget = $uri->getPath();
+		if(empty($requestTarget)) {
+			$requestTarget = "/";
+		}
+
+		$query = $uri->getQuery();
+		if(!empty($query)) {
+			$requestTarget .= "?";
+		}
+		$requestTarget .= $query;
+
+		return $requestTarget;
 	}
 
 	/**
@@ -53,7 +78,13 @@ class Request implements RequestInterface {
 	 * @return static
 	 */
 	public function withRequestTarget($requestTarget) {
-		// TODO: Implement withRequestTarget() method.
+		if($this->requestTarget === $requestTarget) {
+			return $this;
+		}
+
+		$clone = clone $this;
+		$clone->requestTarget = $requestTarget;
+		return $clone;
 	}
 
 	/**
@@ -81,7 +112,14 @@ class Request implements RequestInterface {
 	 * @throws \InvalidArgumentException for invalid HTTP methods.
 	 */
 	public function withMethod($method) {
-		// TODO: Implement withMethod() method.
+		$method = RequestMethod::filterMethodName($method);
+		if($this->method === $method) {
+			return $this;
+		}
+
+		$clone = clone $this;
+		$clone->method = $method;
+		return $clone;
 	}
 
 	/**

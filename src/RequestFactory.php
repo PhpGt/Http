@@ -1,19 +1,27 @@
 <?php
 namespace Gt\Http;
 
-class RequestFactory {
-	public static function create(array $server = null):Request {
-		if(is_null($server)) {
-			$server = $_SERVER;
-		}
+use Psr\Http\Message\StreamInterface;
 
-		$serverInfo = new ServerInfo($server);
+class RequestFactory {
+	public static function create(ServerInfo $serverInfo, StreamInterface $body):Request {
 		$uri = new Uri($serverInfo->getRequestUri());
 		$headers = new RequestHeaders($serverInfo->getHttpHeadersArray());
-		return new Request(
+		$request = (new Request(
 			$serverInfo->getRequestMethod(),
 			$uri,
 			$headers
-		);
+		))
+			->withProtocolVersion($serverInfo->getServerProtocolVersion())
+			->withBody($body);
+
+		foreach($headers as $header) {
+			$request = $request->withAddedHeader(
+				$header->getName(),
+				$header->getValue()
+			);
+		}
+
+		return $request;
 	}
 }

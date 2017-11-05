@@ -4,10 +4,8 @@ namespace Gt\Http;
 use Psr\Http\Message\StreamInterface;
 
 trait Message {
-	/** @var array */
-	private $headers = [];
-	/** @var array Map of lowercase header name => original name */
-	private $headerNames = [];
+	/** @var Headers */
+	private $headers;
 	/** @var string */
 	private $protocol;
 	/** @var StreamInterface */
@@ -36,14 +34,20 @@ trait Message {
 	 *
 	 * @param string $version HTTP protocol version
 	 * @return static
+	 * @throws InvalidProtocol
 	 */
 	public function withProtocolVersion($version) {
 		if($this->protocol === $version) {
 			return $this;
 		}
-		$new = clone $this;
-		$new->protocol = $version;
-		return $new;
+
+		if(!is_numeric($version)) {
+			throw new InvalidProtocol($version);
+		}
+
+		$clone = clone $this;
+		$clone->protocol = $version;
+		return $clone;
 	}
 
 	/**
@@ -71,8 +75,8 @@ trait Message {
 	 *     key MUST be a header name, and each value MUST be an array of strings
 	 *     for that header.
 	 */
-	public function getHeaders() {
-		return $this->headers;
+	public function getHeaders():array {
+		return $this->headers->asArray();
 	}
 
 	/**
@@ -83,8 +87,8 @@ trait Message {
 	 *     name using a case-insensitive string comparison. Returns false if
 	 *     no matching header name is found in the message.
 	 */
-	public function hasHeader($name) {
-		return isset($this->headerNames[strtolower($name)]);
+	public function hasHeader($name):bool {
+		return $this->headers->contains($name);
 	}
 
 	/**
@@ -101,13 +105,8 @@ trait Message {
 	 *    header. If the header does not appear in the message, this method MUST
 	 *    return an empty array.
 	 */
-	public function getHeader($name) {
-		$name = strtolower($name);
-		if(!$this->hasHeader($name)) {
-			return [];
-		}
-		$name = $this->headerNames[$name];
-		return $this->headers[$name];
+	public function getHeader($name):array {
+		return $this->headers->getAll($name);
 	}
 
 	/**
@@ -129,8 +128,8 @@ trait Message {
 	 *    concatenated together using a comma. If the header does not appear in
 	 *    the message, this method MUST return an empty string.
 	 */
-	public function getHeaderLine($name) {
-		return implode(", ", $this->getHeader($name));
+	public function getHeaderLine($name):string {
+		return $this->headers->get($name);
 	}
 
 	/**
@@ -148,19 +147,10 @@ trait Message {
 	 * @return static
 	 * @throws \InvalidArgumentException for invalid header names or values.
 	 */
-	public function withHeader($name, $value) {
-		if(!is_array($value)) {
-			$value = [$value];
-		}
-		$value = $this->trimHeaderValues($value);
-		$normalised = strtolower($name);
-		$new = clone $this;
-		if($new->hasHeader($name)) {
-			unset($new->headers[$new->headerNames[$normalised]]);
-		}
-		$new->headerNames[$normalised] = $name;
-		$new->headers[$name] = $value;
-		return $new;
+	public function withHeader($name, $value):self {
+		$clone = clone $this;
+		$clone->headers->set($name, $value);
+		return $clone;
 	}
 
 	/**
@@ -180,21 +170,9 @@ trait Message {
 	 * @throws \InvalidArgumentException for invalid header names or values.
 	 */
 	public function withAddedHeader($name, $value) {
-		if(!is_array($value)) {
-			$value = [$value];
-		}
-		$value = $this->trimHeaderValues($value);
-		$normalised = strtolower($name);
-		$new = clone $this;
-		if($new->hasHeader($name)) {
-			$name = $this->headerNames[$normalised];
-			$new->headers[$name] = array_merge($this->headers[$name], $value);
-		}
-		else {
-			$new->headerNames[$normalised] = $name;
-			$new->headers[$name] = $value;
-		}
-		return $new;
+		$clone = clone $this;
+		$clone->headers->add($name, $value);
+		return $clone;
 	}
 
 	/**
@@ -210,37 +188,15 @@ trait Message {
 	 * @return static
 	 */
 	public function withoutHeader($name) {
-		if(!$this->hasHeader($name)) {
-			return $this;
-		}
-		$normalised = strtolower($name);
-		$name = $this->headerNames[$normalised];
-		$new = clone $this;
-		unset($new->headers[$name], $new->headerNames[$normalised]);
-		return $new;
+		$clone = clone $this;
+		$clone->headers->remove($name);
+		return $clone;
 	}
 
 	public function setHeaders(array $headers) {
-		$this->headers = [];
-		$this->headerNames = [];
-		foreach($headers as $header => $value) {
-			if(!is_array($value)) {
-				$value = [$value];
-			}
-			$value = $this->trimHeaderValues($value);
-			$normalised = strtolower($header);
-			if($this->hasHeader($header)) {
-				$header = $this->headerNames[$normalised];
-				$this->headers[$header] = array_merge(
-					$this->headers[$header],
-					$value
-				);
-			}
-			else {
-				$this->headerNames[$normalised] = $header;
-				$this->headers[$header] = $value;
-			}
-		}
+		$clone = clone $this;
+		$clone->headers->fromArray($headers);
+		return $clone;
 	}
 
 	/**
@@ -250,7 +206,7 @@ trait Message {
 	 */
 	public function getBody() {
 		if(!$this->stream) {
-			$this->stream = new Stream("");
+			$this->stream = new Stream();
 		}
 		return $this->stream;
 	}
@@ -272,9 +228,9 @@ trait Message {
 		if($body === $this->stream) {
 			return $this;
 		}
-		$new = clone $this;
-		$new->stream = $body;
-		return $new;
+		$clone = clone $this;
+		$clone->stream = $body;
+		return $clone;
 	}
 
 	private function trimHeaderValues(array $valueArray) {
