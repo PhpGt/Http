@@ -5,6 +5,9 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
 
 class Response implements ResponseInterface {
+	public function __toString():string {
+		return (string)$this->getBody();
+	}
 	/**
 	 * Retrieves the HTTP protocol version as a string.
 	 *
@@ -175,7 +178,7 @@ class Response implements ResponseInterface {
 	 *
 	 * @return StreamInterface Returns the body as a stream.
 	 */
-	public function getBody() {
+	public function getBody():StreamInterface {
 		// TODO: Implement getBody() method.
 	}
 
