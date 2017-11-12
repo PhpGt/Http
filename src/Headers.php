@@ -31,6 +31,12 @@ abstract class Headers implements Iterator {
 		}
 	}
 
+	public function add(string $name, string...$values) {
+		// TODO: $values could potentially contain a single string separated by colons; needs splitting.
+		var_dump($name, $values);die();
+		$this->headerLines []= new HeaderLine($name,...$values);
+	}
+
 // Iterator ----------------------------------------------------------------------------------------
 	public function current():HeaderLine {
 		return $this->headerLines[$this->iteratorIndex];
