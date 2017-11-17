@@ -4,12 +4,19 @@ namespace Gt\Http;
 use Psr\Http\Message\UriInterface;
 
 class Uri implements UriInterface {
+	/** @var string */
 	protected $scheme;
+	/** @var string */
 	protected $userInfo;
+	/** @var string */
 	protected $host;
+	/** @var string */
 	protected $port;
+	/** @var string */
 	protected $path;
+	/** @var string */
 	protected $query;
+	/** @var string */
 	protected $fragment;
 
 	public function __construct(string $uri) {
