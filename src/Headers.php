@@ -41,12 +41,32 @@ abstract class Headers implements Iterator {
 		$this->add($name, ...$value);
 	}
 
-	public function remove($name):void {
+	public function remove(string $name):void {
 		foreach($this->headerLines as $i => $line) {
 			if($line->isNamed($name)) {
 				unset($this->headerLines[$i]);
 			}
 		}
+	}
+
+	public function get(string $name):?HeaderLine {
+		foreach($this->headerLines as $i => $line) {
+			if($line->isNamed($name)) {
+				return $line;
+			}
+		}
+
+		return null;
+	}
+
+	public function getAll(string $name):?array {
+		foreach($this->headerLines as $i => $line) {
+			if($line->isNamed($name)) {
+				return $line->getValues();
+			}
+		}
+
+		return null;
 	}
 
 	public function current():HeaderLine {
