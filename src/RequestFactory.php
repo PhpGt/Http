@@ -5,9 +5,9 @@ use Psr\Http\Message\StreamInterface;
 
 class RequestFactory {
 	/**
-	 * A request is a PSR-7 compatible object that is created here from the ServerInfo
-	 * (containing request headers, URI, protocol information, etc.) and the input body (post
-	 * fields or other incoming data).
+	 * A Request object is a PSR-7 compatible object that is created here from the current
+	 * ServerInfo (containing request headers, URI, protocol information, etc.) and the input
+	 * body (post fields or other incoming data).
 	 * @see http://www.php-fig.org/psr/psr-7/
 	 */
 	public static function create(ServerInfo $serverInfo, StreamInterface $body):Request {
