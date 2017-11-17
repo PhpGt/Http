@@ -148,8 +148,12 @@ trait Message {
 	 * @throws \InvalidArgumentException for invalid header names or values.
 	 */
 	public function withHeader($name, $value):self {
+		if(!is_array($value)) {
+			$value = [$value];
+		}
+
 		$clone = clone $this;
-		$clone->headers->set($name, $value);
+		$clone->headers->set($name, ...$value);
 		return $clone;
 	}
 
@@ -170,8 +174,12 @@ trait Message {
 	 * @throws \InvalidArgumentException for invalid header names or values.
 	 */
 	public function withAddedHeader($name, $value) {
+		if(!is_array($value)) {
+			$value = [$value];
+		}
+
 		$clone = clone $this;
-		$clone->headers->add($name, $value);
+		$clone->headers->add($name, ...$value);
 		return $clone;
 	}
 
