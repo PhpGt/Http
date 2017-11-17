@@ -132,7 +132,7 @@ class Request implements RequestInterface {
 	 *     representing the URI of the request.
 	 */
 	public function getUri() {
-		// TODO: Implement getUri() method.
+		return $this->uri;
 	}
 
 	/**
