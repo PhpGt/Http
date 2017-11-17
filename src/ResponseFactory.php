@@ -43,13 +43,16 @@ class ResponseFactory {
 	 * to be registered to match the request's "accept" header. This allows the web client to
 	 * request a web page in HTML format, over a web API in JSON format, for example.
 	 */
-	public static function registerResponseClass(string $class, string...$accept):void {
+	public static function registerResponseClass(
+		string $responseClassName,
+		string...$accept
+	):void {
 		if(empty($accept)) {
 			$accept = [self::DEFAULT_ACCEPT];
 		}
 
 		foreach($accept as $a) {
-			static::$responseClassLookup [$a] = $class;
+			static::$responseClassLookup [$a] = $responseClassName;
 		}
 	}
 }
