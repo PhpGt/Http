@@ -4,7 +4,7 @@ namespace Gt\Http;
 class HeaderLine {
 	protected $originalNameCase;
 	protected $name;
-	protected $values = [];
+	protected $values;
 
 	public function __construct(string $name, string...$values) {
 		$this->originalNameCase = $name;
@@ -20,7 +20,11 @@ class HeaderLine {
 		return $this->values[$position] ?? null;
 	}
 
-	public function getValues():array {
+	public function getValues():string {
 		return $this->values;
+	}
+
+	public function isName(string $name):bool {
+		return $this->name === strtolower($name);
 	}
 }

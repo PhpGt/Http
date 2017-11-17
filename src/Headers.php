@@ -32,12 +32,18 @@ abstract class Headers implements Iterator {
 	}
 
 	public function add(string $name, string...$values) {
-		// TODO: $values could potentially contain a single string separated by colons; needs splitting.
-		var_dump($name, $values);die();
+		// TODO: $values could potentially contain a single string separated by commas; needs splitting.
 		$this->headerLines []= new HeaderLine($name,...$values);
 	}
 
-// Iterator ----------------------------------------------------------------------------------------
+	public function remove($name):void {
+		foreach($this->headerLines as $i => $line) {
+			if($line->isName($name)) {
+				unset($this->headerLines[$i]);
+			}
+		}
+	}
+
 	public function current():HeaderLine {
 		return $this->headerLines[$this->iteratorIndex];
 	}
