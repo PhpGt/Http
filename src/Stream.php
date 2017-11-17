@@ -4,6 +4,23 @@ namespace Gt\Http;
 use Psr\Http\Message\StreamInterface;
 
 class Stream implements StreamInterface {
+	const READABLE_MODES = ["r", "w+", "r+", "x+", "c+", "rb", "w+b", "r+b", "x+b", "c+b", "rt", "w+t", "r+t", "x+t", "c+t", "a+"];
+	const WRITABLE_MODES = ["w", "w+", "rw", "r+", "x+", "c+", "wb", "w+b", "r+b", "x+b", "c+b", "w+t", "r+t", "x+t", "c+t", "a", "a+"];
+
+	protected $stream;
+	protected $isSeekable;
+	protected $isReadable;
+	protected $isWritable;
+	protected $uri;
+
+	public function __construct(string $path, string $mode = "r") {
+		$this->stream = fopen($path, $mode);
+		$streamInfo = stream_get_meta_data($this->stream);
+		$this->isSeekable = $streamInfo["seekable"];
+		$this->uri = $streamInfo["uri"];
+		$this->isReadable = in_array($streamInfo["mode"], self::READABLE_MODES);
+		$this->isWritable = in_array($streamInfo["mode"], self::WRITABLE_MODES);
+	}
 	/**
 	 * Reads all data from the stream into a string, from the beginning to end.
 	 *
@@ -18,8 +35,9 @@ class Stream implements StreamInterface {
 	 * @see http://php.net/manual/en/language.oop5.magic.php#object.tostring
 	 * @return string
 	 */
-	public function __toString() {
-		// TODO: Implement __toString() method.
+	public function __toString():string {
+		$this->rewind();
+		return $this->getContents();
 	}
 
 	/**
@@ -28,7 +46,7 @@ class Stream implements StreamInterface {
 	 * @return void
 	 */
 	public function close() {
-		// TODO: Implement close() method.
+		fclose($this->stream);
 	}
 
 	/**
@@ -38,8 +56,14 @@ class Stream implements StreamInterface {
 	 *
 	 * @return resource|null Underlying PHP stream, if any
 	 */
-	public function detach() {
-		// TODO: Implement detach() method.
+	public function detach():?resource {
+		if(!isset($this->stream)) {
+			return null;
+		}
+
+		$stream = $this->stream;
+		unset($this->stream);
+		return $stream;
 	}
 
 	/**
@@ -47,8 +71,8 @@ class Stream implements StreamInterface {
 	 *
 	 * @return int|null Returns the size in bytes if known, or null if unknown.
 	 */
-	public function getSize() {
-		// TODO: Implement getSize() method.
+	public function getSize():?int {
+		return null;
 	}
 
 	/**
@@ -57,8 +81,10 @@ class Stream implements StreamInterface {
 	 * @return int Position of the file pointer
 	 * @throws \RuntimeException on error.
 	 */
-	public function tell() {
-		// TODO: Implement tell() method.
+	public function tell():int {
+		$position = ftell($this->stream);
+		// TODO: Throw exception on failure.
+		return $position;
 	}
 
 	/**
@@ -66,8 +92,8 @@ class Stream implements StreamInterface {
 	 *
 	 * @return bool
 	 */
-	public function eof() {
-		// TODO: Implement eof() method.
+	public function eof():bool {
+		return feof($this->stream);
 	}
 
 	/**
@@ -75,8 +101,8 @@ class Stream implements StreamInterface {
 	 *
 	 * @return bool
 	 */
-	public function isSeekable() {
-		// TODO: Implement isSeekable() method.
+	public function isSeekable():bool {
+		return $this->isSeekable;
 	}
 
 	/**
@@ -91,8 +117,9 @@ class Stream implements StreamInterface {
 	 *     SEEK_END: Set position to end-of-stream plus offset.
 	 * @throws \RuntimeException on failure.
 	 */
-	public function seek($offset, $whence = SEEK_SET) {
-		// TODO: Implement seek() method.
+	public function seek($offset, $whence = SEEK_SET):void {
+		fseek($this->stream, $offset, $whence);
+		// TODO: Throw exception on failure.
 	}
 
 	/**
@@ -105,8 +132,9 @@ class Stream implements StreamInterface {
 	 * @link http://www.php.net/manual/en/function.fseek.php
 	 * @throws \RuntimeException on failure.
 	 */
-	public function rewind() {
-		// TODO: Implement rewind() method.
+	public function rewind():void {
+		rewind($this->stream);
+		// TODO: Throw exception on failure.
 	}
 
 	/**
@@ -114,8 +142,8 @@ class Stream implements StreamInterface {
 	 *
 	 * @return bool
 	 */
-	public function isWritable() {
-		// TODO: Implement isWritable() method.
+	public function isWritable():bool {
+		return $this->isWritable;
 	}
 
 	/**
@@ -125,8 +153,21 @@ class Stream implements StreamInterface {
 	 * @return int Returns the number of bytes written to the stream.
 	 * @throws \RuntimeException on failure.
 	 */
-	public function write($string) {
-		// TODO: Implement write() method.
+	public function write($string):int {
+		if(!isset($this->stream)) {
+			// TODO: Throw runtime exception.
+		}
+
+		if(!$this->isWritable()) {
+			// TODO: Throw runtime exception.
+		}
+
+		$bytes = fwrite($this->stream, $string);
+		if($bytes === false) {
+			// TODO: Throw runtime exception.
+		}
+
+		return $bytes;
 	}
 
 	/**
@@ -134,8 +175,8 @@ class Stream implements StreamInterface {
 	 *
 	 * @return bool
 	 */
-	public function isReadable() {
-		// TODO: Implement isReadable() method.
+	public function isReadable():bool {
+		return $this->isReadable;
 	}
 
 	/**
@@ -148,8 +189,29 @@ class Stream implements StreamInterface {
 	 *     if no bytes are available.
 	 * @throws \RuntimeException if an error occurs.
 	 */
-	public function read($length) {
-		// TODO: Implement read() method.
+	public function read($length):string {
+		if(!isset($this->stream)) {
+			// TODO: Throw runtime exception.
+		}
+
+		if(!$this->isReadable()) {
+			// TODO: Throw runtime exception.
+		}
+
+		if($length < 0) {
+			// TODO: Throw runtime exception.
+		}
+
+		if($length === 0) {
+			return "";
+		}
+
+		$string = fread($this->stream, $length);
+		if($string === false) {
+			// TODO: Throw runtime exception.
+		}
+
+		return $string;
 	}
 
 	/**
@@ -159,8 +221,20 @@ class Stream implements StreamInterface {
 	 * @throws \RuntimeException if unable to read or an error occurs while
 	 *     reading.
 	 */
-	public function getContents() {
-		// TODO: Implement getContents() method.
+	public function getContents():string {
+		if(!isset($this->stream)) {
+			// TODO: Throw runtime exception.
+		}
+		if(!$this->isReadable()) {
+			// TODO: Throw runtime exception.
+		}
+
+		$string = stream_get_contents($this->stream);
+		if($string === false) {
+			// TODO: Throw runtime exception.
+		}
+
+		return $string;
 	}
 
 	/**
@@ -176,6 +250,11 @@ class Stream implements StreamInterface {
 	 *     value is found, or null if the key is not found.
 	 */
 	public function getMetadata($key = null) {
-		// TODO: Implement getMetadata() method.
+		$data = stream_get_meta_data($this->stream);
+		if(is_null($key)) {
+			return $data;
+		}
+
+		return $data[$key] ?? null;
 	}
 }
