@@ -24,6 +24,10 @@ class HeaderLine {
 		return $this->values;
 	}
 
+	public function getValuesCommaSeparated():string {
+		return implode(",", $this->values);
+	}
+
 	public function isNamed(string $name):bool {
 		return $this->name === strtolower($name);
 	}
