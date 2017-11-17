@@ -20,11 +20,11 @@ class HeaderLine {
 		return $this->values[$position] ?? null;
 	}
 
-	public function getValues():string {
+	public function getValues():array {
 		return $this->values;
 	}
 
-	public function isName(string $name):bool {
+	public function isNamed(string $name):bool {
 		return $this->name === strtolower($name);
 	}
 }

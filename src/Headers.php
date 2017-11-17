@@ -43,7 +43,7 @@ abstract class Headers implements Iterator {
 
 	public function remove($name):void {
 		foreach($this->headerLines as $i => $line) {
-			if($line->isName($name)) {
+			if($line->isNamed($name)) {
 				unset($this->headerLines[$i]);
 			}
 		}
