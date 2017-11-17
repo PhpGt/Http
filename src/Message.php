@@ -129,7 +129,14 @@ trait Message {
 	 *    the message, this method MUST return an empty string.
 	 */
 	public function getHeaderLine($name):string {
-		return $this->headers->get($name);
+		$header = $this->headers->get($name);
+
+		if($header) {
+			return $header->getValuesCommaSeparated();
+		}
+		else {
+			return "";
+		}
 	}
 
 	/**
@@ -214,7 +221,7 @@ trait Message {
 	 */
 	public function getBody() {
 		if(!$this->stream) {
-			$this->stream = new Stream();
+			$this->stream = new Stream("/tmp/greg");
 		}
 		return $this->stream;
 	}
