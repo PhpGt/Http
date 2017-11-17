@@ -18,7 +18,7 @@ class RequestFactory {
 		foreach($headers as $header) {
 			$request = $request->withAddedHeader(
 				$header->getName(),
-				$header->getValue()
+				$header->getValues()
 			);
 		}
 
