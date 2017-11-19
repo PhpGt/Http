@@ -13,7 +13,7 @@ class Stream implements StreamInterface {
 	protected $isWritable;
 	protected $uri;
 
-	public function __construct(string $path, string $mode = "r") {
+	public function __construct(string $path, string $mode = "r+") {
 		$this->stream = fopen($path, $mode);
 		$streamInfo = stream_get_meta_data($this->stream);
 		$this->isSeekable = $streamInfo["seekable"];

@@ -221,7 +221,7 @@ trait Message {
 	 */
 	public function getBody() {
 		if(!$this->stream) {
-			$this->stream = new Stream("/tmp/greg");
+			$this->stream = new Stream("php://memory");
 		}
 		return $this->stream;
 	}
