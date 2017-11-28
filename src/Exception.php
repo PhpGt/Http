@@ -1,4 +1,4 @@
 <?php
 namespace Gt\Http;
 
-class Exception extends \Exception {}
+class Exception extends \RuntimeException {}
