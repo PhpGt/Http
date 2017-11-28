@@ -4,7 +4,8 @@
 	"minimum-stability": "dev",
 	"license": "MIT",
 	"require": {
-		"psr/http-message": "^1.0@dev"
+		"psr/http-message": "^1.0@dev",
+		"willdurand/negotiation": "^2.3"
 	},
 
 	"autoload": {
