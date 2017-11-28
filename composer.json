@@ -1,6 +1,6 @@
 {
 	"name": "phpgt/http",
-	"description": "Simple PSR-7 implementation for use in PHP 7 projects.",
+	"description": "HTTP message implementation (PSR-7).",
 	"minimum-stability": "dev",
 	"license": "MIT",
 	"require": {
