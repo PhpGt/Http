@@ -19,7 +19,7 @@
 	},
 	"autoload-dev": {
 		"psr-4": {
-			"Gt\\Http\\Test\\": "./test"
+			"Gt\\Http\\Test\\": "./test/unit"
 		}
 	}
 }
