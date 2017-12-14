@@ -34,7 +34,7 @@ trait Message {
 	 *
 	 * @param string $version HTTP protocol version
 	 * @return static
-	 * @throws InvalidProtocolException
+	 * @throws InvalidProtocolHttpException
 	 */
 	public function withProtocolVersion($version) {
 		if($this->protocol === $version) {
@@ -42,7 +42,7 @@ trait Message {
 		}
 
 		if(!is_numeric($version)) {
-			throw new InvalidProtocolException($version);
+			throw new InvalidProtocolHttpException($version);
 		}
 
 		$clone = clone $this;

@@ -4,6 +4,11 @@ namespace Gt\Http;
 use Psr\Http\Message\UriInterface;
 
 class Uri implements UriInterface {
+	const DEFAULT_PORT_FOR_SCHEME = [
+		"http" => 80,
+		"https" => 443,
+	];
+
 	/** @var string */
 	protected $scheme;
 	/** @var string */
@@ -19,12 +24,16 @@ class Uri implements UriInterface {
 	/** @var string */
 	protected $fragment;
 
-	public function __construct(string $uri) {
+	public function __construct(string $uri = null) {
+		if(is_null($uri)) {
+			return;
+		}
+
 		$parts = parse_url($uri);
 		$this->applyParts($parts);
 	}
 
-	protected function applyParts(array $parts):void {
+	public function applyParts(array $parts):void {
 		$this->scheme = $this->filterScheme($parts["scheme"] ?? "");
 
 		$this->userInfo = $this->filterUserInfo(
@@ -476,5 +485,12 @@ class Uri implements UriInterface {
 		}
 
 		return $uri;
+	}
+
+	public function isDefaultPort():bool {
+		$scheme = $this->getScheme();
+		$port = $this->getPort();
+
+		return (static::DEFAULT_PORT_FOR_SCHEME[$scheme] === $port);
 	}
 }

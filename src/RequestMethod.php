@@ -16,7 +16,7 @@ class RequestMethod {
 		$name = strtoupper($name);
 
 		if(!in_array($name, self::ALLOWED_METHODS)) {
-			throw new InvalidRequestMethodException($name);
+			throw new InvalidRequestMethodHttpException($name);
 		}
 
 		return $name;
