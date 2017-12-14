@@ -116,11 +116,14 @@ class Uri implements UriInterface {
 	 * @return string The URI authority, in "[user-info@]host[:port]" format.
 	 */
 	public function getAuthority():string {
-		$authority = $this->host;
+		$authority = "";
+
 		if(!empty($this->userInfo)) {
-			$authority .= "@";
 			$authority .= $this->userInfo;
+			$authority .= "@";
 		}
+
+		$authority .= $this->host;
 
 		if(!is_null($this->port)) {
 			$authority .= ":";
@@ -467,10 +470,16 @@ class Uri implements UriInterface {
 	 * @return string
 	 */
 	public function __toString():string {
-		$uri = implode("", [
-			$this->scheme,
-			$this->getAuthority()
-		]);
+		$uri = "";
+		if(!empty($this->getScheme())) {
+			$uri .= $this->getScheme();
+			$uri .= ":";
+		}
+
+		if(!empty($this->getAuthority())) {
+			$uri .= "//";
+			$uri .= $this->getAuthority();
+		}
 
 		$uri .= $this->path;
 
