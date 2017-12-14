@@ -1,5 +1,5 @@
 <?php
-namespace Gt\Http;
+namespace Gt\Http\Header;
 
 use Iterator;
 
