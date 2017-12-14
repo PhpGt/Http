@@ -8,10 +8,18 @@
 		"psr/http-message": "^1.0@dev",
 		"willdurand/negotiation": "^2.3"
 	},
+	"require-dev": {
+		"phpunit/phpunit": "^6.4"
+	},
 
 	"autoload": {
 		"psr-4": {
 			"Gt\\Http\\": "./src"
+		}
+	},
+	"autoload-dev": {
+		"psr-4": {
+			"Gt\\Http\\Test\\": "./test"
 		}
 	}
 }
