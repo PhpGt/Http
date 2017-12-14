@@ -21,8 +21,6 @@ Short introductory paragraph explaining what the repository achieves.
 	<img src="https://img.shields.io/badge/docs-www.php.gt/Http-26a5e3.svg?style=flat-square" alt="PHP.Gt/Http documentation" />
 </a>
 
-EOF
-
 Example usage
 -------------
 
