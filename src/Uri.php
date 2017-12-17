@@ -211,7 +211,7 @@ class Uri implements UriInterface {
 	 * @return string The URI host.
 	 */
 	public function getHost():string {
-		return $this->host;
+		return $this->host ?? "";
 	}
 
 	/**
