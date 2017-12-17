@@ -307,8 +307,8 @@ class UriTest extends TestCase {
 
 	public function testRemoveNonExistingQueryValue() {
 		$uri = new Uri();
-		$uri = Uri::withQueryValue($uri, 'a', 'b');
-		$uri = Uri::withoutQueryValue($uri, 'c');
+		$uri = $uri->withQueryValue('a', 'b');
+		$uri = $uri->withoutQueryValue('c');
 		$this->assertSame('a=b', $uri->getQuery());
 	}
 
