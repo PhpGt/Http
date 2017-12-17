@@ -542,4 +542,24 @@ class Uri implements UriInterface {
 			&& (!isset($this->getPath()[0]) || $this->getPath()[0] !== '/')
 		);
 	}
+
+	public function isSameDocumentReference(Uri $baseUri = null):bool {
+		if (!is_null($baseUri)) {
+			$resolved = UriResolver::resolve($baseUri, $this);
+
+			return (
+				$resolved->getScheme() === $baseUri->getScheme()
+				&& $resolved->getAuthority() === $baseUri->getAuthority()
+				&& $resolved->getPath() === $baseUri->getPath()
+				&& $resolved->getQuery() === $baseUri->getQuery()
+			);
+		}
+
+		return (
+			$this->getScheme() === ""
+			&& $this->getAuthority() === ""
+			&& $this->getPath() === ""
+			&& $this->getQuery() === ""
+		);
+	}
 }

@@ -255,25 +255,25 @@ class UriTest extends TestCase {
 	}
 
 	public function testIsSameDocumentReference() {
-		$this->assertFalse(Uri::isSameDocumentReference(new Uri('http://example.org')));
-		$this->assertFalse(Uri::isSameDocumentReference(new Uri('//example.org')));
-		$this->assertFalse(Uri::isSameDocumentReference(new Uri('/abs-path')));
-		$this->assertFalse(Uri::isSameDocumentReference(new Uri('rel-path')));
-		$this->assertFalse(Uri::isSameDocumentReference(new Uri('?query')));
-		$this->assertTrue(Uri::isSameDocumentReference(new Uri('')));
-		$this->assertTrue(Uri::isSameDocumentReference(new Uri('#fragment')));
+		$this->assertFalse((new Uri('http://example.org'))->isSameDocumentReference());
+		$this->assertFalse((new Uri('//example.org'))->isSameDocumentReference());
+		$this->assertFalse((new Uri('/abs-path'))->isSameDocumentReference());
+		$this->assertFalse((new Uri('rel-path'))->isSameDocumentReference());
+		$this->assertFalse((new Uri('?query'))->isSameDocumentReference());
+		$this->assertTrue((new Uri(''))->isSameDocumentReference());
+		$this->assertTrue((new Uri('#fragment'))->isSameDocumentReference());
 		$baseUri = new Uri('http://example.org/path?foo=bar');
-		$this->assertTrue(Uri::isSameDocumentReference(new Uri('#fragment'), $baseUri));
-		$this->assertTrue(Uri::isSameDocumentReference(new Uri('?foo=bar#fragment'), $baseUri));
-		$this->assertTrue(Uri::isSameDocumentReference(new Uri('/path?foo=bar#fragment'), $baseUri));
-		$this->assertTrue(Uri::isSameDocumentReference(new Uri('path?foo=bar#fragment'), $baseUri));
-		$this->assertTrue(Uri::isSameDocumentReference(new Uri('//example.org/path?foo=bar#fragment'), $baseUri));
-		$this->assertTrue(Uri::isSameDocumentReference(new Uri('http://example.org/path?foo=bar#fragment'), $baseUri));
-		$this->assertFalse(Uri::isSameDocumentReference(new Uri('https://example.org/path?foo=bar'), $baseUri));
-		$this->assertFalse(Uri::isSameDocumentReference(new Uri('http://example.com/path?foo=bar'), $baseUri));
-		$this->assertFalse(Uri::isSameDocumentReference(new Uri('http://example.org/'), $baseUri));
-		$this->assertFalse(Uri::isSameDocumentReference(new Uri('http://example.org'), $baseUri));
-		$this->assertFalse(Uri::isSameDocumentReference(new Uri('urn:/path'), new Uri('urn://example.com/path')));
+		$this->assertTrue((new Uri('#fragment'))->isSameDocumentReference($baseUri));
+		$this->assertTrue((new Uri('?foo=bar#fragment'))->isSameDocumentReference($baseUri));
+		$this->assertTrue((new Uri('/path?foo=bar#fragment'))->isSameDocumentReference($baseUri));
+		$this->assertTrue((new Uri('path?foo=bar#fragment'))->isSameDocumentReference($baseUri));
+		$this->assertTrue((new Uri('//example.org/path?foo=bar#fragment'))->isSameDocumentReference($baseUri));
+		$this->assertTrue((new Uri('http://example.org/path?foo=bar#fragment'))->isSameDocumentReference($baseUri));
+		$this->assertFalse((new Uri('https://example.org/path?foo=bar'))->isSameDocumentReference($baseUri));
+		$this->assertFalse((new Uri('http://example.com/path?foo=bar'))->isSameDocumentReference($baseUri));
+		$this->assertFalse((new Uri('http://example.org/'))->isSameDocumentReference($baseUri));
+		$this->assertFalse((new Uri('http://example.org'))->isSameDocumentReference($baseUri));
+		$this->assertFalse((new Uri('urn:/path'))->isSameDocumentReference(new Uri('urn://example.com/path')));
 	}
 
 	public function testAddAndRemoveQueryValues() {
