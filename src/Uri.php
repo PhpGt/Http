@@ -513,6 +513,11 @@ class Uri implements UriInterface {
 	}
 
 	public function isAbsolute():bool {
-		return $this->scheme !== "";
+		return ($this->getScheme() !== "");
+	}
+
+	public function isNetworkPathReference():bool {
+		return ($this->getScheme() === ""
+			&& $this->getAuthority() !== "");
 	}
 }

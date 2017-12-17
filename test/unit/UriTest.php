@@ -232,10 +232,10 @@ class UriTest extends TestCase {
 	}
 
 	public function testIsNetworkPathReference() {
-		$this->assertFalse(Uri::isNetworkPathReference(new Uri('http://example.org')));
-		$this->assertTrue(Uri::isNetworkPathReference(new Uri('//example.org')));
-		$this->assertFalse(Uri::isNetworkPathReference(new Uri('/abs-path')));
-		$this->assertFalse(Uri::isNetworkPathReference(new Uri('rel-path')));
+		$this->assertFalse((new Uri('http://example.org'))->isNetworkPathReference());
+		$this->assertTrue((new Uri('//example.org'))->isNetworkPathReference());
+		$this->assertFalse((new Uri('/abs-path'))->isNetworkPathReference());
+		$this->assertFalse((new Uri('rel-path'))->isNetworkPathReference());
 	}
 
 	public function testIsAbsolutePathReference() {
