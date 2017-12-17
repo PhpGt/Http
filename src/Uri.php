@@ -141,7 +141,7 @@ class Uri implements UriInterface {
 	 * @return string The URI scheme.
 	 */
 	public function getScheme():string {
-		return $this->scheme;
+		return $this->scheme ?? "";
 	}
 
 	/**
@@ -478,6 +478,8 @@ class Uri implements UriInterface {
 	public function withQueryValue(string $key, string $value = null):self {
 // TODO: Hotspot for refactoring opportunity.
 // http_build_query should help simplify all of this messy code.
+// Note limitation of http_build_query can be resolved using $replaceQuery below
+		$replaceQuery = ["=" => "%3D", "&" => "%26", "^" => "%5E"];
 		$current = $this->getQuery();
 
 		if ($current === "") {
@@ -500,14 +502,14 @@ class Uri implements UriInterface {
 
 // This function is taken from Guzzle's Uri implementation, just to get tests to pass.
 // It must be refactored before v1 release, as it has a major bug as shown here:
-		$replaceQuery = "Guzzle's implementation is broken https://github.com/guzzle/psr7/blob/master/src/Uri.php#L348";
-		$key = strtr($key, [$replaceQuery]);
+		$key = strtr($key, $replaceQuery);
 		if ($value !== null) {
-			$result[] = $key . "=" . strtr($value, [$replaceQuery]);
+			$result[] = $key . "=" . strtr($value, $replaceQuery);
 		}
 		else {
 			$result[] = $key;
 		}
+
 		return $this->withQuery(implode("&", $result));
 	}
 

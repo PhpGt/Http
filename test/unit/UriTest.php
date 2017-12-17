@@ -314,10 +314,10 @@ class UriTest extends TestCase {
 
 	public function testWithQueryValueHandlesEncoding() {
 		$uri = new Uri();
-		$uri = Uri::withQueryValue($uri, 'E=mc^2', 'ein&stein');
+		$uri = $uri->withQueryValue('E=mc^2', 'ein&stein');
 		$this->assertSame('E%3Dmc%5E2=ein%26stein', $uri->getQuery(), 'Decoded key/value get encoded');
 		$uri = new Uri();
-		$uri = Uri::withQueryValue($uri, 'E%3Dmc%5e2', 'ein%26stein');
+		$uri = $uri->withQueryValue('E%3Dmc%5e2', 'ein%26stein');
 		$this->assertSame('E%3Dmc%5e2=ein%26stein', $uri->getQuery(), 'Encoded key/value do not get double-encoded');
 	}
 
