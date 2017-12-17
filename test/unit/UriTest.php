@@ -325,10 +325,10 @@ class UriTest extends TestCase {
 		// It also tests that the case of the percent-encoding does not matter,
 		// i.e. both lowercase "%3d" and uppercase "%5E" can be removed.
 		$uri = (new Uri())->withQuery('E%3dmc%5E2=einstein&foo=bar');
-		$uri = Uri::withoutQueryValue($uri, 'E=mc^2');
+		$uri = $uri->withoutQueryValue('E=mc^2');
 		$this->assertSame('foo=bar', $uri->getQuery(), 'Handles key in decoded form');
 		$uri = (new Uri())->withQuery('E%3dmc%5E2=einstein&foo=bar');
-		$uri = Uri::withoutQueryValue($uri, 'E%3Dmc%5e2');
+		$uri = $uri->withoutQueryValue('E%3Dmc%5e2');
 		$this->assertSame('foo=bar', $uri->getQuery(), 'Handles key in encoded form');
 	}
 
