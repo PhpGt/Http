@@ -293,9 +293,9 @@ class UriTest extends TestCase {
 
 	public function testWithQueryValueReplacesSameKeys() {
 		$uri = new Uri();
-		$uri = Uri::withQueryValue($uri, 'a', 'b');
-		$uri = Uri::withQueryValue($uri, 'c', 'd');
-		$uri = Uri::withQueryValue($uri, 'a', 'e');
+		$uri = $uri->withQueryValue('a', 'b');
+		$uri = $uri->withQueryValue('c', 'd');
+		$uri = $uri->withQueryValue('a', 'e');
 		$this->assertSame('c=d&a=e', $uri->getQuery());
 	}
 
