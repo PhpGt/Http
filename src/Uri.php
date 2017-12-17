@@ -116,7 +116,7 @@ class Uri implements UriInterface {
 		return $port;
 	}
 
-	protected function filterUserInfo(string $user, string $pass):string {
+	protected function filterUserInfo(string $user, string $pass = null):string {
 		$userInfo = $user;
 
 		if(strlen($pass) > 0) {
