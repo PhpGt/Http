@@ -172,7 +172,7 @@ class Uri implements UriInterface {
 
 		$authority .= $this->host;
 
-		if(!$this->isDefaultPort($this->port)) {
+		if(!$this->isDefaultPort()) {
 			$authority .= ":";
 			$authority .= $this->port;
 		}
@@ -569,7 +569,13 @@ class Uri implements UriInterface {
 			return true;
 		}
 
-		$defaultPort = constant("\Gt\Http\DefaultPort::$scheme");
+		$defaultPortConstant = "\\Gt\\Http\\DefaultPort::$scheme";
+		$defaultPort = null;
+
+		if(defined($defaultPortConstant)) {
+			$defaultPort = constant($defaultPortConstant);
+		}
+
 		return ($defaultPort === $port);
 	}
 

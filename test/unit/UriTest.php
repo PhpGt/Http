@@ -381,10 +381,11 @@ class UriTest extends TestCase {
 		$this->assertNull($uri->getPort());
 	}
 
+	/**
+	 * @expectedException \TypeError
+	 */
 	public function testPortPassedAsStringIsCastedToInt() {
 		$uri = (new Uri('//example.com'))->withPort('8080');
-		$this->assertSame(8080, $uri->getPort(), 'Port is returned as integer');
-		$this->assertSame('example.com:8080', $uri->getAuthority());
 	}
 
 	public function testPortCanBeRemoved() {
