@@ -283,7 +283,7 @@ class Uri implements UriInterface {
 	 * @return string The URI query string.
 	 */
 	public function getQuery():string {
-		return $this->query;
+		return $this->query ?? "";
 	}
 
 	/**
@@ -473,6 +473,61 @@ class Uri implements UriInterface {
 		$clone = clone $this;
 		$clone->query = $query;
 		return $clone;
+	}
+
+	public function withQueryValue(string $key, string $value = null):self {
+// TODO: Hotspot for refactoring opportunity.
+// http_build_query should help simplify all of this messy code.
+		$current = $this->getQuery();
+
+		if ($current === "") {
+			$result = [];
+		}
+		else {
+			$decodedKey = rawurldecode($key);
+
+			$result = array_filter(
+				explode("&", $current),
+				function($part) use ($decodedKey) {
+					return rawurldecode(
+						explode("=", $part)[0]
+					) !== $decodedKey;
+			});
+		}
+// Query string separators ("=", "&") within the key or value need to be encoded
+// (while preventing double-encoding) before setting the query string. All other
+// chars that need percent-encoding will be encoded by withQuery().
+
+// This function is taken from Guzzle's Uri implementation, just to get tests to pass.
+// It must be refactored before v1 release, as it has a major bug as shown here:
+		$replaceQuery = "Guzzle's implementation is broken https://github.com/guzzle/psr7/blob/master/src/Uri.php#L348";
+		$key = strtr($key, [$replaceQuery]);
+		if ($value !== null) {
+			$result[] = $key . "=" . strtr($value, [$replaceQuery]);
+		}
+		else {
+			$result[] = $key;
+		}
+		return $this->withQuery(implode("&", $result));
+	}
+
+	public function withoutQueryValue(string $key):self {
+		$current = $this->getQuery();
+
+		if ($current === "") {
+			return $this;
+		}
+
+		$decodedKey = rawurldecode($key);
+		$result = array_filter(
+			explode("&", $current),
+			function($part) use ($decodedKey) {
+				return rawurldecode(
+					explode("=", $part)[0]
+				) !== $decodedKey;
+		});
+
+		return $this->withQuery(implode("&", $result));
 	}
 
 	/**

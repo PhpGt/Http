@@ -278,15 +278,16 @@ class UriTest extends TestCase {
 
 	public function testAddAndRemoveQueryValues() {
 		$uri = new Uri();
-		$uri = Uri::withQueryValue($uri, 'a', 'b');
-		$uri = Uri::withQueryValue($uri, 'c', 'd');
-		$uri = Uri::withQueryValue($uri, 'e', null);
+		$uri = $uri->withQueryValue('a', 'b');
+		$uri = $uri->withQueryValue('c', 'd');
+		$uri = $uri->withQueryValue('e', null);
 		$this->assertSame('a=b&c=d&e', $uri->getQuery());
-		$uri = Uri::withoutQueryValue($uri, 'c');
+
+		$uri = $uri->withoutQueryValue('c');
 		$this->assertSame('a=b&e', $uri->getQuery());
-		$uri = Uri::withoutQueryValue($uri, 'e');
+		$uri = $uri->withoutQueryValue('e');
 		$this->assertSame('a=b', $uri->getQuery());
-		$uri = Uri::withoutQueryValue($uri, 'a');
+		$uri = $uri->withoutQueryValue('a');
 		$this->assertSame('', $uri->getQuery());
 	}
 

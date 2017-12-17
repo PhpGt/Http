@@ -81,7 +81,7 @@ class UriResolver {
 						$targetPath = '/' . $rel->getPath();
 					}
 					else {
-// TODO: Refactor this mess once tests are passed.
+// TODO: Hotspot for refactoring opportunity.
 						$lastSlashPos = strrpos($base->getPath(), '/');
 						if($lastSlashPos === false) {
 							$targetPath = $rel->getPath();
