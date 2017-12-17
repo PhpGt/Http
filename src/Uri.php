@@ -4,6 +4,8 @@ namespace Gt\Http;
 use Psr\Http\Message\UriInterface;
 
 class Uri implements UriInterface {
+	const DEFAULT_HOST_HTTP = "localhost";
+
 	/** @var string */
 	protected $scheme;
 	/** @var string */
@@ -170,7 +172,7 @@ class Uri implements UriInterface {
 			$authority .= "@";
 		}
 
-		$authority .= $this->host;
+		$authority .= $this->getHost();
 
 		if(!$this->isDefaultPort()) {
 			$authority .= ":";
@@ -211,6 +213,11 @@ class Uri implements UriInterface {
 	 * @return string The URI host.
 	 */
 	public function getHost():string {
+		if(strlen($this->host) === 0
+		&& strpos($this->scheme, "http") === 0) {
+			return static::DEFAULT_HOST_HTTP;
+		}
+
 		return $this->host ?? "";
 	}
 
