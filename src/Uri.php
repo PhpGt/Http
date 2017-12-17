@@ -520,4 +520,12 @@ class Uri implements UriInterface {
 		return ($this->getScheme() === ""
 			&& $this->getAuthority() !== "");
 	}
+
+	public function isAbsolutePathReference():bool {
+		return $this->getScheme() === ""
+			&& $this->getAuthority() === ""
+			&& isset($this->getPath()[0])
+			&& $this->getPath()[0] === "/";
+
+	}
 }

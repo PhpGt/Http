@@ -239,11 +239,11 @@ class UriTest extends TestCase {
 	}
 
 	public function testIsAbsolutePathReference() {
-		$this->assertFalse(Uri::isAbsolutePathReference(new Uri('http://example.org')));
-		$this->assertFalse(Uri::isAbsolutePathReference(new Uri('//example.org')));
-		$this->assertTrue(Uri::isAbsolutePathReference(new Uri('/abs-path')));
-		$this->assertTrue(Uri::isAbsolutePathReference(new Uri('/')));
-		$this->assertFalse(Uri::isAbsolutePathReference(new Uri('rel-path')));
+		$this->assertFalse((new Uri('http://example.org'))->isAbsolutePathReference());
+		$this->assertFalse((new Uri('//example.org'))->isAbsolutePathReference());
+		$this->assertTrue((new Uri('/abs-path'))->isAbsolutePathReference());
+		$this->assertTrue((new Uri('/'))->isAbsolutePathReference());
+		$this->assertFalse((new Uri('rel-path'))->isAbsolutePathReference());
 	}
 
 	public function testIsRelativePathReference() {
