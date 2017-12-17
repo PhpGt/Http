@@ -513,19 +513,33 @@ class Uri implements UriInterface {
 	}
 
 	public function isAbsolute():bool {
-		return ($this->getScheme() !== "");
+		return (
+			$this->getScheme() !== ""
+		);
 	}
 
 	public function isNetworkPathReference():bool {
-		return ($this->getScheme() === ""
-			&& $this->getAuthority() !== "");
+		return (
+			$this->getScheme() === ""
+			&& $this->getAuthority() !== ""
+		);
 	}
 
 	public function isAbsolutePathReference():bool {
-		return $this->getScheme() === ""
+		return (
+			$this->getScheme() === ""
 			&& $this->getAuthority() === ""
 			&& isset($this->getPath()[0])
-			&& $this->getPath()[0] === "/";
+			&& $this->getPath()[0] === "/"
+		);
 
+	}
+
+	public function isRelativePathReference():bool {
+		return (
+			$this->getScheme() === ""
+			&& $this->getAuthority() === ""
+			&& (!isset($this->getPath()[0]) || $this->getPath()[0] !== '/')
+		);
 	}
 }

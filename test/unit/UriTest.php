@@ -247,11 +247,11 @@ class UriTest extends TestCase {
 	}
 
 	public function testIsRelativePathReference() {
-		$this->assertFalse(Uri::isRelativePathReference(new Uri('http://example.org')));
-		$this->assertFalse(Uri::isRelativePathReference(new Uri('//example.org')));
-		$this->assertFalse(Uri::isRelativePathReference(new Uri('/abs-path')));
-		$this->assertTrue(Uri::isRelativePathReference(new Uri('rel-path')));
-		$this->assertTrue(Uri::isRelativePathReference(new Uri('')));
+		$this->assertFalse((new Uri('http://example.org'))->isRelativePathReference());
+		$this->assertFalse((new Uri('//example.org'))->isRelativePathReference());
+		$this->assertFalse((new Uri('/abs-path'))->isRelativePathReference());
+		$this->assertTrue((new Uri('rel-path'))->isRelativePathReference());
+		$this->assertTrue((new Uri(''))->isRelativePathReference());
 	}
 
 	public function testIsSameDocumentReference() {
