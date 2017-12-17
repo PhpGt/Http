@@ -301,7 +301,7 @@ class UriTest extends TestCase {
 
 	public function testWithoutQueryValueRemovesAllSameKeys() {
 		$uri = (new Uri())->withQuery('a=b&c=d&a=e');
-		$uri = Uri::withoutQueryValue($uri, 'a');
+		$uri = $uri->withoutQueryValue('a');
 		$this->assertSame('c=d', $uri->getQuery());
 	}
 
