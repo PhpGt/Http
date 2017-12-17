@@ -4,11 +4,6 @@ namespace Gt\Http;
 use Psr\Http\Message\UriInterface;
 
 class Uri implements UriInterface {
-	const DEFAULT_PORT_FOR_SCHEME = [
-		"http" => 80,
-		"https" => 443,
-	];
-
 	/** @var string */
 	protected $scheme;
 	/** @var string */
@@ -30,7 +25,60 @@ class Uri implements UriInterface {
 		}
 
 		$parts = parse_url($uri);
+		if($parts === false) {
+			throw new UriParseErrorException($uri);
+		}
 		$this->applyParts($parts);
+	}
+
+	/**
+	 * Return the string representation as a URI reference.
+	 *
+	 * Depending on which components of the URI are present, the resulting
+	 * string is either a full URI or relative reference according to RFC 3986,
+	 * Section 4.1. The method concatenates the various components of the URI,
+	 * using the appropriate delimiters:
+	 *
+	 * - If a scheme is present, it MUST be suffixed by ":".
+	 * - If an authority is present, it MUST be prefixed by "//".
+	 * - The path can be concatenated without delimiters. But there are two
+	 *   cases where the path has to be adjusted to make the URI reference
+	 *   valid as PHP does not allow to throw an exception in __toString():
+	 *     - If the path is rootless and an authority is present, the path MUST
+	 *       be prefixed by "/".
+	 *     - If the path is starting with more than one "/" and no authority is
+	 *       present, the starting slashes MUST be reduced to one.
+	 * - If a query is present, it MUST be prefixed by "?".
+	 * - If a fragment is present, it MUST be prefixed by "#".
+	 *
+	 * @see http://tools.ietf.org/html/rfc3986#section-4.1
+	 * @return string
+	 */
+	public function __toString():string {
+		$uri = "";
+		if(strlen($this->getScheme()) > 0) {
+			$uri .= $this->getScheme();
+			$uri .= ":";
+		}
+
+		if(strlen($this->getAuthority()) > 0) {
+			$uri .= "//";
+			$uri .= $this->getAuthority();
+		}
+
+		$uri .= $this->path;
+
+		if(strlen($this->query) > 0) {
+			$uri .= "?";
+			$uri .= $this->query;
+		}
+
+		if(strlen($this->fragment) > 0) {
+			$uri .= "#";
+			$uri .= $this->fragment;
+		}
+
+		return $uri;
 	}
 
 	public function applyParts(array $parts):void {
@@ -62,8 +110,7 @@ class Uri implements UriInterface {
 		}
 
 		if($port < 1 || $port > 0xffff) {
-			// TODO: use HttpException PortOutOfBounds.
-			throw new \Exception($port);
+			throw new PortOutOfBoundsException($port);
 		}
 
 		return $port;
@@ -72,7 +119,7 @@ class Uri implements UriInterface {
 	protected function filterUserInfo(string $user, string $pass):string {
 		$userInfo = $user;
 
-		if(!empty($pass)) {
+		if(strlen($pass) > 0) {
 			$userInfo .= ":";
 			$userInfo .= $pass;
 		}
@@ -118,7 +165,7 @@ class Uri implements UriInterface {
 	public function getAuthority():string {
 		$authority = "";
 
-		if(!empty($this->userInfo)) {
+		if(strlen($this->userInfo) > 0) {
 			$authority .= $this->userInfo;
 			$authority .= "@";
 		}
@@ -275,6 +322,7 @@ class Uri implements UriInterface {
 	 * @throws \InvalidArgumentException for invalid or unsupported schemes.
 	 */
 	public function withScheme($scheme):self {
+		ParameterType::check(__METHOD__, func_get_args(), ["string"]);
 		$scheme = $this->filterScheme($scheme);
 
 		if($this->scheme === $scheme) {
@@ -301,6 +349,7 @@ class Uri implements UriInterface {
 	 * @return static A new instance with the specified user information.
 	 */
 	public function withUserInfo($user, $password = null):self {
+		ParameterType::check(__METHOD__, func_get_args(), ["string"]);
 		$userInfo = $this->filterUserInfo($user, $password);
 
 		if($this->userInfo === $userInfo) {
@@ -325,6 +374,7 @@ class Uri implements UriInterface {
 	 * @throws \InvalidArgumentException for invalid hostnames.
 	 */
 	public function withHost($host):self {
+		ParameterType::check(__METHOD__, func_get_args(), ["string"]);
 		$host = $this->filterHost($host);
 
 		if($this->host === $host) {
@@ -354,6 +404,7 @@ class Uri implements UriInterface {
 	 * @throws \InvalidArgumentException for invalid ports.
 	 */
 	public function withPort($port):self {
+		ParameterType::check(__METHOD__, func_get_args(), ["?integer"]);
 		$port = $this->filterPort($port);
 
 		if($this->port === $port) {
@@ -388,6 +439,7 @@ class Uri implements UriInterface {
 	 * @throws \InvalidArgumentException for invalid paths.
 	 */
 	public function withPath($path):self {
+		ParameterType::check(__METHOD__, func_get_args(), ["string"]);
 		if($this->path === $path) {
 			return $this;
 		}
@@ -413,6 +465,7 @@ class Uri implements UriInterface {
 	 * @throws \InvalidArgumentException for invalid query strings.
 	 */
 	public function withQuery($query):self {
+		ParameterType::check(__METHOD__, func_get_args(), ["string"]);
 		if($this->query === $query) {
 			return $this;
 		}
@@ -437,6 +490,7 @@ class Uri implements UriInterface {
 	 * @return static A new instance with the specified fragment.
 	 */
 	public function withFragment($fragment):self {
+		ParameterType::check(__METHOD__, func_get_args(), ["string"]);
 		if($this->fragment === $fragment) {
 			return $this;
 		}
@@ -446,60 +500,15 @@ class Uri implements UriInterface {
 		return $clone;
 	}
 
-	/**
-	 * Return the string representation as a URI reference.
-	 *
-	 * Depending on which components of the URI are present, the resulting
-	 * string is either a full URI or relative reference according to RFC 3986,
-	 * Section 4.1. The method concatenates the various components of the URI,
-	 * using the appropriate delimiters:
-	 *
-	 * - If a scheme is present, it MUST be suffixed by ":".
-	 * - If an authority is present, it MUST be prefixed by "//".
-	 * - The path can be concatenated without delimiters. But there are two
-	 *   cases where the path has to be adjusted to make the URI reference
-	 *   valid as PHP does not allow to throw an exception in __toString():
-	 *     - If the path is rootless and an authority is present, the path MUST
-	 *       be prefixed by "/".
-	 *     - If the path is starting with more than one "/" and no authority is
-	 *       present, the starting slashes MUST be reduced to one.
-	 * - If a query is present, it MUST be prefixed by "?".
-	 * - If a fragment is present, it MUST be prefixed by "#".
-	 *
-	 * @see http://tools.ietf.org/html/rfc3986#section-4.1
-	 * @return string
-	 */
-	public function __toString():string {
-		$uri = "";
-		if(!empty($this->getScheme())) {
-			$uri .= $this->getScheme();
-			$uri .= ":";
-		}
-
-		if(!empty($this->getAuthority())) {
-			$uri .= "//";
-			$uri .= $this->getAuthority();
-		}
-
-		$uri .= $this->path;
-
-		if(!empty($this->query)) {
-			$uri .= "?";
-			$uri .= $this->query;
-		}
-
-		if(!empty($this->fragment)) {
-			$uri .= "#";
-			$uri .= $this->fragment;
-		}
-
-		return $uri;
-	}
-
 	public function isDefaultPort():bool {
 		$scheme = $this->getScheme();
 		$port = $this->getPort();
 
-		return (static::DEFAULT_PORT_FOR_SCHEME[$scheme] === $port);
+		if(is_null($port)) {
+			return true;
+		}
+
+		$defaultPort = constant("\Gt\Http\DefaultPort::$scheme");
+		return ($defaultPort === $port);
 	}
 }

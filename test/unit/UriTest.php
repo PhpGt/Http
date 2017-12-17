@@ -1,6 +1,7 @@
 <?php
 namespace Gt\Http\Test;
 
+use Gt\Http\PortOutOfBoundsException;
 use Gt\Http\Uri;
 use Gt\Http\UriFactory;
 use PHPUnit\Framework\TestCase;
@@ -85,8 +86,7 @@ class UriTest extends TestCase {
 	}
 
 	/**
-	 * @expectedException \InvalidArgumentException
-	 * @expectedExceptionMessage Unable to parse URI
+	 * @expectedException \Gt\Http\UriParseErrorException
 	 * @dataProvider getInvalidUris
 	 */
 	public function testInvalidUrisThrowException($invalidUri) {
@@ -104,59 +104,56 @@ class UriTest extends TestCase {
 	}
 
 	/**
-	 * @expectedException \InvalidArgumentException
-	 * @expectedExceptionMessage Invalid port: 100000. Must be between 1 and 65535
+	 * @expectedException \Gt\Http\PortOutOfBoundsException
 	 */
 	public function testPortMustBeValid() {
 		(new Uri())->withPort(100000);
 	}
 
 	/**
-	 * @expectedException \InvalidArgumentException
-	 * @expectedExceptionMessage Invalid port: 0. Must be between 1 and 65535
+	 * @expectedException \Gt\Http\PortOutOfBoundsException
 	 */
 	public function testWithPortCannotBeZero() {
 		(new Uri())->withPort(0);
 	}
 
 	/**
-	 * @expectedException \InvalidArgumentException
-	 * @expectedExceptionMessage Unable to parse URI
+	 * @expectedException \Gt\Http\UriParseErrorException
 	 */
 	public function testParseUriPortCannotBeZero() {
 		new Uri('//example.com:0');
 	}
 
 	/**
-	 * @expectedException \InvalidArgumentException
+	 * @expectedException \TypeError
 	 */
 	public function testSchemeMustHaveCorrectType() {
 		(new Uri())->withScheme([]);
 	}
 
 	/**
-	 * @expectedException \InvalidArgumentException
+	 * @expectedException \TypeError
 	 */
 	public function testHostMustHaveCorrectType() {
 		(new Uri())->withHost([]);
 	}
 
 	/**
-	 * @expectedException \InvalidArgumentException
+	 * @expectedException \TypeError
 	 */
 	public function testPathMustHaveCorrectType() {
 		(new Uri())->withPath([]);
 	}
 
 	/**
-	 * @expectedException \InvalidArgumentException
+	 * @expectedException \TypeError
 	 */
 	public function testQueryMustHaveCorrectType() {
 		(new Uri())->withQuery([]);
 	}
 
 	/**
-	 * @expectedException \InvalidArgumentException
+	 * @expectedException \TypeError
 	 */
 	public function testFragmentMustHaveCorrectType() {
 		(new Uri())->withFragment([]);
@@ -196,10 +193,15 @@ class UriTest extends TestCase {
 	 * @dataProvider getPortTestCases
 	 */
 	public function testIsDefaultPort($scheme, $port, $isDefaultPort) {
-		$uri = self::createMock(UriInterface::class);
-		$uri->expects($this->any())->method('getScheme')->will($this->returnValue($scheme));
-		$uri->expects($this->any())->method('getPort')->will($this->returnValue($port));
-		$this->assertSame($isDefaultPort, $uri->isDefaultPort());
+		$uri = (new Uri())
+			->withScheme($scheme)
+			->withPort($port);
+
+		$this->assertSame(
+			$isDefaultPort,
+			$uri->isDefaultPort(),
+			"Scheme: $scheme - Port: $port"
+		);
 	}
 
 	public function getPortTestCases() {
