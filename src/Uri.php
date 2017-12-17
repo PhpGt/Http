@@ -511,4 +511,8 @@ class Uri implements UriInterface {
 		$defaultPort = constant("\Gt\Http\DefaultPort::$scheme");
 		return ($defaultPort === $port);
 	}
+
+	public function isAbsolute():bool {
+		return $this->scheme !== "";
+	}
 }

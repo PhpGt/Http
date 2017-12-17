@@ -225,10 +225,10 @@ class UriTest extends TestCase {
 	}
 
 	public function testIsAbsolute() {
-		$this->assertTrue(Uri::isAbsolute(new Uri('http://example.org')));
-		$this->assertFalse(Uri::isAbsolute(new Uri('//example.org')));
-		$this->assertFalse(Uri::isAbsolute(new Uri('/abs-path')));
-		$this->assertFalse(Uri::isAbsolute(new Uri('rel-path')));
+		$this->assertTrue((new Uri('http://example.org'))->isAbsolute());
+		$this->assertFalse((new Uri('//example.org'))->isAbsolute());
+		$this->assertFalse((new Uri('/abs-path'))->isAbsolute());
+		$this->assertFalse((new Uri('rel-path'))->isAbsolute());
 	}
 
 	public function testIsNetworkPathReference() {
