@@ -172,7 +172,7 @@ class Uri implements UriInterface {
 
 		$authority .= $this->host;
 
-		if(!is_null($this->port)) {
+		if(!$this->isDefaultPort($this->port)) {
 			$authority .= ":";
 			$authority .= $this->port;
 		}
@@ -230,6 +230,10 @@ class Uri implements UriInterface {
 	 * @return null|int The URI port.
 	 */
 	public function getPort():?int {
+		if($this->isDefaultPort()) {
+			return null;
+		}
+
 		return $this->port;
 	}
 
@@ -558,8 +562,8 @@ class Uri implements UriInterface {
 	}
 
 	public function isDefaultPort():bool {
-		$scheme = $this->getScheme();
-		$port = $this->getPort();
+		$scheme = $this->scheme;
+		$port = $this->port;
 
 		if(is_null($port)) {
 			return true;
