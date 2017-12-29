@@ -3,6 +3,7 @@ namespace Gt\Http;
 
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\UriInterface;
+use Gt\Http\Header\RequestHeaders;
 
 class Request implements RequestInterface {
 	use Message;

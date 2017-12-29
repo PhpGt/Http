@@ -2,6 +2,7 @@
 namespace Gt\Http;
 
 use Psr\Http\Message\StreamInterface;
+use Gt\Http\Header\RequestHeaders;
 
 class RequestFactory {
 	/**
