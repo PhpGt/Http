@@ -1,5 +1,6 @@
 <?php
 namespace Gt\Http;
+use Psr\Http\Message\UriInterface;
 
 /**
  * @see http://php.net/manual/en/reserved.variables.server.php
@@ -119,8 +120,8 @@ class ServerInfo {
 	/**
 	 * The URI which was given in order to access this page.
 	 */
-	public function getRequestUri():string {
-		return $this->server["REQUEST_URI"];
+	public function getRequestUri():UriInterface {
+		return new Uri($this->server["REQUEST_URI"]);
 	}
 
 // Nullable values: --------------------------------------------------------------------------------
