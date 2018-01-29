@@ -7,10 +7,6 @@ use Psr\Http\Message\StreamInterface;
 class Response implements ResponseInterface {
 	use Message;
 
-	public function __toString():string {
-		return (string)$this->getBody();
-	}
-
 	/**
 	 * Gets the response status code.
 	 *

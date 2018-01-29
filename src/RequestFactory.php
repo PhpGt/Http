@@ -1,6 +1,8 @@
 <?php
 namespace Gt\Http;
 
+use Gt\Cookie\CookieHandler;
+use Gt\Input\Input;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamInterface;
@@ -15,7 +17,8 @@ class RequestFactory {
 	 */
 	public static function createServerRequest(
 		ServerInfo $serverInfo,
-		StreamInterface $body
+		Input $input,
+		CookieHandler $cookieHandler
 	):ServerRequestInterface {
 		$uri = new Uri($serverInfo->getRequestUri());
 		$headers = new RequestHeaders($serverInfo->getHttpHeadersArray());
@@ -23,10 +26,13 @@ class RequestFactory {
 		$request = (new ServerRequest(
 			$serverInfo->getRequestMethod(),
 			$uri,
-			$headers
+			$headers,
+			$serverInfo,
+			$input,
+			$cookieHandler
 		))
 		->withProtocolVersion($serverInfo->getServerProtocolVersion())
-		->withBody($body);
+		->withBody($input->getStream());
 
 		return $request;
 	}
