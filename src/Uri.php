@@ -5,6 +5,9 @@ use Psr\Http\Message\UriInterface;
 
 class Uri implements UriInterface {
 	const DEFAULT_HOST_HTTP = "localhost";
+	const CHAR_UNRESERVED = 'a-zA-Z0-9_\-\.~';
+	const CHAR_SUBDELIMS = '!\$&\'\(\)\*\+,;=';
+//	const REPLACE_QUERY = ['=' => '%3D', '&' => '%26'];
 
 	/** @var string */
 	protected $scheme;
@@ -95,9 +98,9 @@ class Uri implements UriInterface {
 
 		$this->host = $this->filterHost($parts["host"] ?? "");
 		$this->port = $this->filterPort($parts["port"] ?? null);
-		$this->path = $parts["path"] ?? "";
-		$this->query = $parts["query"] ?? "";
-		$this->fragment = $parts["fragment"] ?? "";
+		$this->path = $this->filterPath($parts["path"] ?? "");
+		$this->query = $this->filterQueryAndFragment($parts["query"] ?? "");
+		$this->fragment = $this->filterQueryAndFragment($parts["fragment"] ?? "");
 	}
 
 	protected function filterScheme(string $scheme):string {
@@ -120,6 +123,32 @@ class Uri implements UriInterface {
 		return $port;
 	}
 
+	protected function filterPath(string $path):string {
+		return preg_replace_callback(
+			'/(?:[^'
+				. self::CHAR_UNRESERVED
+				. self::CHAR_SUBDELIMS
+				. '%:@\/]++|%(?![A-Fa-f0-9]{2}))/',
+			[$this, 'rawurlencodeMatchZero'],
+			$path
+		);
+	}
+
+	protected function filterQueryAndFragment(string $query):string {
+		return preg_replace_callback(
+			'/(?:[^'
+				. self::CHAR_UNRESERVED
+				. self::CHAR_SUBDELIMS
+				. '%:@\/\?]++|%(?![A-Fa-f0-9]{2}))/',
+			[$this, 'rawurlencodeMatchZero'],
+			$query
+		);
+	}
+
+	protected function rawurlencodeMatchZero(array $match) {
+		return rawurlencode($match[0]);
+	}
+
 	protected function filterUserInfo(string $user, string $pass = null):string {
 		$userInfo = $user;
 
@@ -130,6 +159,7 @@ class Uri implements UriInterface {
 
 		return $userInfo;
 	}
+
 	/**
 	 * Retrieve the scheme component of the URI.
 	 *
