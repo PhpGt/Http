@@ -58,12 +58,14 @@ class Uri implements UriInterface {
 	 */
 	public function __toString():string {
 		$uri = "";
-		if(strlen($this->getScheme()) > 0) {
-			$uri .= $this->getScheme();
+		$scheme = $this->getScheme();
+		if(strlen($scheme) > 0) {
+			$uri .= $scheme;
 			$uri .= ":";
 		}
 
-		if(strlen($this->getAuthority()) > 0) {
+		if(strlen($this->getAuthority()) > 0
+		|| $scheme === "file") {
 			$uri .= "//";
 			$uri .= $this->getAuthority();
 		}
