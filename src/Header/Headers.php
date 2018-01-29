@@ -31,6 +31,16 @@ abstract class Headers implements Iterator {
 		}
 	}
 
+	public function has(string $name):bool {
+		foreach($this->headerLines as $i => $line) {
+			if($line->isNamed($name)) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
 	public function add(string $name, string...$values):void {
 		// TODO: $values could potentially contain a single string separated by commas; needs splitting.
 		$this->headerLines []= new HeaderLine($name,...$values);

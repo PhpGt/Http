@@ -1,6 +1,7 @@
 <?php
 namespace Gt\Http;
 
+use Gt\Http\Header\Headers;
 use Psr\Http\Message\StreamInterface;
 
 trait Message {
@@ -88,7 +89,7 @@ trait Message {
 	 *     no matching header name is found in the message.
 	 */
 	public function hasHeader($name):bool {
-		return $this->headers->contains($name);
+		return $this->headers->has($name);
 	}
 
 	/**
