@@ -1,6 +1,8 @@
 <?php
 namespace Gt\Http;
 
+use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamInterface;
 use Gt\Http\Header\RequestHeaders;
 
@@ -11,10 +13,14 @@ class RequestFactory {
 	 * body (post fields or other incoming data).
 	 * @see http://www.php-fig.org/psr/psr-7/
 	 */
-	public static function create(ServerInfo $serverInfo, StreamInterface $body):Request {
+	public static function createServerRequest(
+		ServerInfo $serverInfo,
+		StreamInterface $body
+	):ServerRequestInterface {
 		$uri = new Uri($serverInfo->getRequestUri());
 		$headers = new RequestHeaders($serverInfo->getHttpHeadersArray());
-		$request = (new Request(
+
+		$request = (new ServerRequest(
 			$serverInfo->getRequestMethod(),
 			$uri,
 			$headers

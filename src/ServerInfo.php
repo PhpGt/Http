@@ -80,6 +80,29 @@ class ServerInfo {
 		return $this->server["QUERY_STRING"] ?? "";
 	}
 
+	public function withQueryString(string $queryString):self {
+		$clone = clone $this;
+		$clone->server["QUERY_STRING"] = $queryString;
+		return $clone;
+	}
+
+	/**
+	 * The deserialized query string arguments, if any.
+	 */
+	public function getQueryParams():array {
+		$params = [];
+
+		$queryString = $this->getQueryString();
+		parse_str($queryString, $params);
+
+		return $params;
+	}
+
+	public function withQueryParams(array $query):self {
+		$queryString = http_build_cookie($query);
+		return $this->withQueryString($queryString);
+	}
+
 	/**
 	 * The document root directory under which the current script is executing, as defined in
 	 * the server's configuration file.
@@ -247,5 +270,9 @@ class ServerInfo {
 	 */
 	public function getRequestScheme():?string {
 		return $this->server["REQUEST_SCHEME"] ?? null;
+	}
+
+	public function getParams():array {
+		return $this->server;
 	}
 }

@@ -3,8 +3,11 @@
 	"description": "PSR-7 HTTP message implementation.",
 	"minimum-stability": "dev",
 	"license": "MIT",
+
 	"require": {
 		"php": ">=7.1",
+		"phpgt/cookie": "dev-master",
+		"phpgt/input": "dev-master",
 		"psr/http-message": "^1.0@dev",
 		"willdurand/negotiation": "^2.3"
 	},
