@@ -9,20 +9,11 @@ class ServerInfo {
 	/** @var array */
 	protected $server;
 
-	/**
-	 * Construct with an optionally provided array of information, defaulting to PHP's
-	 * inbuilt $_SERVER superglobal.
-	 */
-	public function __construct(array $server = null) {
-		if(is_null($server)) {
-			$server = $_SERVER;
-		}
-
+	public function __construct(array $server) {
 		$this->server = $server;
 	}
 
 // Non-nullable values: ----------------------------------------------------------------------------
-
 	/**
 	 * HTTP headers are case-insensitive, so headers are transformed to uppercase.
 	 * @see https://www.w3.org/Protocols/rfc2616/rfc2616-sec4.html#sec4.2
