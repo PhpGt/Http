@@ -6,9 +6,9 @@
 
 	"require": {
 		"php": ">=7.1",
-		"phpgt/cookie": "dev-master",
-		"phpgt/input": "dev-master",
-		"psr/http-message": "^1.0@dev",
+		"phpgt/cookie": "*",
+		"phpgt/input": "*",
+		"psr/http-message": "^1.0.1",
 		"willdurand/negotiation": "^2.3"
 	},
 	"require-dev": {
