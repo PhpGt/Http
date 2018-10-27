@@ -3,13 +3,15 @@ namespace Gt\Http\Header;
 
 use Iterator;
 
-abstract class Headers implements Iterator {
+class Headers implements Iterator {
 	/** @var HeaderLine[] */
 	protected $headerLines = [];
 	protected $iteratorIndex = 0;
 
-	public function __construct(array $headerArray) {
-		$this->fromArray($headerArray);
+	public function __construct(array $headerArray = []) {
+		if(!empty($headerArray)) {
+			$this->fromArray($headerArray);
+		}
 	}
 
 	public function asArray():array {
