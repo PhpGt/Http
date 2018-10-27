@@ -1,11 +1,25 @@
 <?php
 namespace Gt\Http;
 
+use Gt\Http\Header\ResponseHeaders;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
 
 class Response implements ResponseInterface {
 	use Message;
+
+	protected $statusCode;
+
+	public function __construct(
+		int $status = null,
+		ResponseHeaders $headers = null,
+		string $body = null,
+		string $version = null
+	) {
+		$this->statusCode = $status;
+		$this->headers = $headers ?? new ResponseHeaders();
+		$this->stream = new Stream();
+	}
 
 	/**
 	 * Gets the response status code.
@@ -16,7 +30,7 @@ class Response implements ResponseInterface {
 	 * @return int Status code.
 	 */
 	public function getStatusCode() {
-		// TODO: Implement getStatusCode() method.
+		return $this->statusCode;
 	}
 
 	/**
@@ -40,7 +54,13 @@ class Response implements ResponseInterface {
 	 * @throws \InvalidArgumentException For invalid status code arguments.
 	 */
 	public function withStatus($code, $reasonPhrase = '') {
-		// TODO: Implement withStatus() method.
+		if($this->statusCode === $code) {
+			return $this;
+		}
+
+		$clone = clone $this;
+		$clone->statusCode = $code;
+		return $clone;
 	}
 
 	/**
@@ -57,6 +77,10 @@ class Response implements ResponseInterface {
 	 * @return string Reason phrase; must return an empty string if none present.
 	 */
 	public function getReasonPhrase() {
-		// TODO: Implement getReasonPhrase() method.
+		return StatusCode::REASON_PHRASE[$this->statusCode];
+	}
+
+	public function getResponseHeaders():ResponseHeaders {
+		return $this->headers;
 	}
 }
