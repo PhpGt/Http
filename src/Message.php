@@ -6,11 +6,11 @@ use Psr\Http\Message\StreamInterface;
 
 trait Message {
 	/** @var Headers */
-	private $headers;
+	protected $headers;
 	/** @var string */
-	private $protocol;
+	protected $protocol;
 	/** @var StreamInterface */
-	private $stream;
+	protected $stream;
 
 	/**
 	 * Retrieves the HTTP protocol version as a string.
