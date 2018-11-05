@@ -561,7 +561,7 @@ class UriTest extends TestCase {
 		$this->assertSame('//path-not-host.com', $uri->getPath());
 		$uri = $uri->withScheme('');
 		$this->assertSame('//example.org//path-not-host.com', (string)$uri); // This is still valid
-		$this->setExpectedException('\InvalidArgumentException');
+		self::expectException('\InvalidArgumentException');
 		$uri->withHost(''); // Now it becomes invalid
 	}
 
@@ -576,7 +576,7 @@ class UriTest extends TestCase {
 	public function testRelativeUriWithPathHavingColonSegment() {
 		$uri = (new Uri('urn:/mailto:foo'))->withScheme('');
 		$this->assertSame('/mailto:foo', $uri->getPath());
-		$this->setExpectedException('\InvalidArgumentException');
+		self::expectException('\InvalidArgumentException');
 		(new Uri('urn:mailto:foo'))->withScheme('');
 	}
 

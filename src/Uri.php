@@ -7,7 +7,6 @@ class Uri implements UriInterface {
 	const DEFAULT_HOST_HTTP = "localhost";
 	const CHAR_UNRESERVED = 'a-zA-Z0-9_\-\.~';
 	const CHAR_SUBDELIMS = '!\$&\'\(\)\*\+,;=';
-//	const REPLACE_QUERY = ['=' => '%3D', '&' => '%26'];
 
 	/** @var string */
 	protected $scheme;
@@ -231,7 +230,7 @@ class Uri implements UriInterface {
 	 * @return string The URI user information, in "username[:password]" format.
 	 */
 	public function getUserInfo():string {
-		return $this->userInfo;
+		return $this->userInfo ?? "";
 	}
 
 	/**
@@ -303,7 +302,7 @@ class Uri implements UriInterface {
 	 * @return string The URI path.
 	 */
 	public function getPath():string {
-		return $this->path;
+		return $this->path ?? "";
 	}
 
 	/**
@@ -347,7 +346,7 @@ class Uri implements UriInterface {
 	 * @return string The URI fragment.
 	 */
 	public function getFragment():string {
-		return $this->fragment;
+		return $this->fragment ?? "";
 	}
 
 	/**
@@ -687,10 +686,16 @@ class Uri implements UriInterface {
 			}
 		}
 
-		if($this->getAuthority() !== ""
-		&& strlen($this->path) > 0
-		&& $this->path[0] !== "/") {
-			$this->path = "/" . $this->path;
+		if($this->getAuthority() === "") {
+			if(strpos($this->path, "//") === 0) {
+				throw new \InvalidArgumentException("The path of a URI without an authority must not start with two slashes \"//\"");
+			}
+		}
+		else {
+			if(strlen($this->path) > 0
+			&& $this->path[0] !== "/") {
+				$this->path = "/" . $this->path;
+			}
 		}
 	}
 }
