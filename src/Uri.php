@@ -373,7 +373,7 @@ class Uri implements UriInterface {
 		}
 
 		$clone = clone $this;
-		$clone->scheme = $scheme;
+		$clone->scheme = $this->filterScheme($scheme ?? "");
 		return $clone;
 	}
 
@@ -400,7 +400,7 @@ class Uri implements UriInterface {
 		}
 
 		$clone = clone $this;
-		$clone->userInfo = $userInfo;
+		$clone->userInfo = $this->filterUserInfo($userInfo ?? "");
 		return $clone;
 	}
 
@@ -425,7 +425,7 @@ class Uri implements UriInterface {
 		}
 
 		$clone = clone $this;
-		$clone->host = $host;
+		$clone->host = $this->filterHost($host ?? "");
 		return $clone;
 	}
 
@@ -455,7 +455,7 @@ class Uri implements UriInterface {
 		}
 
 		$clone = clone $this;
-		$clone->port = $port;
+		$clone->port = $this->filterPort($port ?? null);
 		return $clone;
 	}
 
@@ -488,7 +488,7 @@ class Uri implements UriInterface {
 		}
 
 		$clone = clone $this;
-		$clone->path = $path;
+		$clone->path = $this->filterPath($path ?? "");
 		return $clone;
 	}
 
@@ -514,7 +514,7 @@ class Uri implements UriInterface {
 		}
 
 		$clone = clone $this;
-		$clone->query = $query;
+		$clone->query = $this->filterQueryAndFragment($query ?? "");
 		return $clone;
 	}
 
@@ -596,7 +596,7 @@ class Uri implements UriInterface {
 		}
 
 		$clone = clone $this;
-		$clone->fragment = $fragment;
+		$clone->fragment = $this->filterQueryAndFragment($fragment ?? "");
 		return $clone;
 	}
 
