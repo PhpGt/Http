@@ -602,14 +602,4 @@ class UriTest extends TestCase {
 		$this->assertNotSame($uri, $uri->withQuery('q=abc'));
 		$this->assertNotSame($uri, $uri->withFragment('test'));
 	}
-
-	public function testExtendingClassesInstantiates() {
-		// The non-standard port triggers a cascade of private methods which
-		// should not use late static binding to access private static members.
-		// If they do, this will fatal.
-		$this->assertInstanceOf(
-			'GuzzleHttp\Tests\Psr7\ExtendedUriTest',
-			new ExtendedUriTest('http://h:9/')
-		);
-	}
 }
