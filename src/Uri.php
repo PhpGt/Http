@@ -101,6 +101,7 @@ class Uri implements UriInterface {
 		$this->path = $this->filterPath($parts["path"] ?? "");
 		$this->query = $this->filterQueryAndFragment($parts["query"] ?? "");
 		$this->fragment = $this->filterQueryAndFragment($parts["fragment"] ?? "");
+		$this->setDefaults();
 	}
 
 	protected function filterScheme(string $scheme):string {
@@ -126,9 +127,9 @@ class Uri implements UriInterface {
 	protected function filterPath(string $path):string {
 		return preg_replace_callback(
 			'/(?:[^'
-				. self::CHAR_UNRESERVED
-				. self::CHAR_SUBDELIMS
-				. '%:@\/]++|%(?![A-Fa-f0-9]{2}))/',
+			. self::CHAR_UNRESERVED
+			. self::CHAR_SUBDELIMS
+			. '%:@\/]++|%(?![A-Fa-f0-9]{2}))/',
 			[$this, 'rawurlencodeMatchZero'],
 			$path
 		);
@@ -374,6 +375,7 @@ class Uri implements UriInterface {
 
 		$clone = clone $this;
 		$clone->scheme = $this->filterScheme($scheme ?? "");
+		$clone->setDefaults();
 		return $clone;
 	}
 
@@ -401,6 +403,7 @@ class Uri implements UriInterface {
 
 		$clone = clone $this;
 		$clone->userInfo = $this->filterUserInfo($userInfo ?? "");
+		$clone->setDefaults();
 		return $clone;
 	}
 
@@ -426,6 +429,7 @@ class Uri implements UriInterface {
 
 		$clone = clone $this;
 		$clone->host = $this->filterHost($host ?? "");
+		$clone->setDefaults();
 		return $clone;
 	}
 
@@ -456,6 +460,7 @@ class Uri implements UriInterface {
 
 		$clone = clone $this;
 		$clone->port = $this->filterPort($port ?? null);
+		$clone->setDefaults();
 		return $clone;
 	}
 
@@ -489,6 +494,7 @@ class Uri implements UriInterface {
 
 		$clone = clone $this;
 		$clone->path = $this->filterPath($path ?? "");
+		$clone->setDefaults();
 		return $clone;
 	}
 
@@ -515,6 +521,7 @@ class Uri implements UriInterface {
 
 		$clone = clone $this;
 		$clone->query = $this->filterQueryAndFragment($query ?? "");
+		$clone->setDefaults();
 		return $clone;
 	}
 
@@ -553,6 +560,7 @@ class Uri implements UriInterface {
 			$result[] = $key;
 		}
 
+		$this->setDefaults();
 		return $this->withQuery(implode("&", $result));
 	}
 
@@ -572,6 +580,7 @@ class Uri implements UriInterface {
 				) !== $decodedKey;
 		});
 
+		$this->setDefaults();
 		return $this->withQuery(implode("&", $result));
 	}
 
@@ -597,6 +606,7 @@ class Uri implements UriInterface {
 
 		$clone = clone $this;
 		$clone->fragment = $this->filterQueryAndFragment($fragment ?? "");
+		$clone->setDefaults();
 		return $clone;
 	}
 
@@ -667,5 +677,20 @@ class Uri implements UriInterface {
 			&& $this->getPath() === ""
 			&& $this->getQuery() === ""
 		);
+	}
+
+	protected function setDefaults():void {
+		if($this->host === "") {
+			if($this->scheme === "http"
+			|| $this->scheme === "https") {
+				$this->host = self::DEFAULT_HOST_HTTP;
+			}
+		}
+
+		if($this->getAuthority() !== ""
+		&& strlen($this->path) > 0
+		&& $this->path[0] !== "/") {
+			$this->path = "/" . $this->path;
+		}
 	}
 }
