@@ -1,11 +1,9 @@
 <?php
 namespace Gt\Http\Test;
 
-use Gt\Http\PortOutOfBoundsException;
 use Gt\Http\Uri;
 use Gt\Http\UriFactory;
 use PHPUnit\Framework\TestCase;
-use Psr\Http\Message\UriInterface;
 
 class UriTest extends TestCase {
 	public function testParsesProvidedUri() {
@@ -547,11 +545,9 @@ class UriTest extends TestCase {
 		$this->assertSame('//example.com/foo', (string)$uri);
 	}
 
-	/**
-	 * @expectedException \InvalidArgumentException
-	 * @expectedExceptionMessage The path of a URI without an authority must not start with two slashes "//"
-	 */
 	public function testPathStartingWithTwoSlashesAndNoAuthorityIsInvalid() {
+		self::expectException(\InvalidArgumentException::class);
+		self::expectExceptionMessage("The path of a URI without an authority must not start with two slashes \"//\"");
 		// URI "//foo" would be interpreted as network reference and thus change the original path to the host
 		(new Uri)->withPath('//foo');
 	}
@@ -561,22 +557,20 @@ class UriTest extends TestCase {
 		$this->assertSame('//path-not-host.com', $uri->getPath());
 		$uri = $uri->withScheme('');
 		$this->assertSame('//example.org//path-not-host.com', (string)$uri); // This is still valid
-		self::expectException('\InvalidArgumentException');
+		self::expectException(\InvalidArgumentException::class);
 		$uri->withHost(''); // Now it becomes invalid
 	}
 
-	/**
-	 * @expectedException \InvalidArgumentException
-	 * @expectedExceptionMessage A relative URI must not have a path beginning with a segment containing a colon
-	 */
 	public function testRelativeUriWithPathBeginngWithColonSegmentIsInvalid() {
+		self::expectException(\InvalidArgumentException::class);
+		self::expectExceptionMessage("A relative URI must not have a path beginning with a segment containing a colon");
 		(new Uri)->withPath('mailto:foo');
 	}
 
 	public function testRelativeUriWithPathHavingColonSegment() {
 		$uri = (new Uri('urn:/mailto:foo'))->withScheme('');
 		$this->assertSame('/mailto:foo', $uri->getPath());
-		self::expectException('\InvalidArgumentException');
+		self::expectException(\InvalidArgumentException::class);
 		(new Uri('urn:mailto:foo'))->withScheme('');
 	}
 

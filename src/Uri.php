@@ -679,7 +679,7 @@ class Uri implements UriInterface {
 	}
 
 	protected function setDefaults():void {
-		if($this->host === "") {
+		if(strlen($this->host) === 0) {
 			if($this->scheme === "http"
 			|| $this->scheme === "https") {
 				$this->host = self::DEFAULT_HOST_HTTP;
@@ -689,6 +689,10 @@ class Uri implements UriInterface {
 		if($this->getAuthority() === "") {
 			if(strpos($this->path, "//") === 0) {
 				throw new \InvalidArgumentException("The path of a URI without an authority must not start with two slashes \"//\"");
+			}
+			if(strlen($this->scheme) === 0
+			&& strpos(explode('/', $this->path, 2)[0], ':')) {
+				throw new \InvalidArgumentException("A relative URI must not have a path beginning with a segment containing a colon");
 			}
 		}
 		else {
