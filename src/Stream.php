@@ -229,10 +229,15 @@ class Stream implements StreamInterface {
 			// TODO: Throw runtime exception.
 		}
 
+		$position = $this->tell();
+		$this->rewind();
+
 		$string = stream_get_contents($this->stream);
 		if($string === false) {
 			// TODO: Throw runtime exception.
 		}
+
+		$this->seek($position);
 
 		return $string;
 	}
