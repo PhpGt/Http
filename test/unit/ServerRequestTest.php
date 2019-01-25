@@ -64,6 +64,47 @@ class ServerRequestTest extends TestCase {
 		self::assertEquals($cookieParams2, $sut2->getCookieParams());
 	}
 
+	public function testGetQueryParams() {
+		$params = [
+			"key1" => "value1",
+			"key2" => "value2",
+		];
+		$server = [
+			"QUERY_STRING" => http_build_query($params),
+		];
+		$sut = self::getServerRequest(
+			null,
+			null,
+			[],
+			$server
+		);
+		self::assertEquals($params, $sut->getQueryParams());
+	}
+
+// TODO: Work out problem when using cloned mock in withQueryParams below.
+//	public function testWithQueryParams() {
+//		$params1 = [
+//			"key1" => "value1",
+//			"key2" => "value2",
+//		];
+//		$params2 = [
+//			"key3" => "value3",
+//			"key4" => "value4",
+//		];
+//		$server1 = [
+//			"QUERY_STRING" => http_build_query($params1),
+//		];
+//		$sut1 = self::getServerRequest(
+//			null,
+//			null,
+//			[],
+//			$server1
+//		);
+//		$sut2 = $sut1->withQueryParams($params2);
+//		self::assertEquals($params1, $sut1->getQueryParams());
+//		self::assertEquals($params2, $sut2->getQueryParams());
+//	}
+
 	protected function getServerRequest(
 		string $method = null,
 		string $uri = null,
@@ -108,6 +149,18 @@ class ServerRequestTest extends TestCase {
 		$mock = self::createMock(ServerInfo::class);
 		$mock->method("getParams")
 			->willReturn($server);
+		$mock->method("getQueryParams")
+			->willReturnCallback(function()use($server) {
+				parse_str($server["QUERY_STRING"], $result);
+				return $result;
+			});
+		$mock->method("withQueryParams")
+			->willReturnCallback(function($params)use($mock) {
+				$clone = clone $mock;
+				$mock->method("getQueryParams")
+					->willReturn($params);
+				return $clone;
+			});
 		return $mock;
 	}
 

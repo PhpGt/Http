@@ -95,7 +95,7 @@ class ServerRequest extends Request implements ServerRequestInterface {
 	 * @return array
 	 */
 	public function getQueryParams():array {
-		$this->serverInfo->getQueryParams();
+		return $this->serverInfo->getQueryParams();
 	}
 
 	/**
@@ -122,7 +122,8 @@ class ServerRequest extends Request implements ServerRequestInterface {
 	 */
 	public function withQueryParams(array $query):self {
 		$clone = clone $this;
-		$clone->serverInfo = $this->serverInfo->withQueryParams($query);
+		$clone->serverInfo = $clone->serverInfo->withQueryParams($query);
+		return $clone;
 	}
 
 	/**
