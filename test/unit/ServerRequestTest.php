@@ -26,6 +26,44 @@ class ServerRequestTest extends TestCase {
 		self::assertEquals($serverParams, $sut->getServerParams());
 	}
 
+	public function testGetCookieParams() {
+		$cookieParams = [
+			"COOKIE1" => "VALUE1",
+			"COOKIE2" => "VALUE2",
+		];
+		$sut = self::getServerRequest(
+			null,
+			null,
+			[],
+			[],
+			[],
+			$cookieParams
+		);
+		self::assertEquals($cookieParams, $sut->getCookieParams());
+	}
+
+	public function testWithCookieParams() {
+		$cookieParams1 = [
+			"COOKIE1" => "VALUE1",
+			"COOKIE2" => "VALUE2",
+		];
+		$cookieParams2 = [
+			"COOKIE3" => "VALUE3",
+			"COOKIE4" => "VALUE4",
+		];
+		$sut1 = self::getServerRequest(
+			null,
+			null,
+			[],
+			[],
+			[],
+			$cookieParams1
+		);
+		$sut2 = $sut1->withCookieParams($cookieParams2);
+		self::assertEquals($cookieParams1, $sut1->getCookieParams());
+		self::assertEquals($cookieParams2, $sut2->getCookieParams());
+	}
+
 	protected function getServerRequest(
 		string $method = null,
 		string $uri = null,
@@ -82,6 +120,8 @@ class ServerRequestTest extends TestCase {
 	/** @return MockObject|CookieHandler */
 	protected function getMockCookieHandler(array $cookies = []):MockObject {
 		$mock = self::createMock(CookieHandler::class);
+		$mock->method("asArray")
+			->willReturn($cookies);
 		return $mock;
 	}
 }

@@ -12,12 +12,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/PhpGt/Cookie.git",
-                "reference": "da53e2d7b3bda7bf9c885a8f3875d94a494ef30c"
+                "reference": "815b81d1fa9bb918b2b4940c4b232cb64cc04f09"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PhpGt/Cookie/zipball/da53e2d7b3bda7bf9c885a8f3875d94a494ef30c",
-                "reference": "da53e2d7b3bda7bf9c885a8f3875d94a494ef30c",
+                "url": "https://api.github.com/repos/PhpGt/Cookie/zipball/815b81d1fa9bb918b2b4940c4b232cb64cc04f09",
+                "reference": "815b81d1fa9bb918b2b4940c4b232cb64cc04f09",
                 "shasum": ""
             },
             "require": {
@@ -43,7 +43,7 @@
                 }
             ],
             "description": "Object oriented cookie handler.",
-            "time": "2019-01-18T23:27:09+00:00"
+            "time": "2019-01-25T17:12:42+00:00"
         },
         {
             "name": "phpgt/input",

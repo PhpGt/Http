@@ -56,7 +56,7 @@ class ServerRequest extends Request implements ServerRequestInterface {
 	 * @return array
 	 */
 	public function getCookieParams():array {
-		return $this->cookieHandler->getAllAsArray();
+		return $this->cookieHandler->asArray();
 	}
 
 	/**
