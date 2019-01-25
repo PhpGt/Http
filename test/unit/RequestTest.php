@@ -18,6 +18,17 @@ class RequestTest extends TestCase {
 		self::assertEquals($uriPath, $sut->getRequestTarget());
 	}
 
+	public function testWithRequestTarget() {
+		$req = new Request(
+			"get",
+			self::getUriMock("/"),
+			self::getHeadersMock()
+		);
+		$target = "https://example.com?key1=val1";
+		$sut = $req->withRequestTarget($target);
+		self::assertEquals($target, $sut->getRequestTarget());
+	}
+
 	/** @return MockObject|Uri */
 	protected function getUriMock(string $uriPath):MockObject {
 		$partPath = parse_url($uriPath, PHP_URL_PATH);
