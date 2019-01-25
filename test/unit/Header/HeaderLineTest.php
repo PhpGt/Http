@@ -32,4 +32,9 @@ class HeaderLineTest extends TestCase {
 		self::assertEquals("val2", $sut->getValue(1));
 		self::assertEquals("val3", $sut->getValue(2));
 	}
+
+	public function testGetValuesCommaSeparated() {
+		$sut = new HeaderLine("some-key", "val1", "val2", "val3");
+		self::assertEquals("val1,val2,val3", $sut->getValuesCommaSeparated());
+	}
 }
