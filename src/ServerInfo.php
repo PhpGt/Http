@@ -90,7 +90,7 @@ class ServerInfo {
 	}
 
 	public function withQueryParams(array $query):self {
-		$queryString = http_build_cookie($query);
+		$queryString = http_build_query($query);
 		return $this->withQueryString($queryString);
 	}
 
