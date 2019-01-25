@@ -18,6 +18,15 @@ class RequestTest extends TestCase {
 		self::assertEquals($uriPath, $sut->getRequestTarget());
 	}
 
+	public function testGetRequestTargetEmpty() {
+		$sut = new Request(
+			"get",
+			self::getUriMock(),
+			self::getHeadersMock()
+		);
+		self::assertEquals("/", $sut->getRequestTarget());
+	}
+
 	public function testWithRequestTarget() {
 		$req = new Request(
 			"get",
@@ -30,14 +39,14 @@ class RequestTest extends TestCase {
 	}
 
 	/** @return MockObject|Uri */
-	protected function getUriMock(string $uriPath):MockObject {
+	protected function getUriMock(string $uriPath = ""):MockObject {
 		$partPath = parse_url($uriPath, PHP_URL_PATH);
 		$partQuery = parse_url($uriPath, PHP_URL_QUERY);
 		$uri = self::createMock(Uri::class);
 		$uri->method("getPath")
-			->willReturn($partPath);
+			->willReturn($partPath ?? "");
 		$uri->method("getQuery")
-			->willReturn($partQuery);
+			->willReturn($partQuery ?? "");
 		return $uri;
 	}
 
