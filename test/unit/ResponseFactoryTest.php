@@ -44,4 +44,21 @@ class ResponseFactoryTest extends TestCase {
 			ResponseFactory::create($request)
 		);
 	}
+
+	public function testRegisterResponseClassDefault() {
+		$mockResponseClass = self::getMockClass(Response::class);
+		/** @var MockObject|Request $request */
+		$request = self::createMock(Request::class);
+		$request->method("getHeaderLine")
+			->with("accept")
+			->willReturn(ResponseFactory::DEFAULT_ACCEPT);
+		ResponseFactory::registerResponseClass(
+			$mockResponseClass
+		);
+
+		self::assertInstanceOf(
+			$mockResponseClass,
+			ResponseFactory::create($request)
+		);
+	}
 }
