@@ -1,6 +1,7 @@
 <?php
 namespace Gt\Http\Test\Header;
 
+use Gt\Http\Header\HeaderLine;
 use Gt\Http\Header\Headers;
 use PHPUnit\Framework\TestCase;
 
@@ -116,5 +117,22 @@ class HeadersTest extends TestCase {
 			. "id=123; expires=Thu, 1-Jan-1970 00:00:00 UTC; path=/; domain=example.com httponly",
 			$headers->get("Cookie-set")
 		);
+	}
+
+	public function testGetAllNotExist() {
+		$headers = new Headers(self::HEADER_ARRAY);
+		$all = $headers->getAll("X-not-exist");
+		self::assertEmpty($all);
+	}
+
+	public function testGetAll() {
+		$headerValues = ["application/json", "application/xml"];
+		$headers = new Headers(self::HEADER_ARRAY);
+		$headers->add("Accept", ...$headerValues);
+		$all = $headers->getAll("aCcEpT");
+
+		foreach($all as $i => $value) {
+			self::assertEquals($headerValues[$i], $value);
+		}
 	}
 }
