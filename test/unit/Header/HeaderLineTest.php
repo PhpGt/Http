@@ -25,4 +25,11 @@ class HeaderLineTest extends TestCase {
 		$sut = new HeaderLine("Case-Sensitive", "val1");
 		self::assertEquals("Case-Sensitive", $sut->getName());
 	}
+
+	public function testGetValue() {
+		$sut = new HeaderLine("some-key", "val1", "val2", "val3");
+		self::assertEquals("val1", $sut->getValue());
+		self::assertEquals("val2", $sut->getValue(1));
+		self::assertEquals("val3", $sut->getValue(2));
+	}
 }
