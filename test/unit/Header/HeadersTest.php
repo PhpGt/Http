@@ -18,4 +18,17 @@ class HeadersTest extends TestCase {
 			$headers->asArray()
 		);
 	}
+
+	public function testFromArray() {
+		$headers = new Headers(self::HEADER_ARRAY);
+		$newHeaders = [
+			"X-New" => "Example new header",
+			"X-Expected" => "These headers should also be found",
+		];
+
+		$headers->fromArray($newHeaders);
+
+		$combined = array_merge(self::HEADER_ARRAY, $newHeaders);
+		self::assertEquals($combined, $headers->asArray());
+	}
 }
