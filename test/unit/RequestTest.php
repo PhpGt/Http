@@ -2,6 +2,7 @@
 namespace Gt\Http\Test;
 
 use Gt\Http\Header\RequestHeaders;
+use Gt\Http\InvalidRequestMethodHttpException;
 use Gt\Http\Request;
 use Gt\Http\RequestMethod;
 use Gt\Http\Uri;
@@ -60,6 +61,28 @@ class RequestTest extends TestCase {
 		self::assertEquals(
 			RequestMethod::METHOD_GET,
 			$req->getMethod()
+		);
+	}
+
+	public function testWithMethod() {
+		$req = new Request(
+			"get",
+			self::getUriMock(),
+			self::getHeadersMock()
+		);
+		$sut = $req->withMethod("post");
+		self::assertEquals(
+			RequestMethod::METHOD_POST,
+			$sut->getMethod()
+		);
+	}
+
+	public function testInvalidMethod() {
+		self::expectException(InvalidRequestMethodHttpException::class);
+		$sut = new Request(
+			"unknown",
+			self::getUriMock(),
+			self::getHeadersMock()
 		);
 	}
 
