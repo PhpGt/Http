@@ -17,10 +17,10 @@ class Headers implements Iterator {
 	public function asArray():array {
 		$array = [];
 		foreach($this->headerLines as $header) {
-			$array[$header->getName()] = $header->getValues();
+			$array[$header->getName()] = $header->getValuesCommaSeparated();
 		}
 
-		return $this->headerLines;
+		return $array;
 	}
 
 	public function fromArray(array $headerArray):void {
@@ -33,7 +33,7 @@ class Headers implements Iterator {
 		}
 	}
 
-	public function has(string $name):bool {
+	public function contains(string $name):bool {
 		foreach($this->headerLines as $i => $line) {
 			if($line->isNamed($name)) {
 				return true;
