@@ -31,4 +31,10 @@ class HeadersTest extends TestCase {
 		$combined = array_merge(self::HEADER_ARRAY, $newHeaders);
 		self::assertEquals($combined, $headers->asArray());
 	}
+
+	public function testContains() {
+		$headers = new Headers(self::HEADER_ARRAY);
+		self::assertTrue($headers->contains("Etag"));
+		self::assertFalse($headers->contains("Ftag"));
+	}
 }
