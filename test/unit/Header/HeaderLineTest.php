@@ -42,4 +42,11 @@ class HeaderLineTest extends TestCase {
 		$sut = new HeaderLine("some-key", "val1", "val2", "val3");
 		self::assertEquals("val1\nval2\nval3", $sut->getValuesNewlineSeparated());
 	}
+
+	public function testIsNamed() {
+		$sut = new HeaderLine("some-key");
+		self::assertFalse($sut->isNamed("some-other-key"));
+		self::assertTrue($sut->isNamed("some-key"));
+		self::assertTrue($sut->isNamed("Some-Key"));
+	}
 }
