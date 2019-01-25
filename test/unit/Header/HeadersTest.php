@@ -77,4 +77,11 @@ class HeadersTest extends TestCase {
 
 		self::assertEquals($now, $headerArray["Date"]);
 	}
+
+	public function testRemove() {
+		$headers = new Headers(self::HEADER_ARRAY);
+		$headers->remove("Date");
+		$headerArray = $headers->asArray();
+		self::assertArrayNotHasKey("Date", $headerArray);
+	}
 }
