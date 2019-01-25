@@ -37,4 +37,35 @@ class HeadersTest extends TestCase {
 		self::assertTrue($headers->contains("Etag"));
 		self::assertFalse($headers->contains("Ftag"));
 	}
+
+	public function testAdd() {
+		$headers = new Headers(self::HEADER_ARRAY);
+		$headers->add("Accept", "application/json");
+		$headerArray = $headers->asArray();
+		self::assertEquals("application/json", $headerArray["Accept"]);
+	}
+
+	public function testAddMultiple() {
+		$headers = new Headers(self::HEADER_ARRAY);
+		$headers->add("Accept", "application/json", "application/xml");
+		$headerArray = $headers->asArray();
+		self::assertEquals("application/json,application/xml", $headerArray["Accept"]);
+
+		$headers->add("Accept", "text/plain");
+		$headerArray = $headers->asArray();
+		self::assertEquals("application/json,application/xml,text/plain", $headerArray["Accept"]);
+	}
+
+	public function testAddMultipleCommaHeader() {
+		$headers = new Headers(self::HEADER_ARRAY);
+		$headers->add(
+			"Cookie-set",
+			"language=en; expires=Thu, 1-Jan-1970 00:00:00 UTC; path=/; domain=example.com",
+			"id=123; expires=Thu, 1-Jan-1970 00:00:00 UTC; path=/; domain=example.com httponly"
+		);
+		$headerArray = $headers->asArray();
+		$cookie = explode("\n", $headerArray["Cookie-set"]);
+		self::assertContains("language=en; expires=Thu, 1-Jan-1970 00:00:00 UTC; path=/; domain=example.com", $cookie);
+		self::assertContains("id=123; expires=Thu, 1-Jan-1970 00:00:00 UTC; path=/; domain=example.com httponly", $cookie);
+	}
 }

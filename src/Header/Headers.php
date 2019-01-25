@@ -4,6 +4,13 @@ namespace Gt\Http\Header;
 use Iterator;
 
 class Headers implements Iterator {
+	const COMMA_HEADERS = [
+// These cookies use commas within the value, so can't be comma separated.
+		"Cookie-set",
+		"WWW-authenticate",
+		"Proxy-authenticate"
+	];
+
 	/** @var HeaderLine[] */
 	protected $headerLines = [];
 	protected $iteratorIndex = 0;
@@ -17,7 +24,13 @@ class Headers implements Iterator {
 	public function asArray():array {
 		$array = [];
 		foreach($this->headerLines as $header) {
-			$array[$header->getName()] = $header->getValuesCommaSeparated();
+			$name = $header->getName();
+			if(in_array($name, self::COMMA_HEADERS)) {
+				$array[$name] = $header->getValuesNewlineSeparated();
+			}
+			else {
+				$array[$name] = $header->getValuesCommaSeparated();
+			}
 		}
 
 		return $array;
@@ -44,8 +57,28 @@ class Headers implements Iterator {
 	}
 
 	public function add(string $name, string...$values):void {
-		// TODO: $values could potentially contain a single string separated by commas; needs splitting.
-		$this->headerLines []= new HeaderLine($name,...$values);
+		$isCommaHeader = false;
+		if(strstr($values[0], ",")
+		&& in_array($name, self::COMMA_HEADERS)) {
+			$isCommaHeader = true;
+		}
+
+		$headerLineToAdd = null;
+		foreach($this->headerLines as $headerLine) {
+			if(!$headerLine->isNamed($name)) {
+				continue;
+			}
+
+			$headerLineToAdd = $headerLine;
+		}
+
+		if(is_null($headerLineToAdd) || $isCommaHeader) {
+			$this->headerLines []= new HeaderLine($name,...$values);
+		}
+		else {
+			$headerLineToAdd->addValue(...$values);
+		}
+
 	}
 
 	public function set(string $name, string...$value):void {

@@ -2,14 +2,23 @@
 namespace Gt\Http\Header;
 
 class HeaderLine {
+	/** @var string */
 	protected $originalNameCase;
+	/** @var string */
 	protected $name;
+	/** @var string[] */
 	protected $values;
 
 	public function __construct(string $name, string...$values) {
 		$this->originalNameCase = $name;
 		$this->name = strtolower($name);
 		$this->values = $values;
+	}
+
+	public function addValue(string...$values) {
+		foreach($values as $v) {
+			$this->values []= $v;
+		}
 	}
 
 	public function getName():string {
@@ -26,6 +35,10 @@ class HeaderLine {
 
 	public function getValuesCommaSeparated():string {
 		return implode(",", $this->values);
+	}
+
+	public function getValuesNewlineSeparated():string {
+		return implode("\n", $this->values);
 	}
 
 	public function isNamed(string $name):bool {
