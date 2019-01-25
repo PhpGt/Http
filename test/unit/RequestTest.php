@@ -97,15 +97,54 @@ class RequestTest extends TestCase {
 		);
 	}
 
+	public function testWithUri() {
+		$req = new Request(
+			"get",
+			self::getUriMock("/one/two/three"),
+			self::getHeadersMock()
+		);
+		$sut = $req->withUri(self::getUriMock("/four/five/six"));
+		self::assertEquals("/four/five/six", $sut->getUri());
+	}
+
+	public function testWithUriSame() {
+		$uri = self::getUriMock("/one/two/three");
+		$req = new Request(
+			"get",
+			$uri,
+			self::getHeadersMock()
+		);
+		$sut = $req->withUri($uri);
+		self::assertSame($req, $sut);
+	}
+
+	public function testWithUriNewHost() {
+		$headers = self::getHeadersMock();
+		$headers->expects($this->once())
+			->method("add")
+			->with("Host", "example2.com");
+		$req = new Request(
+			"get",
+			self::getUriMock("https://example.com/test"),
+			$headers
+		);
+		$req->withUri(self::getUriMock("https://example2.com/something"));
+	}
+
 	/** @return MockObject|Uri */
 	protected function getUriMock(string $uriPath = ""):MockObject {
 		$partPath = parse_url($uriPath, PHP_URL_PATH);
 		$partQuery = parse_url($uriPath, PHP_URL_QUERY);
+		$partHost = parse_url($uriPath, PHP_URL_HOST);
 		$uri = self::createMock(Uri::class);
 		$uri->method("getPath")
 			->willReturn($partPath ?? "");
 		$uri->method("getQuery")
 			->willReturn($partQuery ?? "");
+		$uri->method("getHost")
+			->willReturn($partHost ?? "");
+		$uri->method("__toString")
+			->willReturn($partPath ?? "");
 		return $uri;
 	}
 

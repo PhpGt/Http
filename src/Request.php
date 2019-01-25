@@ -167,6 +167,21 @@ class Request implements RequestInterface {
 	 * @return static
 	 */
 	public function withUri(UriInterface $uri, $preserveHost = false) {
-		// TODO: Implement withUri() method.
+		if($this->uri === $uri) {
+			return $this;
+		}
+
+		$clone = clone $this;
+
+		$host = $uri->getHost();
+		if(!empty($host)) {
+			if(!$preserveHost
+			|| !$this->headers->contains("Host")) {
+				$this->headers->add("Host", $host);
+			}
+		}
+
+		$clone->uri = $uri;
+		return $clone;
 	}
 }
