@@ -7,7 +7,7 @@ use PHPUnit\Framework\TestCase;
 class ParserTest extends TestCase {
 	const HEADERS_BASIC_REQUEST = <<<HEADERS
 GET /example/picture.jpg HTTP/1.1
-HOST: example.com
+Host: example.com
 User-Agent: PHPUnit Test (PHP.Gt)
 HEADERS;
 
@@ -50,5 +50,27 @@ HEADERS;
 			200,
 			$parser->getStatusCode()
 		);
+	}
+
+	public function testGetKeyValuesRequest() {
+		$parser = new Parser(self::HEADERS_BASIC_REQUEST);
+		$keyValues = $parser->getKeyValues();
+
+		self::assertArrayHasKey("Host", $keyValues);
+		self::assertEquals("example.com", $keyValues["Host"]);
+		self::assertArrayHasKey("User-Agent", $keyValues);
+		self::assertEquals("PHPUnit Test (PHP.Gt)", $keyValues["User-Agent"]);
+	}
+
+	public function testGetKeyValuesResponse() {
+		$parser = new Parser(self::HEADERS_BASIC_RESPONSE);
+		$keyValues = $parser->getKeyValues();
+
+		self::assertArrayHasKey("Date", $keyValues);
+		self::assertEquals("Thu, 1 Jan 1970 00:00:00 UTC", $keyValues["Date"]);
+		self::assertArrayHasKey("Server", $keyValues);
+		self::assertEquals("PHPUnit", $keyValues["Server"]);
+		self::assertArrayHasKey("X-Test-For", $keyValues);
+		self::assertEquals("PHP.Gt", $keyValues["X-Test-For"]);
 	}
 }

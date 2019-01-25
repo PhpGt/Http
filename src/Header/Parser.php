@@ -30,7 +30,7 @@ class Parser {
 				$value
 			) = explode(":", $h, 2);
 
-			$keyValues[$key] = $value;
+			$keyValues[$key] = trim($value);
 		}
 
 		return $keyValues;
