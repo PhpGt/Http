@@ -1,6 +1,7 @@
 <?php
 namespace Gt\Http\Test;
 
+use Gt\Http\Header\ResponseHeaders;
 use Gt\Http\Response;
 use PHPUnit\Framework\TestCase;
 
@@ -33,5 +34,12 @@ class ResponseTest extends TestCase {
 
 		$teapot = new Response(418);
 		self::assertEquals("I'm a teapot", $teapot->getReasonPhrase());
+	}
+
+	public function testGetResponseHeadersDefault() {
+		$sut = new Response(123);
+		$headers = $sut->getResponseHeaders();
+		self::assertInstanceOf(ResponseHeaders::class, $headers);
+		self::assertCount(0, $headers);
 	}
 }

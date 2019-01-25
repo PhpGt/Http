@@ -1,9 +1,10 @@
 <?php
 namespace Gt\Http\Header;
 
+use Countable;
 use Iterator;
 
-class Headers implements Iterator {
+class Headers implements Iterator, Countable {
 	const COMMA_HEADERS = [
 // These cookies use commas within the value, so can't be comma separated.
 		"cookie-set",
@@ -132,5 +133,9 @@ class Headers implements Iterator {
 
 	public function rewind():void {
 		$this->iteratorIndex = 0;
+	}
+
+	public function count():int {
+		return count($this->headerLines);
 	}
 }
