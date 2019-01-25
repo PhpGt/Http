@@ -23,4 +23,15 @@ class ResponseTest extends TestCase {
 		$sut2 = $sut->withStatus(123);
 		self::assertSame($sut, $sut2);
 	}
+
+	public function testGetReasonPhraseDefault() {
+		$notFound = new Response(404);
+		self::assertEquals("Not Found", $notFound->getReasonPhrase());
+
+		$noContent = new Response(204);
+		self::assertEquals("No Content", $noContent->getReasonPhrase());
+
+		$teapot = new Response(418);
+		self::assertEquals("I'm a teapot", $teapot->getReasonPhrase());
+	}
 }
