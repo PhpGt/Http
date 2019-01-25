@@ -77,6 +77,17 @@ class RequestTest extends TestCase {
 		);
 	}
 
+	public function testWithSameMethod() {
+		$req = new Request(
+			"get",
+			self::getUriMock(),
+			self::getHeadersMock()
+		);
+		$sut = $req->withMethod("post");
+		$sut2 = $sut->withMethod("post");
+		self::assertSame($sut, $sut2);
+	}
+
 	public function testInvalidMethod() {
 		self::expectException(InvalidRequestMethodHttpException::class);
 		$sut = new Request(
