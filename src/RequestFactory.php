@@ -3,9 +3,7 @@ namespace Gt\Http;
 
 use Gt\Cookie\CookieHandler;
 use Gt\Input\Input;
-use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Message\StreamInterface;
 use Gt\Http\Header\RequestHeaders;
 
 class RequestFactory {
