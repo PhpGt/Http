@@ -2,6 +2,7 @@
 namespace Gt\Http;
 
 use Negotiation\BaseAccept;
+use Negotiation\Exception\InvalidArgument;
 use Negotiation\Negotiator;
 use Psr\Http\Message\RequestInterface;
 
@@ -18,7 +19,8 @@ class ResponseFactory {
 	 */
 	public static function create(RequestInterface $request):Response {
 		$negotiator = new Negotiator();
-		$acceptHeader = $request->getHeaderLine("accept");
+		$acceptHeader = $request->getHeaderLine("accept")
+			?: self::DEFAULT_ACCEPT;
 		$priorities = [
 			"text/html; charset=UTF-8",
 			"application/json",
@@ -30,11 +32,16 @@ class ResponseFactory {
 			$priorities
 		);
 
-		$accept = self::DEFAULT_ACCEPT;
 		if(static::$mediaType) {
 			$accept = static::$mediaType->getType();
 		}
+		else {
+			$accept = $acceptHeader;
+		}
 
+		if(!isset(static::$responseClassLookup[$accept])) {
+			throw new UnknownAcceptHeaderException($accept);
+		}
 		return new static::$responseClassLookup[$accept];
 	}
 
