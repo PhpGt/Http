@@ -3,6 +3,7 @@ namespace Gt\Http\Test;
 
 use Gt\Http\Header\RequestHeaders;
 use Gt\Http\Request;
+use Gt\Http\RequestMethod;
 use Gt\Http\Uri;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -48,6 +49,18 @@ class RequestTest extends TestCase {
 		$sut = $req->withRequestTarget($target);
 		$sut2 = $sut->withRequestTarget($target);
 		self::assertSame($sut, $sut2);
+	}
+
+	public function testGetMethod() {
+		$req = new Request(
+			"get",
+			self::getUriMock(),
+			self::getHeadersMock()
+		);
+		self::assertEquals(
+			RequestMethod::METHOD_GET,
+			$req->getMethod()
+		);
 	}
 
 	/** @return MockObject|Uri */

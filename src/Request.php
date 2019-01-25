@@ -94,7 +94,7 @@ class Request implements RequestInterface {
 	 * @return string Returns the request method.
 	 */
 	public function getMethod() {
-		// TODO: Implement getMethod() method.
+		return $this->method;
 	}
 
 	/**
