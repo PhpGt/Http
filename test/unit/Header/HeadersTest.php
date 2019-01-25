@@ -68,4 +68,13 @@ class HeadersTest extends TestCase {
 		self::assertContains("language=en; expires=Thu, 1-Jan-1970 00:00:00 UTC; path=/; domain=example.com", $cookie);
 		self::assertContains("id=123; expires=Thu, 1-Jan-1970 00:00:00 UTC; path=/; domain=example.com httponly", $cookie);
 	}
+
+	public function testSet() {
+		$now = date("D, j M Y H:i:s T");
+		$headers = new Headers(self::HEADER_ARRAY);
+		$headers->set("Date", $now);
+		$headerArray = $headers->asArray();
+
+		self::assertEquals($now, $headerArray["Date"]);
+	}
 }
