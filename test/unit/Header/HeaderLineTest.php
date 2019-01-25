@@ -37,4 +37,9 @@ class HeaderLineTest extends TestCase {
 		$sut = new HeaderLine("some-key", "val1", "val2", "val3");
 		self::assertEquals("val1,val2,val3", $sut->getValuesCommaSeparated());
 	}
+
+	public function testGetValuesNewlineSeparated() {
+		$sut = new HeaderLine("some-key", "val1", "val2", "val3");
+		self::assertEquals("val1\nval2\nval3", $sut->getValuesNewlineSeparated());
+	}
 }
