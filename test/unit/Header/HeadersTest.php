@@ -135,4 +135,19 @@ class HeadersTest extends TestCase {
 			self::assertEquals($headerValues[$i], $value);
 		}
 	}
+
+	public function testIterator() {
+		$headers = new Headers(self::HEADER_ARRAY);
+		$kvp = [];
+		foreach($headers as $i => $headerLine) {
+			$kvp[$headerLine->getName()] = $headerLine;
+		}
+
+		self::assertCount(count(self::HEADER_ARRAY), $kvp);
+
+		foreach(self::HEADER_ARRAY as $expectedKey => $expectedValue) {
+			self::assertArrayHasKey($expectedKey, $kvp);
+			self::assertEquals($expectedValue, $kvp[$expectedKey]);
+		}
+	}
 }
