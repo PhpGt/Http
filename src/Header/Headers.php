@@ -6,9 +6,9 @@ use Iterator;
 class Headers implements Iterator {
 	const COMMA_HEADERS = [
 // These cookies use commas within the value, so can't be comma separated.
-		"Cookie-set",
-		"WWW-authenticate",
-		"Proxy-authenticate"
+		"cookie-set",
+		"www-authenticate",
+		"proxy-authenticate"
 	];
 
 	/** @var HeaderLine[] */
@@ -25,7 +25,7 @@ class Headers implements Iterator {
 		$array = [];
 		foreach($this->headerLines as $header) {
 			$name = $header->getName();
-			if(in_array($name, self::COMMA_HEADERS)) {
+			if(in_array(strtolower($name), self::COMMA_HEADERS)) {
 				$array[$name] = $header->getValuesNewlineSeparated();
 			}
 			else {
@@ -59,7 +59,7 @@ class Headers implements Iterator {
 	public function add(string $name, string...$values):void {
 		$isCommaHeader = false;
 		if(strstr($values[0], ",")
-		&& in_array($name, self::COMMA_HEADERS)) {
+		&& in_array(strtolower($name), self::COMMA_HEADERS)) {
 			$isCommaHeader = true;
 		}
 

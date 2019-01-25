@@ -84,4 +84,37 @@ class HeadersTest extends TestCase {
 		$headerArray = $headers->asArray();
 		self::assertArrayNotHasKey("Date", $headerArray);
 	}
+
+	public function testGetNotExist() {
+		$headers = new Headers(self::HEADER_ARRAY);
+		$h = $headers->get("X-NOT-EXISTS");
+		self::assertNull($h);
+	}
+
+	public function testGet() {
+		$headers = new Headers(self::HEADER_ARRAY);
+		$h = $headers->get("Date");
+		self::assertEquals(self::HEADER_ARRAY["Date"], $h);
+	}
+
+	public function testGetMultiple() {
+		$headers = new Headers(self::HEADER_ARRAY);
+		$headers->add("Accept", "application/json", "application/xml");
+		self::assertEquals("application/json,application/xml", $headers->get("Accept"));
+	}
+
+	public function testGetMultipleCommas() {
+		$headers = new Headers(self::HEADER_ARRAY);
+		$headers->add(
+			"Cookie-set",
+			"language=en; expires=Thu, 1-Jan-1970 00:00:00 UTC; path=/; domain=example.com",
+			"id=123; expires=Thu, 1-Jan-1970 00:00:00 UTC; path=/; domain=example.com httponly"
+		);
+		self::assertEquals(
+			"language=en; expires=Thu, 1-Jan-1970 00:00:00 UTC; path=/; domain=example.com"
+			. "\n"
+			. "id=123; expires=Thu, 1-Jan-1970 00:00:00 UTC; path=/; domain=example.com httponly",
+			$headers->get("Cookie-set")
+		);
+	}
 }

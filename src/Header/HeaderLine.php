@@ -15,6 +15,15 @@ class HeaderLine {
 		$this->values = $values;
 	}
 
+	public function __toString():string {
+		if(in_array($this->name, Headers::COMMA_HEADERS)) {
+			return $this->getValuesNewlineSeparated();
+		}
+		else {
+			return $this->getValuesCommaSeparated();
+		}
+	}
+
 	public function addValue(string...$values) {
 		foreach($values as $v) {
 			$this->values []= $v;
