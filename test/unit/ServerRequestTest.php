@@ -8,6 +8,8 @@ use Gt\Http\ServerInfo;
 use Gt\Http\ServerRequest;
 use Gt\Http\Uri;
 use Gt\Input\Input;
+use Gt\Input\InputData\Datum\FileUpload;
+use Gt\Input\InputData\FileUploadInputData;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -118,10 +120,21 @@ class ServerRequestTest extends TestCase {
 			[],
 			[
 				"files" => [
-
+					"file1" => [
+						"name" => "myfile.txt",
+						"type" => "text/plain",
+						"error" => UPLOAD_ERR_OK,
+					],
+					"file2" => [
+						"name" => "image.jpg",
+						"type" => "image/jpeg",
+						"error" => UPLOAD_ERR_OK,
+					],
 				]
 			]
 		);
+		$uploadedFiles = $sut->getUploadedFiles();
+		self::assertCount(2, $uploadedFiles);
 	}
 
 	protected function getServerRequest(
@@ -136,7 +149,11 @@ class ServerRequestTest extends TestCase {
 		$uri = self::getMockUri($uri ?? "/");
 		$headers = self::getMockHeaders($headerArray);
 		$serverInfo = self::getMockServerInfo($serverArray);
-		$input = self::getMockInput($inputArray);
+		$input = self::getMockInput(
+			$inputArray["get"] ?? [],
+			$inputArray["post"] ?? [],
+			$inputArray["files"] ?? []
+		);
 		$cookieHandler = self::getMockCookieHandler($cookieArray);
 
 		$sut = new ServerRequest(
@@ -184,8 +201,23 @@ class ServerRequestTest extends TestCase {
 	}
 
 	/** @return MockObject|Input */
-	protected function getMockInput(array $input = []):MockObject {
+	protected function getMockInput(
+		array $get = [],
+		array $post = [],
+		array $files = []
+	):MockObject {
+		$fileArray = [];
+		foreach($files as $file) {
+			$fileArray []= $this->createMock(FileUpload::class);
+		}
+		$fileUploadParameters = self::createMock(FileUploadInputData::class);
+		$fileUploadParameters->method("asArray")
+			->willReturn($fileArray);
+
 		$mock = self::createMock(Input::class);
+		$mock->method("getAll")
+			->with(Input::DATA_FILES)
+			->willReturn($fileUploadParameters);
 		return $mock;
 	}
 

@@ -51,12 +51,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/PhpGt/Input.git",
-                "reference": "409e1371df45d06f3f046ef9f8fbf04c7585f9cd"
+                "reference": "2c4cb6c5e3ac2ff86820ac0293dd92a00576354b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PhpGt/Input/zipball/409e1371df45d06f3f046ef9f8fbf04c7585f9cd",
-                "reference": "409e1371df45d06f3f046ef9f8fbf04c7585f9cd",
+                "url": "https://api.github.com/repos/PhpGt/Input/zipball/2c4cb6c5e3ac2ff86820ac0293dd92a00576354b",
+                "reference": "2c4cb6c5e3ac2ff86820ac0293dd92a00576354b",
                 "shasum": ""
             },
             "require": {
@@ -76,7 +76,7 @@
                 "MIT"
             ],
             "description": "Encapsulated user input.",
-            "time": "2019-01-16T11:01:42+00:00"
+            "time": "2019-01-26T12:58:56+00:00"
         },
         {
             "name": "psr/http-message",
