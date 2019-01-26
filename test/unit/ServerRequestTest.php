@@ -105,6 +105,25 @@ class ServerRequestTest extends TestCase {
 		self::assertEquals($params2, $sut2->getQueryParams());
 	}
 
+	public function testGetUploadedFilesEmpty() {
+		$sut = self::getServerRequest();
+		self::assertEmpty($sut->getUploadedFiles());
+	}
+
+	public function testGetUploadedFiles() {
+		$sut = self::getServerRequest(
+			"post",
+			"/example",
+			[],
+			[],
+			[
+				"files" => [
+
+				]
+			]
+		);
+	}
+
 	protected function getServerRequest(
 		string $method = null,
 		string $uri = null,

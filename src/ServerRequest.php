@@ -139,7 +139,7 @@ class ServerRequest extends Request implements ServerRequestInterface {
 	 *     array MUST be returned if no data is present.
 	 */
 	public function getUploadedFiles():array {
-// TODO: Implement when input files are implemented.
+		return $this->input->getUploadedFiles();
 	}
 
 	/**
