@@ -122,19 +122,33 @@ class ServerRequestTest extends TestCase {
 				"files" => [
 					"file1" => [
 						"name" => "myfile.txt",
-						"type" => "text/plain",
-						"error" => UPLOAD_ERR_OK,
 					],
 					"file2" => [
 						"name" => "image.jpg",
-						"type" => "image/jpeg",
-						"error" => UPLOAD_ERR_OK,
 					],
 				]
 			]
 		);
 		$uploadedFiles = $sut->getUploadedFiles();
 		self::assertCount(2, $uploadedFiles);
+	}
+
+	public function testWithUploadedFilesFullToEmpty() {
+		$sutFull = self::getServerRequest(
+			"post",
+			"/example",
+			[],
+			[],
+			[
+				"files" => [
+					"file1" => [
+						"name" => "myfile.txt",
+					]
+				]
+			]
+		);
+		$sutEmpty = $sutFull->withUploadedFiles([]);
+		self::assertEmpty($sutEmpty->getUploadedFiles());
 	}
 
 	protected function getServerRequest(
@@ -211,8 +225,21 @@ class ServerRequestTest extends TestCase {
 			$fileArray []= $this->createMock(FileUpload::class);
 		}
 		$fileUploadParameters = self::createMock(FileUploadInputData::class);
+		$fileUploadParameters->method("getKeys")
+			->willReturnCallback(function()use(&$fileArray) {
+				return array_keys($fileArray);
+			});
 		$fileUploadParameters->method("asArray")
-			->willReturn($fileArray);
+			->willReturnCallback(function() use(&$fileArray) {
+				return $fileArray;
+			});
+		$fileUploadParameters->method("remove")
+			->willReturnCallback(function(string...$keys)use(&$fileArray, $fileUploadParameters) {
+				foreach($keys as $k) {
+					unset($fileArray[$k]);
+				}
+				return $fileUploadParameters;
+			});
 
 		$mock = self::createMock(Input::class);
 		$mock->method("getAll")

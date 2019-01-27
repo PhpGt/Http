@@ -5,7 +5,9 @@ use Gt\Cookie\Cookie;
 use Gt\Cookie\CookieHandler;
 use Gt\Http\Header\RequestHeaders;
 use Gt\Input\Input;
+use Gt\Input\InputData\Datum\FileUpload;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\UploadedFileInterface;
 
 class ServerRequest extends Request implements ServerRequestInterface {
 	/** @var ServerInfo */
@@ -155,7 +157,25 @@ class ServerRequest extends Request implements ServerRequestInterface {
 	 * @throws \InvalidArgumentException if an invalid structure is provided.
 	 */
 	public function withUploadedFiles(array $uploadedFiles):self {
-// TODO: Implement withUploadedFiles() method.
+		$clone = clone $this;
+
+		$fileUploadParameters = $clone->input->getAll(
+			Input::DATA_FILES
+		);
+		$fileUploadParameters->remove(
+			...$fileUploadParameters->getKeys()
+		);
+
+		/** @var FileUpload[] $uploadedFiles */
+		foreach($uploadedFiles as $key => $file) {
+			$clone->input->add(
+				$key,
+				$file,
+				Input::DATA_FILES
+			);
+		}
+
+		return $clone;
 	}
 
 	/**
