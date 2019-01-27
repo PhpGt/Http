@@ -8,9 +8,11 @@ use Gt\Http\ServerInfo;
 use Gt\Http\ServerRequest;
 use Gt\Http\Uri;
 use Gt\Input\Input;
+use Gt\Input\InputData\BodyInputData;
 use Gt\Input\InputData\Datum\FileUpload;
 use Gt\Input\InputData\Datum\InputDatum;
 use Gt\Input\InputData\FileUploadInputData;
+use Gt\Input\InputData\InputData;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -174,6 +176,47 @@ class ServerRequestTest extends TestCase {
 		self::assertCount(2, $sutFull->getUploadedFiles());
 	}
 
+	public function testGetParsedBodyEmpty() {
+		$sut = self::getServerRequest(
+			"get",
+			"/example"
+		);
+		self::assertEmpty($sut->getParsedBody());
+	}
+
+	public function testGetParsedBody() {
+		$sut = self::getServerRequest(
+			"post",
+			"/example",
+			[],
+			[],
+			[
+				"post" => [
+					"key1" => "value1",
+					"key2" => "value2",
+				]
+			]
+		);
+
+		/** @var InputData $inputData */
+		$inputData = $sut->getParsedBody();
+		self::assertInstanceOf(InputData::class, $inputData);
+		self::assertCount(2, $inputData->asArray());
+	}
+
+	public function testWithParsedBody() {
+		$sut = self::getServerRequest();
+		$inputData = $sut->getParsedBody();
+		self::assertEmpty($inputData->asArray());
+
+		$inputDatumArray = [];
+		$inputDatumArray []= self::createMock(InputDatum::class);
+		$inputDatumArray []= self::createMock(InputDatum::class);
+
+		$sut = $sut->withParsedBody($inputDatumArray);
+		self::assertCount(2, $sut->getParsedBody()->asArray());
+	}
+
 	protected function getServerRequest(
 		string $method = null,
 		string $uri = null,
@@ -243,9 +286,19 @@ class ServerRequestTest extends TestCase {
 		array $post = [],
 		array $files = []
 	):MockObject {
+		$bodyArray = [];
+		foreach($post as $key => $value) {
+			$bodyArray []= self::createMock(InputDatum::class);
+		}
+		$bodyParameters = self::createMock(BodyInputData::class);
+		$bodyParameters->method("asArray")
+			->willReturnCallback(function()use(&$bodyArray) {
+				return $bodyArray;
+			});
+
 		$fileArray = [];
 		foreach($files as $file) {
-			$fileArray []= $this->createMock(FileUpload::class);
+			$fileArray []= self::createMock(FileUpload::class);
 		}
 		$fileUploadParameters = self::createMock(FileUploadInputData::class);
 		$fileUploadParameters->method("getKeys")
@@ -266,15 +319,25 @@ class ServerRequestTest extends TestCase {
 
 		$mock = self::createMock(Input::class);
 		$mock->method("getAll")
-			->with(Input::DATA_FILES)
-			->willReturn($fileUploadParameters);
+			->willReturnCallback(function($method)use($bodyParameters, $fileUploadParameters) {
+				if($method === Input::DATA_FILES) {
+					return $fileUploadParameters;
+				}
+				if($method === Input::DATA_BODY) {
+					return $bodyParameters;
+				}
+			});
 		$mock->method("add")
-			->willReturnCallback(function(string $key, InputDatum $datum, string $method)use(&$fileArray) {
+			->willReturnCallback(function(string $key, InputDatum $datum, string $method)use(&$bodyArray, &$fileArray) {
 				if($method === Input::DATA_FILES) {
 					/** @var FileUpload $datum */
 					$fileArray[$key] = [
 						"name" => $datum->getClientFilename()
 					];
+				}
+				if($method === INPUT::DATA_BODY) {
+					/** @var InputDatum $datum */
+					$bodyArray[$key] = $datum;
 				}
 			});
 		return $mock;

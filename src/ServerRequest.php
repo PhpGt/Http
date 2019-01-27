@@ -6,6 +6,8 @@ use Gt\Cookie\CookieHandler;
 use Gt\Http\Header\RequestHeaders;
 use Gt\Input\Input;
 use Gt\Input\InputData\Datum\FileUpload;
+use Gt\Input\InputData\Datum\InputDatum;
+use Gt\Input\InputData\InputData;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UploadedFileInterface;
 
@@ -152,30 +154,15 @@ class ServerRequest extends Request implements ServerRequestInterface {
 	 * immutability of the message, and MUST return an instance that has the
 	 * updated body parameters.
 	 *
-	 * @param array $uploadedFiles An array tree of UploadedFileInterface instances.
+	 * @param FileUpload[] $uploadedFiles An array tree of UploadedFileInterface instances.
 	 * @return static
 	 * @throws \InvalidArgumentException if an invalid structure is provided.
 	 */
 	public function withUploadedFiles(array $uploadedFiles):self {
-		$clone = clone $this;
-
-		$fileUploadParameters = $clone->input->getAll(
+		return $this->withInputData(
+			$uploadedFiles,
 			Input::DATA_FILES
 		);
-		$fileUploadParameters->remove(
-			...$fileUploadParameters->getKeys()
-		);
-
-		/** @var FileUpload[] $uploadedFiles */
-		foreach($uploadedFiles as $key => $file) {
-			$clone->input->add(
-				$key,
-				$file,
-				Input::DATA_FILES
-			);
-		}
-
-		return $clone;
 	}
 
 	/**
@@ -194,7 +181,7 @@ class ServerRequest extends Request implements ServerRequestInterface {
 	 *     These will typically be an array or object.
 	 */
 	public function getParsedBody() {
-// TODO: Implement getParsedBody() method.
+		return $this->input->getAll(Input::DATA_BODY);
 	}
 
 	/**
@@ -219,14 +206,17 @@ class ServerRequest extends Request implements ServerRequestInterface {
 	 * immutability of the message, and MUST return an instance that has the
 	 * updated body parameters.
 	 *
-	 * @param null|array|object $data The deserialized body data. This will
+	 * @param InputDatum[] $inputDatumArray The deserialized body data. This will
 	 *     typically be in an array or object.
 	 * @return static
 	 * @throws \InvalidArgumentException if an unsupported argument type is
 	 *     provided.
 	 */
-	public function withParsedBody($data):self {
-// TODO: Implement withParsedBody() method.
+	public function withParsedBody($inputDatumArray):self {
+		return $this->withInputData(
+			$inputDatumArray,
+			Input::DATA_BODY
+		);
 	}
 
 	/**
@@ -301,6 +291,31 @@ class ServerRequest extends Request implements ServerRequestInterface {
 	public function withoutAttribute($name):self {
 		$clone = clone $this;
 		unset($clone->attributes[$name]);
+		return $clone;
+	}
+
+	protected function withInputData(
+		array $inputDatumArray,
+		string $method
+	):self {
+		$clone = clone $this;
+
+		$parameters = $clone->input->getAll(
+			$method
+		);
+		$parameters->remove(
+			...$parameters->getKeys()
+		);
+
+		/** @var InputDatum[] $inputDatumArray */
+		foreach($inputDatumArray as $key => $datum) {
+			$clone->input->add(
+				$key,
+				$datum,
+				$method
+			);
+		}
+
 		return $clone;
 	}
 }
