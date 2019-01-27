@@ -9,6 +9,7 @@ use Gt\Http\ServerRequest;
 use Gt\Http\Uri;
 use Gt\Input\Input;
 use Gt\Input\InputData\Datum\FileUpload;
+use Gt\Input\InputData\Datum\InputDatum;
 use Gt\Input\InputData\FileUploadInputData;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -151,6 +152,28 @@ class ServerRequestTest extends TestCase {
 		self::assertEmpty($sutEmpty->getUploadedFiles());
 	}
 
+	public function testWithUploadedFilesEmptyToFull() {
+		$sutEmpty = self::getServerRequest(
+			"post",
+			"/example",
+			[],
+			[],
+			[
+				"files" => [],
+			]
+		);
+		self::assertEmpty($sutEmpty->getUploadedFiles());
+
+		$file1 = self::createMock(FileUpload::class);
+		$file2 = self::createMock(FileUpload::class);
+
+		$sutFull = $sutEmpty->withUploadedFiles([
+			$file1,
+			$file2,
+		]);
+		self::assertCount(2, $sutFull->getUploadedFiles());
+	}
+
 	protected function getServerRequest(
 		string $method = null,
 		string $uri = null,
@@ -245,6 +268,15 @@ class ServerRequestTest extends TestCase {
 		$mock->method("getAll")
 			->with(Input::DATA_FILES)
 			->willReturn($fileUploadParameters);
+		$mock->method("add")
+			->willReturnCallback(function(string $key, InputDatum $datum, string $method)use(&$fileArray) {
+				if($method === Input::DATA_FILES) {
+					/** @var FileUpload $datum */
+					$fileArray[$key] = [
+						"name" => $datum->getClientFilename()
+					];
+				}
+			});
 		return $mock;
 	}
 
