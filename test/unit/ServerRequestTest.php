@@ -217,6 +217,45 @@ class ServerRequestTest extends TestCase {
 		self::assertCount(2, $sut->getParsedBody()->asArray());
 	}
 
+	public function testGetAttributesEmpty() {
+		$sut = self::getServerRequest();
+		self::assertEmpty($sut->getAttributes());
+	}
+
+	public function testWithAttribute() {
+		$sutWithout = self::getServerRequest();
+		$sutWith = $sutWithout->withAttribute("testAttr", "testValue");
+		self::assertEmpty($sutWithout->getAttributes());
+		self::assertCount(1, $sutWith->getAttributes());
+	}
+
+	public function testGetAttribute() {
+		$sut = self::getServerRequest()
+			->withAttribute("testAttr", "testValue");
+		self::assertEquals(
+			"testValue",
+			$sut->getAttribute("testAttr")
+		);
+	}
+
+	public function testGetAttributeDefault() {
+		$sut = self::getServerRequest()
+			->withAttribute("testAttr", "testValue");
+		self::assertEquals(
+			"defaultValue",
+			$sut->getAttribute("notExists", "defaultValue")
+		);
+	}
+
+	public function testGetAttributeWithout() {
+		$sut = self::getServerRequest()
+			->withAttribute("testAttr1", "testValue1")
+			->withAttribute("testAttr2", "testValue2")
+			->withAttribute("testAttr3", "testValue3")
+			->withoutAttribute("testAttr2");
+		self::assertCount(2, $sut->getAttributes());
+	}
+
 	protected function getServerRequest(
 		string $method = null,
 		string $uri = null,
