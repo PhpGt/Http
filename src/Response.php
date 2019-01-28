@@ -54,10 +54,6 @@ class Response implements ResponseInterface {
 	 * @throws \InvalidArgumentException For invalid status code arguments.
 	 */
 	public function withStatus($code, $reasonPhrase = '') {
-		if($this->statusCode === $code) {
-			return $this;
-		}
-
 		$clone = clone $this;
 		$clone->statusCode = $code;
 		return $clone;

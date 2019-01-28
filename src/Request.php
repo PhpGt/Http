@@ -79,10 +79,6 @@ class Request implements RequestInterface {
 	 * @return static
 	 */
 	public function withRequestTarget($requestTarget) {
-		if($this->requestTarget === $requestTarget) {
-			return $this;
-		}
-
 		$clone = clone $this;
 		$clone->requestTarget = $requestTarget;
 		return $clone;
@@ -114,10 +110,6 @@ class Request implements RequestInterface {
 	 */
 	public function withMethod($method) {
 		$method = RequestMethod::filterMethodName($method);
-		if($this->method === $method) {
-			return $this;
-		}
-
 		$clone = clone $this;
 		$clone->method = $method;
 		return $clone;
@@ -167,10 +159,6 @@ class Request implements RequestInterface {
 	 * @return static
 	 */
 	public function withUri(UriInterface $uri, $preserveHost = false) {
-		if($this->uri === $uri) {
-			return $this;
-		}
-
 		$clone = clone $this;
 
 		$host = $uri->getHost();

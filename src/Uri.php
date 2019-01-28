@@ -245,11 +245,6 @@ class Uri implements UriInterface {
 	 * @return string The URI host.
 	 */
 	public function getHost():string {
-		if(strlen($this->host) === 0
-		&& strpos($this->scheme, "http") === 0) {
-			return static::DEFAULT_HOST_HTTP;
-		}
-
 		return $this->host ?? "";
 	}
 
@@ -368,10 +363,6 @@ class Uri implements UriInterface {
 		ParameterType::check(__METHOD__, func_get_args(), ["string"]);
 		$scheme = $this->filterScheme($scheme);
 
-		if($this->scheme === $scheme) {
-			return $this;
-		}
-
 		$clone = clone $this;
 		$clone->scheme = $this->filterScheme($scheme ?? "");
 		$clone->setDefaults();
@@ -396,10 +387,6 @@ class Uri implements UriInterface {
 		ParameterType::check(__METHOD__, func_get_args(), ["string"]);
 		$userInfo = $this->filterUserInfo($user, $password);
 
-		if($this->userInfo === $userInfo) {
-			return $this;
-		}
-
 		$clone = clone $this;
 		$clone->userInfo = $this->filterUserInfo($userInfo ?? "");
 		$clone->setDefaults();
@@ -421,10 +408,6 @@ class Uri implements UriInterface {
 	public function withHost($host):self {
 		ParameterType::check(__METHOD__, func_get_args(), ["string"]);
 		$host = $this->filterHost($host);
-
-		if($this->host === $host) {
-			return $this;
-		}
 
 		$clone = clone $this;
 		$clone->host = $this->filterHost($host ?? "");
@@ -452,10 +435,6 @@ class Uri implements UriInterface {
 	public function withPort($port):self {
 		ParameterType::check(__METHOD__, func_get_args(), ["?integer"]);
 		$port = $this->filterPort($port);
-
-		if($this->port === $port) {
-			return $this;
-		}
 
 		$clone = clone $this;
 		$clone->port = $this->filterPort($port ?? null);
@@ -487,9 +466,6 @@ class Uri implements UriInterface {
 	 */
 	public function withPath($path):self {
 		ParameterType::check(__METHOD__, func_get_args(), ["string"]);
-		if($this->path === $path) {
-			return $this;
-		}
 
 		$clone = clone $this;
 		$clone->path = $this->filterPath($path ?? "");
@@ -514,9 +490,6 @@ class Uri implements UriInterface {
 	 */
 	public function withQuery($query):self {
 		ParameterType::check(__METHOD__, func_get_args(), ["string"]);
-		if($this->query === $query) {
-			return $this;
-		}
 
 		$clone = clone $this;
 		$clone->query = $this->filterQueryAndFragment($query ?? "");
@@ -566,10 +539,6 @@ class Uri implements UriInterface {
 	public function withoutQueryValue(string $key):self {
 		$current = $this->getQuery();
 
-		if ($current === "") {
-			return $this;
-		}
-
 		$decodedKey = rawurldecode($key);
 		$result = array_filter(
 			explode("&", $current),
@@ -599,9 +568,6 @@ class Uri implements UriInterface {
 	 */
 	public function withFragment($fragment):self {
 		ParameterType::check(__METHOD__, func_get_args(), ["string"]);
-		if($this->fragment === $fragment) {
-			return $this;
-		}
 
 		$clone = clone $this;
 		$clone->fragment = $this->filterQueryAndFragment($fragment ?? "");

@@ -38,10 +38,6 @@ trait Message {
 	 * @throws InvalidProtocolHttpException
 	 */
 	public function withProtocolVersion($version) {
-		if($this->protocol === $version) {
-			return $this;
-		}
-
 		if(!is_numeric($version)) {
 			throw new InvalidProtocolHttpException($version);
 		}
@@ -241,9 +237,6 @@ trait Message {
 	 * @throws \InvalidArgumentException When the body is not valid.
 	 */
 	public function withBody(StreamInterface $body) {
-		if($body === $this->stream) {
-			return $this;
-		}
 		$clone = clone $this;
 		$clone->stream = $body;
 		return $clone;
