@@ -67,6 +67,13 @@ class Stream implements StreamInterface {
 	}
 
 	/**
+	 * @return resource|null The file handle opened by fopen
+	 */
+	public function getFileHandle() {
+		return $this->stream ?? null;
+	}
+
+	/**
 	 * Get the size of the stream if known.
 	 *
 	 * @return int|null Returns the size in bytes if known, or null if unknown.

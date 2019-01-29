@@ -49,4 +49,13 @@ class SteamTest extends TestCase {
 		$contents = file_get_contents($this->tmpFileFull);
 		self::assertEquals($contents, $stream);
 	}
+
+	public function testDetatch() {
+		$stream = new Stream($this->tmpFile, "r+");
+		$handle = $stream->getFileHandle();
+		self::assertIsResource($handle);
+		$detatched = $stream->detach();
+		self::assertNull($stream->getFileHandle());
+		self::assertSame($detatched, $handle);
+	}
 }
