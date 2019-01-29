@@ -151,4 +151,24 @@ class SteamTest extends TestCase {
 		$stream = new Stream($this->tmpFile);
 		$stream->read(-123);
 	}
+
+	public function testGetMetaData() {
+		$stream = new Stream($this->tmpFileFull);
+		$metaData = $stream->getMetadata();
+		$eof = $stream->getMetadata("eof");
+		self::assertFalse($eof);
+		self::assertArrayHasKey("eof", $metaData);
+		self::assertArrayHasKey("timed_out", $metaData);
+		self::assertArrayHasKey("blocked", $metaData);
+		self::assertArrayHasKey("unread_bytes", $metaData);
+		self::assertArrayHasKey("stream_type", $metaData);
+		self::assertArrayHasKey("wrapper_type", $metaData);
+		self::assertArrayHasKey("mode", $metaData);
+		self::assertArrayHasKey("seekable", $metaData);
+		self::assertArrayHasKey("uri", $metaData);
+
+		$stream->read(12345);
+		$eof = $stream->getMetadata("eof");
+		self::assertTrue($eof);
+	}
 }

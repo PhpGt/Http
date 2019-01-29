@@ -57,10 +57,6 @@ class Stream implements StreamInterface {
 	 * @return resource|null Underlying PHP stream, if any
 	 */
 	public function detach() {
-		if(!isset($this->stream)) {
-			return null;
-		}
-
 		$stream = $this->stream;
 		unset($this->stream);
 		return $stream;
