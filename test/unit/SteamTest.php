@@ -74,4 +74,16 @@ class SteamTest extends TestCase {
 		self::assertEquals(2, strlen($twoBytes));
 		self::assertEquals(2, $stream->tell());
 	}
+
+	public function testEof() {
+		$actualContent = file_get_contents($this->tmpFileFull);
+		$stream = new Stream($this->tmpFileFull);
+		$streamContent = "";
+
+		while(!$stream->eof()) {
+			$streamContent .= $stream->read(1);
+		}
+
+		self::assertEquals($actualContent, $streamContent);
+	}
 }
