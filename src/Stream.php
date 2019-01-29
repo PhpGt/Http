@@ -89,9 +89,7 @@ class Stream implements StreamInterface {
 	 * @throws \RuntimeException on error.
 	 */
 	public function tell():int {
-		$position = ftell($this->stream);
-		// TODO: Throw exception on failure.
-		return $position;
+		return ftell($this->stream);
 	}
 
 	/**

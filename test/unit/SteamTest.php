@@ -2,6 +2,7 @@
 namespace Gt\Http\Test;
 
 use Gt\Http\Stream;
+use Gt\Http\StreamException;
 use PHPUnit\Framework\TestCase;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
@@ -64,5 +65,13 @@ class SteamTest extends TestCase {
 		$streamFull = new Stream($this->tmpFileFull);
 		self::assertNull($streamEmpty->getSize());
 		self::assertNull($streamFull->getSize());
+	}
+
+	public function testTell() {
+		$stream = new Stream($this->tmpFileFull);
+		self::assertEquals(0, $stream->tell());
+		$twoBytes = $stream->read(2);
+		self::assertEquals(2, strlen($twoBytes));
+		self::assertEquals(2, $stream->tell());
 	}
 }
