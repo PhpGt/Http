@@ -133,4 +133,22 @@ class SteamTest extends TestCase {
 			$numBytesWritten
 		);
 	}
+
+	public function testReadNonReadable() {
+		self::expectExceptionMessage("Stream is not readable");
+		$stream = new Stream($this->tmpFile, "w");
+		$stream->read(123);
+	}
+
+	public function testGetContentsNonReadable() {
+		self::expectExceptionMessage("Stream is not readable");
+		$stream = new Stream($this->tmpFile, "w");
+		$stream->getContents();
+	}
+
+	public function testReadNegativeBytes() {
+		self::expectExceptionMessage("Stream read length must be positive");
+		$stream = new Stream($this->tmpFile);
+		$stream->read(-123);
+	}
 }

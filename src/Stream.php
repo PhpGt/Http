@@ -186,28 +186,15 @@ class Stream implements StreamInterface {
 	 * @throws \RuntimeException if an error occurs.
 	 */
 	public function read($length):string {
-		if(!isset($this->stream)) {
-			// TODO: Throw runtime exception.
-		}
-
 		if(!$this->isReadable()) {
-			// TODO: Throw runtime exception.
+			throw new StreamException("Stream is not readable");
 		}
 
 		if($length < 0) {
-			// TODO: Throw runtime exception.
+			throw new StreamException("Stream read length must be positive");
 		}
 
-		if($length === 0) {
-			return "";
-		}
-
-		$string = fread($this->stream, $length);
-		if($string === false) {
-			// TODO: Throw runtime exception.
-		}
-
-		return $string;
+		return fread($this->stream, $length);
 	}
 
 	/**
@@ -218,21 +205,14 @@ class Stream implements StreamInterface {
 	 *     reading.
 	 */
 	public function getContents():string {
-		if(!isset($this->stream)) {
-			// TODO: Throw runtime exception.
-		}
 		if(!$this->isReadable()) {
-			// TODO: Throw runtime exception.
+			throw new StreamException("Stream is not readable");
 		}
 
 		$position = $this->tell();
 		$this->rewind();
 
 		$string = stream_get_contents($this->stream);
-		if($string === false) {
-			// TODO: Throw runtime exception.
-		}
-
 		$this->seek($position);
 
 		return $string;
