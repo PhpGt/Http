@@ -86,4 +86,19 @@ class SteamTest extends TestCase {
 
 		self::assertEquals($actualContent, $streamContent);
 	}
+
+	public function testSeek() {
+		$actualContent = file_get_contents($this->tmpFileFull);
+		$stream = new Stream($this->tmpFileFull);
+		self::assertTrue($stream->isSeekable());
+
+		$offset = round(strlen($actualContent) / 2);
+		$stream->seek($offset);
+
+		$streamContent = $stream->read(1024);
+		self::assertEquals(
+			substr($actualContent, $offset),
+			$streamContent
+		);
+	}
 }
