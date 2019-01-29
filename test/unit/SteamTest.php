@@ -45,17 +45,24 @@ class SteamTest extends TestCase {
 	}
 
 	public function testToString() {
-		$stream = new Stream($this->tmpFileFull, "r");
+		$stream = new Stream($this->tmpFileFull);
 		$contents = file_get_contents($this->tmpFileFull);
 		self::assertEquals($contents, $stream);
 	}
 
 	public function testDetatch() {
-		$stream = new Stream($this->tmpFile, "r+");
+		$stream = new Stream($this->tmpFile);
 		$handle = $stream->getFileHandle();
 		self::assertIsResource($handle);
 		$detatched = $stream->detach();
 		self::assertNull($stream->getFileHandle());
 		self::assertSame($detatched, $handle);
+	}
+
+	public function testGetSizeIsNull() {
+		$streamEmpty = new Stream($this->tmpFile);
+		$streamFull = new Stream($this->tmpFileFull);
+		self::assertNull($streamEmpty->getSize());
+		self::assertNull($streamFull->getSize());
 	}
 }
