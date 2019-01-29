@@ -159,20 +159,11 @@ class Stream implements StreamInterface {
 	 * @throws \RuntimeException on failure.
 	 */
 	public function write($string):int {
-		if(!isset($this->stream)) {
-			// TODO: Throw runtime exception.
-		}
-
 		if(!$this->isWritable()) {
-			// TODO: Throw runtime exception.
+			throw new StreamException("Stream is not writable");
 		}
 
-		$bytes = fwrite($this->stream, $string);
-		if($bytes === false) {
-			// TODO: Throw runtime exception.
-		}
-
-		return $bytes;
+		return fwrite($this->stream, $string);
 	}
 
 	/**

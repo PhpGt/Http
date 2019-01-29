@@ -101,4 +101,36 @@ class SteamTest extends TestCase {
 			$streamContent
 		);
 	}
+
+	public function testIsWriteable() {
+		$stream = new Stream($this->tmpFileFull, "r");
+		self::assertFalse($stream->isWritable());
+		$stream = new Stream($this->tmpFileFull, "r+");
+		self::assertTrue($stream->isWritable());
+	}
+
+	public function testWriteToNonWritable() {
+		self::expectexceptionMessage("Stream is not writable");
+		$stream = new Stream($this->tmpFile, "r");
+		$stream->write("test");
+	}
+
+	public function testWrite() {
+		$originalContent = file_get_contents($this->tmpFileFull);
+		$newContent = uniqid("new-");
+		$stream = new Stream($this->tmpFileFull);
+		$stream->seek(strlen($originalContent));
+		$numBytesWritten = $stream->write($newContent);
+		$stream->close();
+		$stream = null;
+
+		self::assertEquals(
+			$originalContent . $newContent,
+			file_get_contents($this->tmpFileFull)
+		);
+		self::assertEquals(
+			strlen($newContent),
+			$numBytesWritten
+		);
+	}
 }
