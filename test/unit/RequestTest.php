@@ -40,18 +40,6 @@ class RequestTest extends TestCase {
 		self::assertEquals($target, $sut->getRequestTarget());
 	}
 
-	public function testWithRequestTargetSame() {
-		$req = new Request(
-			"get",
-			self::getUriMock(),
-			self::getHeadersMock()
-		);
-		$target = "/example";
-		$sut = $req->withRequestTarget($target);
-		$sut2 = $sut->withRequestTarget($target);
-		self::assertSame($sut, $sut2);
-	}
-
 	public function testGetMethod() {
 		$req = new Request(
 			"get",
@@ -77,17 +65,6 @@ class RequestTest extends TestCase {
 		);
 	}
 
-	public function testWithSameMethod() {
-		$req = new Request(
-			"get",
-			self::getUriMock(),
-			self::getHeadersMock()
-		);
-		$sut = $req->withMethod("post");
-		$sut2 = $sut->withMethod("post");
-		self::assertSame($sut, $sut2);
-	}
-
 	public function testInvalidMethod() {
 		self::expectException(InvalidRequestMethodHttpException::class);
 		$sut = new Request(
@@ -105,17 +82,6 @@ class RequestTest extends TestCase {
 		);
 		$sut = $req->withUri(self::getUriMock("/four/five/six"));
 		self::assertEquals("/four/five/six", $sut->getUri());
-	}
-
-	public function testWithUriSame() {
-		$uri = self::getUriMock("/one/two/three");
-		$req = new Request(
-			"get",
-			$uri,
-			self::getHeadersMock()
-		);
-		$sut = $req->withUri($uri);
-		self::assertSame($req, $sut);
 	}
 
 	public function testWithUriNewHost() {

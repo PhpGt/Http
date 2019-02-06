@@ -19,12 +19,6 @@ class ResponseTest extends TestCase {
 		);
 	}
 
-	public function testWithStatusCodeSame() {
-		$sut = new Response(123);
-		$sut2 = $sut->withStatus(123);
-		self::assertSame($sut, $sut2);
-	}
-
 	public function testGetReasonPhraseDefault() {
 		$notFound = new Response(404);
 		self::assertEquals("Not Found", $notFound->getReasonPhrase());
