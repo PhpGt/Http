@@ -25,10 +25,9 @@ class Parser {
 			}
 
 			$h = trim($h);
-			list(
-				$key,
-				$value
-			) = explode(":", $h, 2);
+			$kvp = explode(":", $h, 2);
+			$key = $kvp[0];
+			$value = $kvp[1] ?? "";
 
 			$keyValues[$key] = trim($value);
 		}
