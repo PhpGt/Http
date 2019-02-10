@@ -115,6 +115,10 @@ class Headers implements Iterator, Countable {
 		return null;
 	}
 
+	public function getFirst():string {
+		return $this->headerLines[0] ?? "";
+	}
+
 	public function current():HeaderLine {
 		return $this->headerLines[$this->iteratorIndex];
 	}

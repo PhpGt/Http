@@ -23,6 +23,13 @@ class Request implements RequestInterface {
 		$this->method = RequestMethod::filterMethodName($method);
 		$this->uri = $uri;
 		$this->headers = $headers;
+
+		$firstLine = $this->headers->getFirst();
+		$this->protocol = substr(
+			$firstLine,
+			0,
+			strpos($firstLine, " ")
+		);
 	}
 
 	/**

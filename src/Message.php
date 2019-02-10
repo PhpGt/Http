@@ -19,7 +19,14 @@ trait Message {
 	 *
 	 * @return string HTTP protocol version.
 	 */
-	public function getProtocolVersion() {
+	public function getProtocolVersion():string {
+		if(strstr($this->protocol, "/")) {
+			return substr(
+				$this->protocol,
+				strpos($this->protocol, "/") + 1
+			);
+		}
+
 		return $this->protocol;
 	}
 
@@ -43,7 +50,34 @@ trait Message {
 		}
 
 		$clone = clone $this;
-		$clone->protocol = $version;
+
+		if(strstr($clone->protocol, "/")) {
+			$versionStartPos = strpos(
+					$clone->protocol,
+					"/"
+				) + 1;
+			$versionEndPos = strpos(
+				$clone->protocol,
+				" "
+			);
+
+			$protocol = "";
+			$protocol .= substr(
+				$clone->protocol,
+				0,
+				$versionStartPos
+			);
+			$protocol .= $version;
+			$protocol .= substr(
+				$clone->protocol,
+				$versionEndPos
+			);
+			$clone->protocol = $protocol;
+		}
+		else {
+			$clone->protocol = $version;
+		}
+
 		return $clone;
 	}
 
