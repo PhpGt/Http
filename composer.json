@@ -5,8 +5,8 @@
 
 	"require": {
 		"php": ">=7.2",
-		"phpgt/cookie": "dev-master@dev",
-		"phpgt/input": "dev-master@dev",
+		"phpgt/cookie": "*",
+		"phpgt/input": "*",
 		"psr/http-message": "^1.0.1",
 		"willdurand/negotiation": "^2.3"
 	},

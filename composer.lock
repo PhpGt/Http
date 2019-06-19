@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6fb2d5432321b9d74f0ffbe68f92bace",
+    "content-hash": "6624735071308754aeeb4acb8ab7d77f",
     "packages": [
         {
             "name": "phpgt/cookie",
-            "version": "dev-master",
+            "version": "v1.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PhpGt/Cookie.git",
-                "reference": "d7c614cefa151179e1add7d18a058430b89beafc"
+                "reference": "365b528d2a988c68cbd78be7ecc2b0d9e5c62712"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PhpGt/Cookie/zipball/d7c614cefa151179e1add7d18a058430b89beafc",
-                "reference": "d7c614cefa151179e1add7d18a058430b89beafc",
+                "url": "https://api.github.com/repos/PhpGt/Cookie/zipball/365b528d2a988c68cbd78be7ecc2b0d9e5c62712",
+                "reference": "365b528d2a988c68cbd78be7ecc2b0d9e5c62712",
                 "shasum": ""
             },
             "require": {
@@ -43,20 +43,20 @@
                 }
             ],
             "description": "Object oriented cookie handler.",
-            "time": "2019-06-10T08:12:59+00:00"
+            "time": "2019-04-08T12:24:52+00:00"
         },
         {
             "name": "phpgt/input",
-            "version": "dev-master",
+            "version": "v1.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PhpGt/Input.git",
-                "reference": "cfa3e36090aa66029855d79dd2ccfe7008c9a74a"
+                "reference": "53f00758408dd48cb5a76e389d296d84a1a339fc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PhpGt/Input/zipball/cfa3e36090aa66029855d79dd2ccfe7008c9a74a",
-                "reference": "cfa3e36090aa66029855d79dd2ccfe7008c9a74a",
+                "url": "https://api.github.com/repos/PhpGt/Input/zipball/53f00758408dd48cb5a76e389d296d84a1a339fc",
+                "reference": "53f00758408dd48cb5a76e389d296d84a1a339fc",
                 "shasum": ""
             },
             "require": {
@@ -76,7 +76,7 @@
                 "MIT"
             ],
             "description": "Encapsulated user input.",
-            "time": "2019-06-10T08:12:56+00:00"
+            "time": "2019-04-08T15:03:27+00:00"
         },
         {
             "name": "psr/http-message",
@@ -857,16 +857,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "8.2.2",
+            "version": "8.2.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "24b6cfcec34c1167ee1d90b7cb22bee324af319f"
+                "reference": "f67ca36860ebca7224d4573f107f79bd8ed0ba03"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/24b6cfcec34c1167ee1d90b7cb22bee324af319f",
-                "reference": "24b6cfcec34c1167ee1d90b7cb22bee324af319f",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/f67ca36860ebca7224d4573f107f79bd8ed0ba03",
+                "reference": "f67ca36860ebca7224d4573f107f79bd8ed0ba03",
                 "shasum": ""
             },
             "require": {
@@ -936,7 +936,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2019-06-15T07:25:54+00:00"
+            "time": "2019-06-19T12:03:56+00:00"
         },
         {
             "name": "sebastian/code-unit-reverse-lookup",
@@ -1466,16 +1466,16 @@
         },
         {
             "name": "sebastian/type",
-            "version": "1.1.1",
+            "version": "1.1.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/type.git",
-                "reference": "b2a7f9aac51ce18cd7ac8b31e37c8ce5646fc741"
+                "reference": "251ca774d58181fe1d3eda68843264eaae7e07ef"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/type/zipball/b2a7f9aac51ce18cd7ac8b31e37c8ce5646fc741",
-                "reference": "b2a7f9aac51ce18cd7ac8b31e37c8ce5646fc741",
+                "url": "https://api.github.com/repos/sebastianbergmann/type/zipball/251ca774d58181fe1d3eda68843264eaae7e07ef",
+                "reference": "251ca774d58181fe1d3eda68843264eaae7e07ef",
                 "shasum": ""
             },
             "require": {
@@ -1508,7 +1508,7 @@
             ],
             "description": "Collection of value objects that represent the types of the PHP type system",
             "homepage": "https://github.com/sebastianbergmann/type",
-            "time": "2019-06-08T04:53:27+00:00"
+            "time": "2019-06-19T06:39:12+00:00"
         },
         {
             "name": "sebastian/version",
@@ -1705,10 +1705,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "phpgt/cookie": 20,
-        "phpgt/input": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
