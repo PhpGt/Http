@@ -14,7 +14,7 @@ class SteamTest extends TestCase {
 	protected $tmpStream;
 	protected $tmpFileFull;
 
-	public function setUp() {
+	public function setUp():void {
 		$this->tmpDir = implode(DIRECTORY_SEPARATOR, [
 			sys_get_temp_dir(),
 			"phpgt",
@@ -27,7 +27,7 @@ class SteamTest extends TestCase {
 		file_put_contents($this->tmpFileFull, uniqid("data-"));
 	}
 
-	public function tearDown() {
+	public function tearDown():void {
 		/** @var SplFileInfo[] $files */
 		$files = new RecursiveIteratorIterator(
 			new RecursiveDirectoryIterator(

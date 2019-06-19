@@ -1,9 +1,12 @@
 <?php
 namespace Gt\Http\Test;
 
+use Gt\Http\PortOutOfBoundsException;
 use Gt\Http\Uri;
 use Gt\Http\UriFactory;
+use Gt\Http\UriParseErrorException;
 use PHPUnit\Framework\TestCase;
+use TypeError;
 
 class UriTest extends TestCase {
 	public function testParsesProvidedUri() {
@@ -83,11 +86,9 @@ class UriTest extends TestCase {
 		];
 	}
 
-	/**
-	 * @expectedException \Gt\Http\UriParseErrorException
-	 * @dataProvider getInvalidUris
-	 */
+	/** @dataProvider getInvalidUris */
 	public function testInvalidUrisThrowException($invalidUri) {
+		self::expectException(UriParseErrorException::class);
 		new Uri($invalidUri);
 	}
 
@@ -101,59 +102,43 @@ class UriTest extends TestCase {
 		];
 	}
 
-	/**
-	 * @expectedException \Gt\Http\PortOutOfBoundsException
-	 */
 	public function testPortMustBeValid() {
+		self::expectException(PortOutOfBoundsException::class);
 		(new Uri())->withPort(100000);
 	}
 
-	/**
-	 * @expectedException \Gt\Http\PortOutOfBoundsException
-	 */
 	public function testWithPortCannotBeZero() {
+		self::expectException(PortOutOfBoundsException::class);
 		(new Uri())->withPort(0);
 	}
 
-	/**
-	 * @expectedException \Gt\Http\UriParseErrorException
-	 */
 	public function testParseUriPortCannotBeZero() {
+		self::expectException(UriParseErrorException::class);
 		new Uri('//example.com:0');
 	}
 
-	/**
-	 * @expectedException \TypeError
-	 */
 	public function testSchemeMustHaveCorrectType() {
+		self::expectException(TypeError::class);
 		(new Uri())->withScheme([]);
 	}
 
-	/**
-	 * @expectedException \TypeError
-	 */
 	public function testHostMustHaveCorrectType() {
+		self::expectException(TypeError::class);
 		(new Uri())->withHost([]);
 	}
 
-	/**
-	 * @expectedException \TypeError
-	 */
 	public function testPathMustHaveCorrectType() {
+		self::expectException(TypeError::class);
 		(new Uri())->withPath([]);
 	}
 
-	/**
-	 * @expectedException \TypeError
-	 */
 	public function testQueryMustHaveCorrectType() {
+		self::expectException(TypeError::class);
 		(new Uri())->withQuery([]);
 	}
 
-	/**
-	 * @expectedException \TypeError
-	 */
 	public function testFragmentMustHaveCorrectType() {
+		self::expectException(TypeError::class);
 		(new Uri())->withFragment([]);
 	}
 
@@ -379,10 +364,8 @@ class UriTest extends TestCase {
 		$this->assertNull($uri->getPort());
 	}
 
-	/**
-	 * @expectedException \TypeError
-	 */
 	public function testPortPassedAsStringIsCastedToInt() {
+		self::expectException(TypeError::class);
 		$uri = (new Uri('//example.com'))->withPort('8080');
 	}
 

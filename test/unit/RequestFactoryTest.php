@@ -18,7 +18,7 @@ class RequestFactoryTest extends TestCase {
 		/** @var MockObject|ServerInfo $serverInfo */
 		$serverInfo = self::createMock(ServerInfo::class);
 		$serverInfo->method("getServerProtocolVersion")
-			->willReturn("123");
+			->willReturn(123.000);
 		$serverInfo->method("getRequestMethod")
 			->willReturn(RequestMethod::METHOD_GET);
 		/** @var MockObject|Input $input */
