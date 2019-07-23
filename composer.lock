@@ -8,20 +8,20 @@
     "packages": [
         {
             "name": "phpgt/cookie",
-            "version": "v1.0.1",
+            "version": "v1.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PhpGt/Cookie.git",
-                "reference": "365b528d2a988c68cbd78be7ecc2b0d9e5c62712"
+                "reference": "dd811b6f04becc7c1f8524d84ad02e4635f4a94e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PhpGt/Cookie/zipball/365b528d2a988c68cbd78be7ecc2b0d9e5c62712",
-                "reference": "365b528d2a988c68cbd78be7ecc2b0d9e5c62712",
+                "url": "https://api.github.com/repos/PhpGt/Cookie/zipball/dd811b6f04becc7c1f8524d84ad02e4635f4a94e",
+                "reference": "dd811b6f04becc7c1f8524d84ad02e4635f4a94e",
                 "shasum": ""
             },
             "require": {
-                "php": "^7.2"
+                "php": ">=7.2"
             },
             "require-dev": {
                 "phpunit/phpunit": "8.*"
@@ -43,7 +43,7 @@
                 }
             ],
             "description": "Object oriented cookie handler.",
-            "time": "2019-04-08T12:24:52+00:00"
+            "time": "2019-07-17T20:11:11+00:00"
         },
         {
             "name": "phpgt/input",
