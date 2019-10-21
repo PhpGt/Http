@@ -29,6 +29,7 @@ class ServerInfoTest extends TestCase {
 
 		foreach($httpHeaders as $key => $value) {
 			$httplessKey = substr($key, strlen("HTTP_"));
+			$httplessKey = str_replace("_", "-", $httplessKey);
 			self::assertArrayHasKey($httplessKey, $httpHeadersArray);
 			self::assertEquals($value, $httpHeadersArray[$httplessKey]);
 		}

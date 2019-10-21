@@ -150,4 +150,18 @@ class HeadersTest extends TestCase {
 			self::assertEquals($expectedValue, $kvp[$expectedKey]);
 		}
 	}
+
+	public function testCaseInsensitive() {
+		$headers = new Headers(self::HEADER_ARRAY);
+		self::assertTrue($headers->contains("date"));
+		self::assertTrue($headers->contains("Date"));
+		self::assertTrue($headers->contains("DATE"));
+
+		self::assertEquals(
+			self::HEADER_ARRAY["Date"],
+			$headers->get("dAtE")
+		);
+
+		self::assertTrue($headers->contains("ConTent-Type"));
+	}
 }

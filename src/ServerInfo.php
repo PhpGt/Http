@@ -28,6 +28,7 @@ class ServerInfo {
 
 			$headerName = substr($key, strlen("HTTP_"));
 			$headerName = strtoupper($headerName);
+			$headerName = str_replace("_", "-", $headerName);
 			$headers[$headerName] = $value;
 		}
 
