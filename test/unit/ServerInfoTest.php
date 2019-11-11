@@ -142,6 +142,91 @@ class ServerInfoTest extends TestCase {
 		self::assertEmpty($sut->getParams());
 	}
 
+	public function testGetFullUri8080() {
+		$sut = new ServerInfo([
+			"HTTP_HOST" => "localhost:8080",
+			"HTTPS" => 1,
+			"REQUEST_URI" => "/example?key1=value1&key2=value2",
+			"SERVER_PORT" => 8080,
+			"REMOTE_PORT" => 12345,
+			"QUERY_STRING" => "key1=value1&key2=value2",
+		]);
+		self::assertEquals(
+			"https://localhost:8080/example?key1=value1&key2=value2",
+			$sut->getFullUri()
+		);
+	}
+
+	public function testGetFullUri80() {
+		$sut = new ServerInfo([
+			"HTTP_HOST" => "localhost",
+			"REQUEST_URI" => "/example?key1=value1&key2=value2",
+			"SERVER_PORT" => 80,
+			"REMOTE_PORT" => 12345,
+			"QUERY_STRING" => "key1=value1&key2=value2",
+		]);
+		self::assertEquals(
+			"http://localhost/example?key1=value1&key2=value2",
+			$sut->getFullUri()
+		);
+	}
+
+	public function testGetFullUriIncorrectHttpHostHeader() {
+		$sut = new ServerInfo([
+			"HTTP_HOST" => "localhost",
+			"REQUEST_URI" => "/example?key1=value1&key2=value2",
+			"SERVER_PORT" => 8080,
+			"REMOTE_PORT" => 12345,
+			"QUERY_STRING" => "key1=value1&key2=value2",
+		]);
+		self::assertEquals(
+			"http://localhost:8080/example?key1=value1&key2=value2",
+			$sut->getFullUri()
+		);
+	}
+
+	public function testGetServerHost8080MissingFromHostHeader() {
+		$sut = new ServerInfo([
+			"HTTP_HOST" => "localhost",
+			"REQUEST_URI" => "/example?key1=value1&key2=value2",
+			"SERVER_PORT" => 8080,
+			"REMOTE_PORT" => 12345,
+			"QUERY_STRING" => "key1=value1&key2=value2",
+		]);
+		self::assertEquals(
+			"localhost",
+			$sut->getServerHost()
+		);
+	}
+
+	public function testGetServerHost8080() {
+		$sut = new ServerInfo([
+			"HTTP_HOST" => "localhost:8080",
+			"REQUEST_URI" => "/example?key1=value1&key2=value2",
+			"SERVER_PORT" => 8080,
+			"REMOTE_PORT" => 12345,
+			"QUERY_STRING" => "key1=value1&key2=value2",
+		]);
+		self::assertEquals(
+			"localhost",
+			$sut->getServerHost()
+		);
+	}
+
+	public function testGetServerHost80() {
+		$sut = new ServerInfo([
+			"HTTP_HOST" => "localhost",
+			"REQUEST_URI" => "/example?key1=value1&key2=value2",
+			"SERVER_PORT" => 80,
+			"REMOTE_PORT" => 12345,
+			"QUERY_STRING" => "key1=value1&key2=value2",
+		]);
+		self::assertEquals(
+			"localhost",
+			$sut->getServerHost()
+		);
+	}
+
 	protected function getServerArray():array {
 		return [
 			"PHP_SELF" => __FILE__,

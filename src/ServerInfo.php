@@ -139,6 +139,43 @@ class ServerInfo {
 		return new Uri($this->server["REQUEST_URI"]);
 	}
 
+	public function getFullUri():string {
+		$scheme = $this->getRequestScheme();
+		if(!$scheme) {
+			$scheme = "http";
+			if($this->isHttps()) {
+				$scheme .= "s";
+			}
+		}
+
+		$host = $this->getHttpHost();
+		$port = "";
+
+		if(strstr($host, ":") === false
+		&& $this->getServerPort() !== 80) {
+			$port = ":" . $this->getServerPort();
+		}
+
+		$path = $this->getRequestUri()->getPath();
+		$query = "";
+		$queryParams = $this->getQueryParams();
+
+		if(!empty($queryParams)) {
+			$query = "?";
+			$query .= http_build_query($queryParams);
+		}
+
+		$uri = new Uri(
+			$scheme
+			. "://"
+			. $host
+			. $port
+			. $path
+			. $query
+		);
+		return (string)$uri;
+	}
+
 // Nullable values: --------------------------------------------------------------------------------
 
 	/**
@@ -182,6 +219,30 @@ class ServerInfo {
 	 */
 	public function getRemoteHost():?string {
 		return $this->server["REMOTE_HOST"] ?? null;
+	}
+
+	/**
+	 * The Host name of the server that is serving the current page. This
+	 * is the value of the HTTP "host" header, without the port.
+	 */
+	public function getServerHost():?string {
+		$host = $this->server["HTTP_HOST"] ?? null;
+
+		if($host) {
+			$host = strtok($host, ":");
+		}
+
+		return $host;
+	}
+
+	/**
+	 * The Host name of the server that is serving the current page. This
+	 * is the value of the HTTP "host" header, typically sent from the
+	 * browser. Ports other than 80 are included after a colon.
+	 */
+	public function getHttpHost():?string {
+		$host = $this->server["HTTP_HOST"] ?? null;
+		return $host;
 	}
 
 	/**
