@@ -139,7 +139,7 @@ class ServerInfo {
 		return new Uri($this->server["REQUEST_URI"]);
 	}
 
-	public function getFullUri():string {
+	public function getFullUri():UriInterface {
 		$scheme = $this->getRequestScheme();
 		if(!$scheme) {
 			$scheme = "http";
@@ -173,7 +173,7 @@ class ServerInfo {
 			. $path
 			. $query
 		);
-		return (string)$uri;
+		return $uri;
 	}
 
 // Nullable values: --------------------------------------------------------------------------------
