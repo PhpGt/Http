@@ -117,7 +117,11 @@ class ServerInfoTest extends TestCase {
 
 	public function testGetRequestUri() {
 		$sut = new ServerInfo(self::getServerArray());
-		self::assertEquals("/example?key1=value1&key2=value2", $sut->getRequestUri());
+
+		self::assertEquals(
+			"http://localhost/example?key1=value1&key2=value2",
+			$sut->getRequestUri()
+		);
 	}
 
 	public function testNullFields() {
