@@ -1,15 +1,5 @@
 version: 2
 
-workflows:
-  version: 2
-
-  ci:
-    jobs:
-      - build
-      - test-phpunit:
-          requires:
-            build
-
 jobs:
   build:
     docker:
@@ -57,3 +47,13 @@ jobs:
       - store_artifacts:
           path: test/unit/_coverage
           destination: TestCoverage
+
+workflows:
+  version: 2
+
+  ci:
+    jobs:
+      - build
+      - test-phpunit:
+          requires:
+            build
