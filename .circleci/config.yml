@@ -31,13 +31,11 @@ jobs:
     docker:
       - image: circleci/php:7.2-cli
 
-    working-directory: ~/repo
-
     steps:
       - attach_workspace:
           at: /home/circleci/repo
+      - run: cd /home/circleci/repo
       - run: mkdir -p test/phpunit/_junit
-      - run: cd ~/repo
       - run:
           name: PHPUnit tests
           command: vendor/bin/phpunit -c test/phpunit/phpunit.xml --log-junit test/phpunit/_junit/junit.xml
