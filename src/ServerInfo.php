@@ -136,7 +136,36 @@ class ServerInfo {
 	 * The URI which was given in order to access this page.
 	 */
 	public function getRequestUri():UriInterface {
-		return new Uri($this->server["REQUEST_URI"]);
+		$uri = new Uri();
+
+		if(isset($this->server["HTTPS"])) {
+			$uri = $uri->withScheme("https");
+		}
+		else {
+			$uri = $uri->withScheme("http");
+		}
+
+		if(isset($this->server["HTTP_HOST"])) {
+			$uri = $uri->withHost(
+				strtok($this->server["HTTP_HOST"], ":")
+			);
+		}
+
+		if(isset($this->server["SERVER_PORT"])) {
+			$uri = $uri->withPort((int)$this->server["SERVER_PORT"]);
+		}
+
+		if(isset($this->server["REQUEST_URI"])) {
+			$uri = $uri->withPath(
+				strtok($this->server["REQUEST_URI"], "?")
+			);
+		}
+
+		if(isset($this->server["QUERY_STRING"])) {
+			$uri = $uri->withQuery($this->server["QUERY_STRING"]);
+		}
+
+		return $uri;
 	}
 
 	public function getFullUri():UriInterface {
