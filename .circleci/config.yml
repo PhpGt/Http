@@ -5,7 +5,7 @@ jobs:
     docker:
       - image: circleci/php:7.2-cli
 
-    working_directory: ~/repo
+    working_directory: ~/project
 
     steps:
       - checkout
@@ -23,7 +23,7 @@ jobs:
           key: v1-dependencies-{{ checksum "composer.json" }}
 
       - persist_to_workspace:
-          root: /home/circleci/repo
+          root: /home/circleci/project
           paths:
             - ./
 
@@ -33,8 +33,8 @@ jobs:
 
     steps:
       - attach_workspace:
-          at: /home/circleci/repo
-      - run: cd /home/circleci/repo
+          at: /home/circleci/project
+      - run: cd /home/circleci/project
       - run: mkdir -p test/phpunit/_junit
       - run:
           name: PHPUnit tests
