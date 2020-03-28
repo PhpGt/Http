@@ -36,15 +36,16 @@ jobs:
     steps:
       - attach_workspace:
           at: /home/circleci/repo
+      - run: mkdir -p test/phpunit/_junit
       - run:
           name: PHPUnit tests
-          command: mkdir test/unit/_junit && vendor/bin/phpunit -c test/unit/phpunit.xml --log-junit test/unit/_junit/junit.xml
+          command: vendor/bin/phpunit -c test/phpunit/phpunit.xml --log-junit test/phpunit/_junit/junit.xml
 
       - store_test_results:
-          path: test/unit/_junit
+          path: test/phpunit/_junit
 
       - store_artifacts:
-          path: test/unit/_coverage
+          path: test/phpunit/_coverage
           destination: TestCoverage
 
 workflows:
