@@ -1,24 +1,58 @@
 version: 2
+
 jobs:
   build:
     docker:
       - image: circleci/php:7.2-cli
-    working_directory: ~/repo
+
+    working_directory: ~/project
+
     steps:
       - checkout
+
       - restore_cache:
           keys:
-          - v1-dependencies-{{ checksum "composer.json" }}
-          - v1-dependencies-
+            - v1-dependencies-{{ checksum "composer.json" }}
+            - v1-dependencies-
+
       - run: composer install -n --prefer-dist
+
       - save_cache:
           paths:
             - ./vendor
           key: v1-dependencies-{{ checksum "composer.json" }}
-      - run: mkdir test/unit/_junit
-      - run: vendor/bin/phpunit -c test/unit/phpunit.xml --log-junit test/unit/_junit/junit.xml -d memory_limit=512M
+
+      - persist_to_workspace:
+          root: /home/circleci/project
+          paths:
+            - ./
+
+  test-phpunit:
+    docker:
+      - image: circleci/php:7.2-cli
+
+    steps:
+      - attach_workspace:
+          at: /home/circleci/project
+      - run: cd /home/circleci/project
+      - run: mkdir -p test/phpunit/_junit
+      - run:
+          name: PHPUnit tests
+          command: vendor/bin/phpunit -c test/phpunit/phpunit.xml --log-junit test/phpunit/_junit/junit.xml
+
       - store_test_results:
-          path: test/unit/_junit
+          path: test/phpunit/_junit
+
       - store_artifacts:
-          path: test/unit/_coverage
+          path: test/phpunit/_coverage
           destination: TestCoverage
+
+workflows:
+  version: 2
+
+  ci:
+    jobs:
+      - build
+      - test-phpunit:
+          requires:
+            - build

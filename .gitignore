@@ -1,4 +1,4 @@
 /vendor
 /.idea
-/test/unit/_coverage
+/test/phpunit/_coverage
 /*.phar
