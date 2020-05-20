@@ -23,6 +23,8 @@ class StatusCode {
 	const USE_PROXY = 305;
 	const SWITCH_PROXY = 306;
 	const TEMPORARY_REDIRECT = 307;
+	const PERMANENT_REDIRECT = 308;
+
 	const BAD_REQUEST = 400;
 	const UNAUTHORIZED = 401;
 	const PAYMENT_REQUIRED = 402;
