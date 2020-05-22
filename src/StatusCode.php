@@ -38,22 +38,24 @@ class StatusCode {
 	const GONE = 410;
 	const LENGTH_REQUIRED = 411;
 	const PRECONDITION_FAILED = 412;
-	const REQUEST_ENTITY_TOO_LARGE = 413;
-	const REQUEST_URI_TOO_LARGE = 414;
+	const PAYLOAD_TOO_LARGE = 413;
+	const REQUEST_URI_TOO_LONG = 414;
 	const UNSUPPORTED_MEDIA_TYPE = 415;
 	const REQUESTED_RANGE_NOT_SATISFIABLE = 416;
 	const EXPECTATION_FAILED = 417;
 	const IM_A_TEAPOT = 418;
+	const MISDIRECTED_REQUEST = 421;
 	const UNPROCESSABLE_ENTITY = 422;
 	const LOCKED = 423;
 	const FAILED_DEPENDENCY = 424;
 	const UNORDERED_COLLECTION = 425;
+	const TOO_EARLY = 425;
 	const UPGRADE_REQUIRED = 426;
 	const PRECONDITION_REQUIRED = 428;
 	const TOO_MANY_REQUESTS = 429;
 	const REQUEST_HEADER_FIELDS_TOO_LARGE = 431;
-	const UNAVAILABLE_FOR_LEGAL_REASONS = 451;
 
+	const UNAVAILABLE_FOR_LEGAL_REASONS = 451;
 	const INTERNAL_SERVER_ERROR = 500;
 	const NOT_IMPLEMENTED = 501;
 	const BAD_GATEWAY = 502;
@@ -63,8 +65,10 @@ class StatusCode {
 	const VARIANT_ALSO_NEGOTIATES = 506;
 	const INSUFFICIENT_STORAGE = 507;
 	const LOOP_DETECTED = 508;
+
 	const NETWORK_AUTHENTICATION_REQUIRED = 511;
 
+// TODO: Double check all codes are here:
 	const REASON_PHRASE = [
 		self::CONTINUE => "Continue",
 		self::SWITCHING_PROTOCOLS => "Switching Protocols",
@@ -102,8 +106,8 @@ class StatusCode {
 		self::GONE => "Gone",
 		self::LENGTH_REQUIRED => "Length Required",
 		self::PRECONDITION_FAILED => "Precondition Failed",
-		self::REQUEST_ENTITY_TOO_LARGE => "Request Entity Too Large",
-		self::REQUEST_URI_TOO_LARGE => "Request-URI Too Large",
+		self::PAYLOAD_TOO_LARGE => "Request Entity Too Large",
+		self::REQUEST_URI_TOO_LONG => "Request-URI Too Large",
 		self::UNSUPPORTED_MEDIA_TYPE => "Unsupported Media Type",
 		self::REQUESTED_RANGE_NOT_SATISFIABLE => "Requested range not satisfiable",
 		self::EXPECTATION_FAILED => "Expectation Failed",
