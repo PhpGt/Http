@@ -6,6 +6,8 @@ class StatusCode {
 	const CONTINUE = 100;
 	const SWITCHING_PROTOCOLS = 101;
 	const PROCESSING = 102;
+	const EARLY_HINTS = 103;
+
 	const OK = 200;
 	const CREATED = 201;
 	const ACCEPTED = 202;
@@ -15,6 +17,8 @@ class StatusCode {
 	const PARTIAL_CONTENT = 206;
 	const MULTI_STATUS = 207;
 	const ALREADY_REPORTED = 208;
+	const IM_USED = 226;
+
 	const MULTIPLE_CHOICES = 300;
 	const MOVED_PERMANENTLY = 301;
 	const FOUND = 302;
@@ -48,14 +52,13 @@ class StatusCode {
 	const UNPROCESSABLE_ENTITY = 422;
 	const LOCKED = 423;
 	const FAILED_DEPENDENCY = 424;
-	const UNORDERED_COLLECTION = 425;
 	const TOO_EARLY = 425;
 	const UPGRADE_REQUIRED = 426;
 	const PRECONDITION_REQUIRED = 428;
 	const TOO_MANY_REQUESTS = 429;
 	const REQUEST_HEADER_FIELDS_TOO_LARGE = 431;
-
 	const UNAVAILABLE_FOR_LEGAL_REASONS = 451;
+
 	const INTERNAL_SERVER_ERROR = 500;
 	const NOT_IMPLEMENTED = 501;
 	const BAD_GATEWAY = 502;
@@ -73,6 +76,7 @@ class StatusCode {
 		self::CONTINUE => "Continue",
 		self::SWITCHING_PROTOCOLS => "Switching Protocols",
 		self::PROCESSING => "Processing",
+		self::EARLY_HINTS => "Early Hints",
 
 		self::OK => "OK",
 		self::CREATED => "Created",
@@ -83,6 +87,7 @@ class StatusCode {
 		self::PARTIAL_CONTENT => "Partial Content",
 		self::MULTI_STATUS => "Multi-status",
 		self::ALREADY_REPORTED => "Already Reported",
+		self::IM_USED => "IM Used",
 
 		self::MULTIPLE_CHOICES => "Multiple Choices",
 		self::MOVED_PERMANENTLY => "Moved Permanently",
@@ -92,6 +97,7 @@ class StatusCode {
 		self::USE_PROXY => "Use Proxy",
 		self::SWITCH_PROXY => "Switch Proxy",
 		self::TEMPORARY_REDIRECT => "Temporary Redirect",
+		self::PERMANENT_REDIRECT => "Permanent Redirect",
 
 		self::BAD_REQUEST => "Bad Request",
 		self::UNAUTHORIZED => "Unauthorized",
@@ -112,10 +118,11 @@ class StatusCode {
 		self::REQUESTED_RANGE_NOT_SATISFIABLE => "Requested range not satisfiable",
 		self::EXPECTATION_FAILED => "Expectation Failed",
 		self::IM_A_TEAPOT => "I'm a teapot",
+		self::MISDIRECTED_REQUEST => "Misdirected Request",
 		self::UNPROCESSABLE_ENTITY => "Unprocessable Entity",
 		self::LOCKED => "Locked",
 		self::FAILED_DEPENDENCY => "Failed Dependency",
-		self::UNORDERED_COLLECTION => "Unordered Collection",
+		self::TOO_EARLY => "Too Early",
 		self::UPGRADE_REQUIRED => "Upgrade Required",
 		self::PRECONDITION_REQUIRED => "Precondition Required",
 		self::TOO_MANY_REQUESTS => "Too Many Requests",
