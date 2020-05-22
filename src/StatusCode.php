@@ -65,7 +65,7 @@ class StatusCode {
 	const VARIANT_ALSO_NEGOTIATES = 506;
 	const INSUFFICIENT_STORAGE = 507;
 	const LOOP_DETECTED = 508;
-
+	const NOT_EXTENDED = 510;
 	const NETWORK_AUTHENTICATION_REQUIRED = 511;
 
 // TODO: Double check all codes are here:
