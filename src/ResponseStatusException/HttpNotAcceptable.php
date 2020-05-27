@@ -9,7 +9,7 @@ use Gt\Http\StatusCode;
  * @linkhttps://httpstatuses.com/406
  */
 class HttpNotAcceptable extends AbstractResponseStatusException {
-	protected function getHttpCode():int {
+	public function getHttpCode():int {
 		return StatusCode::NOT_ACCEPTABLE;
 	}
 }

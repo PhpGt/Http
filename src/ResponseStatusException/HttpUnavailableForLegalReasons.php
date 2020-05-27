@@ -10,7 +10,7 @@ use Gt\Http\StatusCode;
  * @link https://httpstatuses.com/451
  */
 class HttpUnavailableForLegalReasons extends AbstractResponseStatusException {
-	protected function getHttpCode():int {
+	public function getHttpCode():int {
 		return StatusCode::UNAVAILABLE_FOR_LEGAL_REASONS;
 	}
 }

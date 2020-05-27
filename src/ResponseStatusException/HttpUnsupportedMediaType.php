@@ -10,7 +10,7 @@ use Gt\Http\StatusCode;
  * @link https://httpstatuses.com/415
  */
 class HttpUnsupportedMediaType extends AbstractResponseStatusException {
-	protected function getHttpCode():int {
+	public function getHttpCode():int {
 		return StatusCode::UNSUPPORTED_MEDIA_TYPE;
 	}
 }

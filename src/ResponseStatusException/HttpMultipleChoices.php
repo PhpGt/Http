@@ -11,7 +11,7 @@ use Gt\Http\StatusCode;
  * @link https://httpstatuses.com/300
  */
 class HttpMultipleChoices extends AbstractResponseStatusException {
-	protected function getHttpCode():int {
+	public function getHttpCode():int {
 		return StatusCode::MULTIPLE_CHOICES;
 	}
 }

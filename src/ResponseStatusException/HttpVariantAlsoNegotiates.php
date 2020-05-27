@@ -9,7 +9,7 @@ use Gt\Http\StatusCode;
  * @link https://httpstatuses.com/506
  */
 class HttpVariantAlsoNegotiates extends AbstractResponseStatusException {
-	protected function getHttpCode():int {
+	public function getHttpCode():int {
 		return StatusCode::VARIANT_ALSO_NEGOTIATES;
 	}
 }

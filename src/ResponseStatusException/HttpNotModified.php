@@ -11,7 +11,7 @@ use Gt\Http\StatusCode;
  * @link https://httpstatuses.com/304
  */
 class HttpNotModified extends AbstractResponseStatusException {
-	protected function getHttpCode():int {
+	public function getHttpCode():int {
 		return StatusCode::NOT_MODIFIED;
 	}
 }

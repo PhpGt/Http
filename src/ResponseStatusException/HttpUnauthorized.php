@@ -16,7 +16,7 @@ use Gt\Http\StatusCode;
  * @link https://httpstatuses.com/401
  */
 class HttpUnauthorized extends AbstractResponseStatusException {
-	protected function getHttpCode():int {
+	public function getHttpCode():int {
 		return StatusCode::UNAUTHORIZED;
 	}
 }

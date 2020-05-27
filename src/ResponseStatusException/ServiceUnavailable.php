@@ -9,7 +9,7 @@ use Gt\Http\StatusCode;
  * @link https://httpstatuses.com/503
  */
 class ServiceUnavailable extends AbstractResponseStatusException {
-	protected function getHttpCode():int {
+	public function getHttpCode():int {
 		return StatusCode::SERVICE_UNAVAILABLE;
 	}
 }

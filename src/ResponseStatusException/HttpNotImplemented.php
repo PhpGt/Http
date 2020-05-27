@@ -10,7 +10,7 @@ use Gt\Http\StatusCode;
  * @link https://httpstatuses.com/501
  */
 class HttpNotImplemented extends AbstractResponseStatusException {
-	protected function getHttpCode():int {
+	public function getHttpCode():int {
 		return StatusCode::NOT_IMPLEMENTED;
 	}
 }

@@ -11,7 +11,7 @@ use Gt\Http\StatusCode;
  * @link https://httpstatuses.com/303
  */
 class HttpSeeOther extends AbstractResponseStatusException {
-	protected function getHttpCode():int {
+	public function getHttpCode():int {
 		return StatusCode::SEE_OTHER;
 	}
 }

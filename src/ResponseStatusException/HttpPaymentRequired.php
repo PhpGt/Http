@@ -16,7 +16,7 @@ use Gt\Http\StatusCode;
  * @linkhttps://httpstatuses.com/402
  */
 class HttpPaymentRequired extends AbstractResponseStatusException {
-	protected function getHttpCode():int {
+	public function getHttpCode():int {
 		return StatusCode::PAYMENT_REQUIRED;
 	}
 }
