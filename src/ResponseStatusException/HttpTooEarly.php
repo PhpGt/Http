@@ -9,7 +9,7 @@ use Gt\Http\StatusCode;
  * @link https://tools.ietf.org/html/rfc8470
  */
 class HttpTooEarly extends AbstractResponseStatusException {
-	protected function getHttpCode():int {
+	public function getHttpCode():int {
 		return StatusCode::TOO_EARLY;
 	}
 }

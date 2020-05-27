@@ -11,7 +11,7 @@ use Gt\Http\StatusCode;
  * @link https://httpstatuses.com/308
  */
 class HttpPermanentRedirect extends AbstractResponseStatusException {
-	protected function getHttpCode():int {
+	public function getHttpCode():int {
 		return StatusCode::PERMANENT_REDIRECT;
 	}
 }

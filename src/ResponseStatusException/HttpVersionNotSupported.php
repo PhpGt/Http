@@ -8,7 +8,7 @@ use Gt\Http\StatusCode;
  * @link https://httpstatuses.com/505
  */
 class HttpVersionNotSupported extends AbstractResponseStatusException {
-	protected function getHttpCode():int {
+	public function getHttpCode():int {
 		return StatusCode::HTTP_VERSION_NOT_SUPPORTED;
 	}
 }

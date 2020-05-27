@@ -15,7 +15,7 @@ use Gt\Http\StatusCode;
  * @link https://httpstatuses.com/302
  */
 class HttpFound extends AbstractResponseStatusException {
-	protected function getHttpCode():int {
+	public function getHttpCode():int {
 		return StatusCode::FOUND;
 	}
 }

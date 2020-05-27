@@ -12,5 +12,5 @@ abstract class AbstractResponseStatusException extends HttpException {
 		);
 	}
 
-	abstract protected function getHttpCode():int;
+	abstract public function getHttpCode():int;
 }

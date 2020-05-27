@@ -9,7 +9,7 @@ use Gt\Http\StatusCode;
  * @link https://httpstatuses.com/502
  */
 class HttpBadGateway extends AbstractResponseStatusException {
-	protected function getHttpCode():int {
+	public function getHttpCode():int {
 		return StatusCode::BAD_GATEWAY;
 	}
 }

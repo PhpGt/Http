@@ -9,7 +9,7 @@ use Gt\Http\StatusCode;
  * @link https://httpstatuses.com/404
  */
 class HttpNotFound extends AbstractResponseStatusException {
-	protected function getHttpCode():int {
+	public function getHttpCode():int {
 		return StatusCode::NOT_FOUND;
 	}
 }

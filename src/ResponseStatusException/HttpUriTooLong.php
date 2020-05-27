@@ -11,7 +11,7 @@ use Gt\Http\StatusCode;
  * @link https://httpstatuses.com/414
  */
 class HttpUriTooLong extends AbstractResponseStatusException {
-	protected function getHttpCode():int {
+	public function getHttpCode():int {
 		return StatusCode::REQUEST_URI_TOO_LONG;
 	}
 }

@@ -9,7 +9,7 @@ use Gt\Http\StatusCode;
  * @link https://httpstatuses.com/426
  */
 class HttpUpgradeRequired extends AbstractResponseStatusException {
-	protected function getHttpCode():int {
+	public function getHttpCode():int {
 		return StatusCode::UPGRADE_REQUIRED;
 	}
 }
