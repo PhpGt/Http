@@ -113,7 +113,7 @@ class UriTest extends TestCase {
 	}
 
 	public function testParseUriPortCannotBeZero() {
-		self::expectException(UriParseErrorException::class);
+		self::expectException(PortOutOfBoundsException::class);
 		new Uri('//example.com:0');
 	}
 
