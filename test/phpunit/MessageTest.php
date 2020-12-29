@@ -93,9 +93,9 @@ class MessageTest extends TestCase {
 					$uri .= "&";
 				}
 
-				$qsParts .= uniqid("key-");
-				$qsParts .= "=";
-				$qsParts .= uniqid("value-");
+				$uri .= uniqid("key-");
+				$uri .= "=";
+				$uri .= uniqid("value-");
 			}
 		}
 
