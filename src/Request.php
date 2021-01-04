@@ -18,11 +18,11 @@ class Request implements RequestInterface {
 	public function __construct(
 		string $method,
 		Uri $uri,
-		RequestHeaders $headers
+		RequestHeaders $headers = null
 	) {
 		$this->method = RequestMethod::filterMethodName($method);
 		$this->uri = $uri;
-		$this->headers = $headers;
+		$this->headers = $headers ?? new RequestHeaders();
 
 		$firstLine = $this->headers->getFirst();
 		$this->protocol = substr(

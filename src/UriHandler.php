@@ -1,6 +1,7 @@
 <?php
 namespace Gt\Http;
 
+use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\UriInterface;
 
 /**
@@ -10,7 +11,7 @@ use Psr\Http\Message\UriInterface;
  *
  * @link https://tools.ietf.org/html/rfc3986#section-5
  */
-class UriResolver {
+class UriHandler {
 	/**
 	 * Removes dot segments from a path and returns the new path.
 	 * @link http://tools.ietf.org/html/rfc3986#section-5.2.4
@@ -164,6 +165,20 @@ class UriResolver {
 		}
 
 		return $emptyPathUri;
+	}
+
+	/**
+	 * @param string|UriInterface $input
+	 */
+	public static function ensureUriInterface($input):UriInterface {
+		if($input instanceof RequestInterface) {
+			$uri = $input->getUri();
+		}
+		else {
+			$uri = new Uri($input);
+		}
+
+		return $uri;
 	}
 
 	private static function getRelativePath(UriInterface $base, UriInterface $target) {
