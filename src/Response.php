@@ -4,7 +4,20 @@ namespace Gt\Http;
 use Gt\Http\Header\ResponseHeaders;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
+use Psr\Http\Message\UriInterface;
 
+/**
+ * @property-read ResponseHeaders $headers The Headers object associated with the response.
+ * @property-read bool $ok A boolean indicating whether the response was successful (status in the range 200–299) or not.
+ * @property-read bool $redirected Indicates whether or not the response is the result of a redirect (that is, its URL list has more than one entry).
+ * @property-read int $status The status code of the response. (This will be 200 for a success).
+ * @property-read string $statusText The status message corresponding to the status code. (e.g., OK for 200).
+ * @property-read string $type The status message corresponding to the status code. (e.g., OK for 200).
+ * @property-read Uri $url The status message corresponding to the status code. (e.g., OK for 200).
+ * @property-read bool $useFinalURL A boolean indicating whether this is the final URL of the response.
+ * @property-read Stream $body A simple getter exposing a readable Stream of the body contents.
+ * @property-read bool $bodyUsed Stores a Boolean that declares whether the body has been used in a response yet.
+ */
 class Response implements ResponseInterface {
 	use Message;
 
@@ -17,12 +30,19 @@ class Response implements ResponseInterface {
 		string $version = null
 	) {
 		$this->statusCode = $status;
-		$this->headers = $headers ?? new ResponseHeaders();
+		$this->internalHeaders = $headers ?? new ResponseHeaders();
 		$this->stream = new Stream();
 
 		if($body) {
 			$this->stream->write($body);
 		}
+	}
+
+	public function redirect(string $uri, int $status = 302):static {
+		$clone = clone $this;
+		$clone = $clone->withStatus($status);
+		$clone->internalHeaders = $clone->internalHeaders->withHeader("Location: $uri");
+		return $clone;
 	}
 
 	/**
@@ -81,6 +101,6 @@ class Response implements ResponseInterface {
 	}
 
 	public function getResponseHeaders():ResponseHeaders {
-		return $this->headers;
+		return $this->internalHeaders;
 	}
 }

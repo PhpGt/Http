@@ -5,15 +5,26 @@ use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\UriInterface;
 use Gt\Http\Header\RequestHeaders;
 
+/**
+ * @property-read string $cache Contains the cache mode of the request (e.g., default, reload, no-cache).
+ * @property-read string $context Contains the context of the request (e.g., audio, image, iframe, etc.)
+ * @property-read string $credentials Contains the credentials of the request (e.g., omit, same-origin, include). The default is same-origin.
+ * @property-read string $destination Returns a string from the RequestDestination enum describing the request's destination. This is a string indicating the type of content being requested.
+ * @property-read RequestHeaders $headers Contains the associated Headers object of the request.
+ * @property-read string $integrity Contains the subresource integrity value of the request (e.g., sha256-BpfBw7ivV8q2jLiT13fxDYAe2tJllusRSZ273h2nFSE=).
+ * @property-read string $method Contains the request's method (GET, POST, etc.)
+ * @property-read string $mode Contains the mode of the request (e.g., cors, no-cors, same-origin, navigate.)
+ * @property-read string $redirect Contains the mode for how redirects are handled. It may be one of follow, error, or manual.
+ * @property-read string $referrer Contains the referrer of the request (e.g., client).
+ * @property-read string $referrerPolicy Contains the referrer policy of the request (e.g., no-referrer).
+ * @property-read UriInterface $url Contains the URL of the request.
+ */
 class Request implements RequestInterface {
 	use Message;
 
-	/** @var string */
-	protected $method;
-	/** @var Uri */
-	protected $uri;
-	/** @var string */
-	protected $requestTarget;
+	protected string $method;
+	protected UriInterface $uri;
+	protected string $requestTarget;
 
 	public function __construct(
 		string $method,
@@ -22,9 +33,9 @@ class Request implements RequestInterface {
 	) {
 		$this->method = RequestMethod::filterMethodName($method);
 		$this->uri = $uri;
-		$this->headers = $headers ?? new RequestHeaders();
+		$this->internalHeaders = $headers ?? new RequestHeaders();
 
-		$firstLine = $this->headers->getFirst();
+		$firstLine = $this->internalHeaders->getFirst();
 		$this->protocol = substr(
 			$firstLine,
 			0,
@@ -48,8 +59,8 @@ class Request implements RequestInterface {
 	 *
 	 * @return string
 	 */
-	public function getRequestTarget() {
-		if(!is_null($this->requestTarget)) {
+	public function getRequestTarget():string {
+		if(isset($this->requestTarget)) {
 			return $this->requestTarget;
 		}
 
@@ -84,8 +95,9 @@ class Request implements RequestInterface {
 	 *     request-target forms allowed in request messages)
 	 * @param mixed $requestTarget
 	 * @return static
+	 * @noinspection PhpMissingParamTypeInspection
 	 */
-	public function withRequestTarget($requestTarget) {
+	public function withRequestTarget($requestTarget):static {
 		$clone = clone $this;
 		$clone->requestTarget = $requestTarget;
 		return $clone;
@@ -96,7 +108,7 @@ class Request implements RequestInterface {
 	 *
 	 * @return string Returns the request method.
 	 */
-	public function getMethod() {
+	public function getMethod():string {
 		return $this->method;
 	}
 
@@ -114,8 +126,9 @@ class Request implements RequestInterface {
 	 * @param string $method Case-sensitive method.
 	 * @return static
 	 * @throws \InvalidArgumentException for invalid HTTP methods.
+	 * @noinspection PhpMissingParamTypeInspection
 	 */
-	public function withMethod($method) {
+	public function withMethod($method):static  {
 		$method = RequestMethod::filterMethodName($method);
 		$clone = clone $this;
 		$clone->method = $method;
@@ -131,7 +144,7 @@ class Request implements RequestInterface {
 	 * @return UriInterface Returns a UriInterface instance
 	 *     representing the URI of the request.
 	 */
-	public function getUri() {
+	public function getUri():UriInterface {
 		return $this->uri;
 	}
 
@@ -165,14 +178,17 @@ class Request implements RequestInterface {
 	 * @param bool $preserveHost Preserve the original state of the Host header.
 	 * @return static
 	 */
-	public function withUri(UriInterface $uri, $preserveHost = false) {
+	public function withUri(UriInterface $uri, $preserveHost = false):static {
 		$clone = clone $this;
 
 		$host = $uri->getHost();
 		if(!empty($host)) {
 			if(!$preserveHost
-			|| !$this->headers->contains("Host")) {
-				$this->headers = $this->headers->withHeader("Host", $host);
+			|| !$this->internalHeaders->contains("Host")) {
+				$this->internalHeaders = $this->internalHeaders->withHeader(
+					"Host",
+					$host
+				);
 			}
 		}
 

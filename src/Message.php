@@ -1,11 +1,16 @@
 <?php
 namespace Gt\Http;
 
+use Gt\Http\Data\ArrayBuffer;
+use Gt\Http\Data\Blob;
+use Gt\Http\Data\UnknownContentLengthException;
 use Gt\Http\Header\Headers;
+use Gt\Promise\Deferred;
 use Psr\Http\Message\StreamInterface;
+use Gt\Promise\Promise;
 
 trait Message {
-	protected Headers $headers;
+	protected Headers $internalHeaders;
 	protected string $protocol;
 	protected StreamInterface $stream;
 
@@ -105,7 +110,7 @@ trait Message {
 	 *     for that header.
 	 */
 	public function getHeaders():array {
-		return $this->headers->asArray();
+		return $this->internalHeaders->asArray();
 	}
 
 	/**
@@ -118,7 +123,7 @@ trait Message {
 	 * @noinspection PhpMissingParamTypeInspection
 	 */
 	public function hasHeader($name):bool {
-		return $this->headers->contains($name);
+		return $this->internalHeaders->contains($name);
 	}
 
 	/**
@@ -137,7 +142,7 @@ trait Message {
 	 * @noinspection PhpMissingParamTypeInspection
 	 */
 	public function getHeader($name):array {
-		return $this->headers->getAll($name);
+		return $this->internalHeaders->getAll($name);
 	}
 
 	/**
@@ -161,7 +166,7 @@ trait Message {
 	 * @noinspection PhpMissingParamTypeInspection
 	 */
 	public function getHeaderLine($name):string {
-		$header = $this->headers->get($name);
+		$header = $this->internalHeaders->get($name);
 
 		if($header) {
 			return $header->getValuesCommaSeparated();
@@ -193,7 +198,7 @@ trait Message {
 		}
 
 		$clone = clone $this;
-		$clone->headers = $clone->headers->withHeader($name, ...$value);
+		$clone->internalHeaders = $clone->internalHeaders->withHeader($name, ...$value);
 		return $clone;
 	}
 
@@ -213,13 +218,13 @@ trait Message {
 	 * @return static
 	 * @throws \InvalidArgumentException for invalid header names or values.
 	 */
-	public function withAddedHeader($name, $value) {
+	public function withAddedHeader($name, $value):static {
 		if(!is_array($value)) {
 			$value = [$value];
 		}
 
 		$clone = clone $this;
-		$clone->headers = $clone->headers->withAddedHeaderValue($name, ...$value);
+		$clone->internalHeaders = $clone->internalHeaders->withAddedHeaderValue($name, ...$value);
 		return $clone;
 	}
 
@@ -238,7 +243,7 @@ trait Message {
 	 */
 	public function withoutHeader($name):static {
 		$clone = clone $this;
-		$clone->headers = $clone->headers->withoutHeader($name);
+		$clone->internalHeaders = $clone->internalHeaders->withoutHeader($name);
 		return $clone;
 	}
 
@@ -279,4 +284,48 @@ trait Message {
 		}, $valueArray);
 	}
 
+	public function arrayBuffer():Promise {
+		$length = $this->internalHeaders->get("Content-length");
+		if(!$length) {
+			throw new UnknownContentLengthException();
+		}
+
+		$deferred = new Deferred();
+
+		$this->blob()->then(function(Blob $blob):Promise {
+			return $blob->arrayBuffer();
+		})->then(function(ArrayBuffer $arrayBuffer) use($deferred) {
+			$deferred->resolve($arrayBuffer);
+		});
+
+		return $deferred->getPromise();
+	}
+
+	public function blob():Promise {
+		$deferred = new Deferred();
+
+		$chunks = [];
+		while(!$this->stream->eof()) {
+			array_push(
+				$chunks,
+				$this->stream->read(1024)
+			);
+		}
+		$blob = new Blob($chunks);
+		$deferred->resolve($blob);
+
+		return $deferred->getPromise();
+	}
+
+	public function formData():Promise {
+
+	}
+
+	public function json():Promise {
+
+	}
+
+	public function text():Promise {
+
+	}
 }
