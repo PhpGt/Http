@@ -18,11 +18,11 @@ class Request implements RequestInterface {
 	public function __construct(
 		string $method,
 		Uri $uri,
-		RequestHeaders $headers
+		RequestHeaders $headers = null
 	) {
 		$this->method = RequestMethod::filterMethodName($method);
 		$this->uri = $uri;
-		$this->headers = $headers;
+		$this->headers = $headers ?? new RequestHeaders();
 
 		$firstLine = $this->headers->getFirst();
 		$this->protocol = substr(
@@ -172,7 +172,7 @@ class Request implements RequestInterface {
 		if(!empty($host)) {
 			if(!$preserveHost
 			|| !$this->headers->contains("Host")) {
-				$this->headers->add("Host", $host);
+				$this->headers = $this->headers->withHeader("Host", $host);
 			}
 		}
 

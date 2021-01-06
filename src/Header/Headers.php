@@ -13,8 +13,8 @@ class Headers implements Iterator, Countable {
 	];
 
 	/** @var HeaderLine[] */
-	protected $headerLines = [];
-	protected $iteratorIndex = 0;
+	protected array $headerLines = [];
+	protected int $iteratorIndex = 0;
 
 	public function __construct(array $headerArray = []) {
 		if(!empty($headerArray)) {
@@ -57,42 +57,35 @@ class Headers implements Iterator, Countable {
 		return false;
 	}
 
-	public function add(string $name, string...$values):void {
-		$isCommaHeader = false;
-		if(strstr($values[0], ",")
-		&& in_array(strtolower($name), self::COMMA_HEADERS)) {
-			$isCommaHeader = true;
-		}
+	public function withHeader(string $name, string...$value):self {
+		$clone = clone $this;
+		$clone->headerLines[$name] = new HeaderLine($name, ...$value);
+		return $clone;
+	}
 
-		$headerLineToAdd = null;
-		foreach($this->headerLines as $headerLine) {
-			if(!$headerLine->isNamed($name)) {
-				continue;
-			}
-
-			$headerLineToAdd = $headerLine;
-		}
-
-		if(is_null($headerLineToAdd) || $isCommaHeader) {
-			$this->headerLines []= new HeaderLine($name,...$values);
+	public function withAddedHeaderValue(string $name, string...$values):self {
+		$clone = clone $this;
+		if(isset($this->headerLines[$name])) {
+			$clone->headerLines[$name] = $clone->headerLines[$name]
+				->withAddedValue(...$values);
 		}
 		else {
-			$headerLineToAdd->addValue(...$values);
+			$clone = $clone->withHeader($name, ...$values);
 		}
 
+		return $clone;
 	}
 
-	public function set(string $name, string...$value):void {
-		$this->remove($name);
-		$this->add($name, ...$value);
-	}
+	public function withoutHeader(string $name):self {
+		$clone = clone $this;
 
-	public function remove(string $name):void {
-		foreach($this->headerLines as $i => $line) {
+		foreach($clone->headerLines as $i => $line) {
 			if($line->isNamed($name)) {
-				unset($this->headerLines[$i]);
+				unset($clone->headerLines[$i]);
 			}
 		}
+
+		return $clone;
 	}
 
 	public function get(string $name):?HeaderLine {

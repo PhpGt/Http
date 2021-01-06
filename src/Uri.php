@@ -626,7 +626,7 @@ class Uri implements UriInterface {
 
 	public function isSameDocumentReference(Uri $baseUri = null):bool {
 		if (!is_null($baseUri)) {
-			$resolved = UriResolver::resolve($baseUri, $this);
+			$resolved = UriHandler::resolve($baseUri, $this);
 
 			return (
 				$resolved->getScheme() === $baseUri->getScheme()

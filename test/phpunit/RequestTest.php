@@ -87,7 +87,7 @@ class RequestTest extends TestCase {
 	public function testWithUriNewHost() {
 		$headers = self::getHeadersMock();
 		$headers->expects($this->once())
-			->method("add")
+			->method("withHeader")
 			->with("Host", "example2.com");
 		$req = new Request(
 			"get",

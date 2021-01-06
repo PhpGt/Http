@@ -15,10 +15,18 @@ class HeaderLineTest extends TestCase {
 		self::assertEquals("val1,val2,val3", $sut);
 	}
 
-	public function testAddValue() {
+	public function testWithValue() {
 		$sut = new HeaderLine("some-key", "val1");
-		$sut->addValue("val2", "val3", "val4");
-		self::assertEquals("val1,val2,val3,val4", $sut);
+		$sut2 = $sut->withValue("val2", "val3", "val4");
+		self::assertNotSame($sut, $sut2);
+		self::assertEquals("val2,val3,val4", $sut2);
+	}
+
+	public function testWithAddedValue() {
+		$sut = new HeaderLine("some-key", "val1");
+		$sut2 = $sut->withAddedValue("val2", "val3", "val4");
+		self::assertNotSame($sut, $sut2);
+		self::assertEquals("val1,val2,val3,val4", $sut2);
 	}
 
 	public function testGetName() {

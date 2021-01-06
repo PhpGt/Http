@@ -2,12 +2,10 @@
 namespace Gt\Http\Header;
 
 class HeaderLine {
-	/** @var string */
-	protected $originalNameCase;
-	/** @var string */
-	protected $name;
+	protected string $originalNameCase;
+	protected string $name;
 	/** @var string[] */
-	protected $values;
+	protected array $values;
 
 	public function __construct(string $name, string...$values) {
 		$this->originalNameCase = $name;
@@ -24,10 +22,18 @@ class HeaderLine {
 		}
 	}
 
-	public function addValue(string...$values) {
+	public function withValue(string...$values):self {
+		$clone = clone $this;
+		$clone->values = [];
+		return $clone->withAddedValue(...$values);
+	}
+
+	public function withAddedValue(string...$values):self {
+		$clone = clone $this;
 		foreach($values as $v) {
-			$this->values []= $v;
+			array_push($clone->values, $v);
 		}
+		return $clone;
 	}
 
 	public function getName():string {

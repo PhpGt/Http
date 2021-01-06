@@ -39,50 +39,63 @@ class HeadersTest extends TestCase {
 		self::assertFalse($headers->contains("Ftag"));
 	}
 
-	public function testAdd() {
-		$headers = new Headers(self::HEADER_ARRAY);
-		$headers->add("Accept", "application/json");
-		$headerArray = $headers->asArray();
+	public function testWith() {
+		$sut = new Headers(self::HEADER_ARRAY);
+		$headerArray = $sut->asArray();
+		self::assertArrayNotHasKey("Accept", $headerArray);
+
+		$sut2 = $sut->withHeader("Accept", "application/json");
+		$headerArray = $sut2->asArray();
+
+		foreach(self::HEADER_ARRAY as $key => $value) {
+			self::assertEquals($value, $headerArray[$key]);
+		}
 		self::assertEquals("application/json", $headerArray["Accept"]);
 	}
 
-	public function testAddMultiple() {
-		$headers = new Headers(self::HEADER_ARRAY);
-		$headers->add("Accept", "application/json", "application/xml");
-		$headerArray = $headers->asArray();
+	public function testWithSecondCallOverwrites() {
+		$sut = new Headers(self::HEADER_ARRAY);
+		$sut = $sut->withHeader("Accept", "application/json", "application/xml");
+		$headerArray = $sut->asArray();
 		self::assertEquals("application/json,application/xml", $headerArray["Accept"]);
 
-		$headers->add("Accept", "text/plain");
-		$headerArray = $headers->asArray();
+		$sut = $sut->withHeader("Accept", "text/plain");
+		$headerArray = $sut->asArray();
+		self::assertEquals("text/plain", $headerArray["Accept"]);
+	}
+
+	public function testWithAddedValue() {
+		$sut = new Headers(self::HEADER_ARRAY);
+		$sut = $sut->withHeader("Accept", "application/json", "application/xml");
+		$sut = $sut->withAddedHeaderValue("Accept", "text/plain");
+		$headerArray = $sut->asArray();
 		self::assertEquals("application/json,application/xml,text/plain", $headerArray["Accept"]);
 	}
 
+	public function testWithAddedValueWhenNoKeyExists() {
+		$sut = new Headers();
+		$sut = $sut->withAddedHeaderValue("Accept", "text/plain");
+		$headerArray = $sut->asArray();
+		self::assertEquals("text/plain", $headerArray["Accept"]);
+	}
+
 	public function testAddMultipleCommaHeader() {
-		$headers = new Headers(self::HEADER_ARRAY);
-		$headers->add(
+		$sut = new Headers(self::HEADER_ARRAY);
+		$sut = $sut->withAddedHeaderValue(
 			"Cookie-set",
 			"language=en; expires=Thu, 1-Jan-1970 00:00:00 UTC; path=/; domain=example.com",
 			"id=123; expires=Thu, 1-Jan-1970 00:00:00 UTC; path=/; domain=example.com httponly"
 		);
-		$headerArray = $headers->asArray();
+		$headerArray = $sut->asArray();
 		$cookie = explode("\n", $headerArray["Cookie-set"]);
 		self::assertContains("language=en; expires=Thu, 1-Jan-1970 00:00:00 UTC; path=/; domain=example.com", $cookie);
 		self::assertContains("id=123; expires=Thu, 1-Jan-1970 00:00:00 UTC; path=/; domain=example.com httponly", $cookie);
 	}
 
-	public function testSet() {
-		$now = date("D, j M Y H:i:s T");
-		$headers = new Headers(self::HEADER_ARRAY);
-		$headers->set("Date", $now);
-		$headerArray = $headers->asArray();
-
-		self::assertEquals($now, $headerArray["Date"]);
-	}
-
-	public function testRemove() {
-		$headers = new Headers(self::HEADER_ARRAY);
-		$headers->remove("Date");
-		$headerArray = $headers->asArray();
+	public function testWithoutHeader() {
+		$sut = new Headers(self::HEADER_ARRAY);
+		$sut = $sut->withoutHeader("Date");
+		$headerArray = $sut->asArray();
 		self::assertArrayNotHasKey("Date", $headerArray);
 	}
 
@@ -99,14 +112,14 @@ class HeadersTest extends TestCase {
 	}
 
 	public function testGetMultiple() {
-		$headers = new Headers(self::HEADER_ARRAY);
-		$headers->add("Accept", "application/json", "application/xml");
-		self::assertEquals("application/json,application/xml", $headers->get("Accept"));
+		$sut = new Headers(self::HEADER_ARRAY);
+		$sut = $sut->withHeader("Accept", "application/json", "application/xml");
+		self::assertEquals("application/json,application/xml", $sut->get("Accept"));
 	}
 
 	public function testGetMultipleCommas() {
-		$headers = new Headers(self::HEADER_ARRAY);
-		$headers->add(
+		$sut = new Headers(self::HEADER_ARRAY);
+		$sut = $sut->withHeader(
 			"Cookie-set",
 			"language=en; expires=Thu, 1-Jan-1970 00:00:00 UTC; path=/; domain=example.com",
 			"id=123; expires=Thu, 1-Jan-1970 00:00:00 UTC; path=/; domain=example.com httponly"
@@ -115,7 +128,7 @@ class HeadersTest extends TestCase {
 			"language=en; expires=Thu, 1-Jan-1970 00:00:00 UTC; path=/; domain=example.com"
 			. "\n"
 			. "id=123; expires=Thu, 1-Jan-1970 00:00:00 UTC; path=/; domain=example.com httponly",
-			$headers->get("Cookie-set")
+			$sut->get("Cookie-set")
 		);
 	}
 
@@ -127,9 +140,9 @@ class HeadersTest extends TestCase {
 
 	public function testGetAll() {
 		$headerValues = ["application/json", "application/xml"];
-		$headers = new Headers(self::HEADER_ARRAY);
-		$headers->add("Accept", ...$headerValues);
-		$all = $headers->getAll("aCcEpT");
+		$sut = new Headers(self::HEADER_ARRAY);
+		$sut = $sut->withHeader("Accept", ...$headerValues);
+		$all = $sut->getAll("aCcEpT");
 
 		foreach($all as $i => $value) {
 			self::assertEquals($headerValues[$i], $value);

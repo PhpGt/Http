@@ -19,6 +19,10 @@ class Response implements ResponseInterface {
 		$this->statusCode = $status;
 		$this->headers = $headers ?? new ResponseHeaders();
 		$this->stream = new Stream();
+
+		if($body) {
+			$this->stream->write($body);
+		}
 	}
 
 	/**
