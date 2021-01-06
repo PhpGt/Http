@@ -22,13 +22,13 @@ class HeaderLine {
 		}
 	}
 
-	public function withValue(string...$values):self {
+	public function withValue(string...$values):static {
 		$clone = clone $this;
 		$clone->values = [];
 		return $clone->withAddedValue(...$values);
 	}
 
-	public function withAddedValue(string...$values):self {
+	public function withAddedValue(string...$values):static {
 		$clone = clone $this;
 		foreach($values as $v) {
 			array_push($clone->values, $v);

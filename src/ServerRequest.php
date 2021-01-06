@@ -80,7 +80,7 @@ class ServerRequest extends Request implements ServerRequestInterface {
 	 * @param array $cookies Array of key/value pairs representing cookies.
 	 * @return static
 	 */
-	public function withCookieParams(array $cookies):self {
+	public function withCookieParams(array $cookies):static {
 		$clone = clone $this;
 		$clone->cookieHandler = new CookieHandler($cookies);
 		return $clone;
@@ -124,7 +124,7 @@ class ServerRequest extends Request implements ServerRequestInterface {
 	 *     $_GET.
 	 * @return static
 	 */
-	public function withQueryParams(array $query):self {
+	public function withQueryParams(array $query):static {
 		$clone = clone $this;
 		$clone->serverInfo = $clone->serverInfo->withQueryParams($query);
 		return $clone;
@@ -158,7 +158,7 @@ class ServerRequest extends Request implements ServerRequestInterface {
 	 * @return static
 	 * @throws \InvalidArgumentException if an invalid structure is provided.
 	 */
-	public function withUploadedFiles(array $uploadedFiles):self {
+	public function withUploadedFiles(array $uploadedFiles):static {
 		return $this->withInputData(
 			$uploadedFiles,
 			Input::DATA_FILES
@@ -212,7 +212,7 @@ class ServerRequest extends Request implements ServerRequestInterface {
 	 * @throws \InvalidArgumentException if an unsupported argument type is
 	 *     provided.
 	 */
-	public function withParsedBody($inputDatumArray):self {
+	public function withParsedBody($inputDatumArray):static {
 		return $this->withInputData(
 			$inputDatumArray,
 			Input::DATA_BODY
@@ -268,7 +268,7 @@ class ServerRequest extends Request implements ServerRequestInterface {
 	 * @param mixed $value The value of the attribute.
 	 * @return static
 	 */
-	public function withAttribute($name, $value):self {
+	public function withAttribute($name, $value):static {
 		$clone = clone $this;
 		$clone->attributes[$name] = $value;
 		return $clone;
@@ -288,7 +288,7 @@ class ServerRequest extends Request implements ServerRequestInterface {
 	 * @param string $name The attribute name.
 	 * @return static
 	 */
-	public function withoutAttribute($name):self {
+	public function withoutAttribute($name):static {
 		$clone = clone $this;
 		unset($clone->attributes[$name]);
 		return $clone;
@@ -297,7 +297,7 @@ class ServerRequest extends Request implements ServerRequestInterface {
 	protected function withInputData(
 		array $inputDatumArray,
 		string $method
-	):self {
+	):static {
 		$clone = clone $this;
 
 		$parameters = $clone->input->getAll(

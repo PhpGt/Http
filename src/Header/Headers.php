@@ -17,8 +17,15 @@ class Headers implements Iterator, Countable {
 	protected int $iteratorIndex = 0;
 
 	public function __construct(array $headerArray = []) {
-		if(!empty($headerArray)) {
-			$this->fromArray($headerArray);
+		foreach($headerArray as $key => $value) {
+			if(!is_array($value)) {
+				$value = [$value];
+			}
+
+			array_push(
+				$this->headerLines,
+				new HeaderLine($key, ...$value)
+			);
 		}
 	}
 
@@ -37,16 +44,6 @@ class Headers implements Iterator, Countable {
 		return $array;
 	}
 
-	public function fromArray(array $headerArray):void {
-		foreach($headerArray as $key => $value) {
-			if(!is_array($value)) {
-				$value = [$value];
-			}
-
-			$this->headerLines []= new HeaderLine($key, ...$value);
-		}
-	}
-
 	public function contains(string $name):bool {
 		foreach($this->headerLines as $i => $line) {
 			if($line->isNamed($name)) {
@@ -57,13 +54,13 @@ class Headers implements Iterator, Countable {
 		return false;
 	}
 
-	public function withHeader(string $name, string...$value):self {
+	public function withHeader(string $name, string...$value):static {
 		$clone = clone $this;
 		$clone->headerLines[$name] = new HeaderLine($name, ...$value);
 		return $clone;
 	}
 
-	public function withAddedHeaderValue(string $name, string...$values):self {
+	public function withAddedHeaderValue(string $name, string...$values):static {
 		$clone = clone $this;
 		if(isset($this->headerLines[$name])) {
 			$clone->headerLines[$name] = $clone->headerLines[$name]
@@ -76,7 +73,7 @@ class Headers implements Iterator, Countable {
 		return $clone;
 	}
 
-	public function withoutHeader(string $name):self {
+	public function withoutHeader(string $name):static {
 		$clone = clone $this;
 
 		foreach($clone->headerLines as $i => $line) {

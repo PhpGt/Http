@@ -359,7 +359,7 @@ class Uri implements UriInterface {
 	 * @return static A new instance with the specified scheme.
 	 * @throws \InvalidArgumentException for invalid or unsupported schemes.
 	 */
-	public function withScheme($scheme):self {
+	public function withScheme($scheme):static {
 		ParameterType::check(__METHOD__, func_get_args(), ["string"]);
 		$scheme = $this->filterScheme($scheme);
 
@@ -383,7 +383,7 @@ class Uri implements UriInterface {
 	 * @param null|string $password The password associated with $user.
 	 * @return static A new instance with the specified user information.
 	 */
-	public function withUserInfo($user, $password = null):self {
+	public function withUserInfo($user, $password = null):static {
 		ParameterType::check(__METHOD__, func_get_args(), ["string"]);
 		$userInfo = $this->filterUserInfo($user, $password);
 
@@ -405,7 +405,7 @@ class Uri implements UriInterface {
 	 * @return static A new instance with the specified host.
 	 * @throws \InvalidArgumentException for invalid hostnames.
 	 */
-	public function withHost($host):self {
+	public function withHost($host):static {
 		ParameterType::check(__METHOD__, func_get_args(), ["string"]);
 		$host = $this->filterHost($host);
 
@@ -432,7 +432,7 @@ class Uri implements UriInterface {
 	 * @return static A new instance with the specified port.
 	 * @throws \InvalidArgumentException for invalid ports.
 	 */
-	public function withPort($port):self {
+	public function withPort($port):static {
 		ParameterType::check(__METHOD__, func_get_args(), ["?integer"]);
 		$port = $this->filterPort($port);
 
@@ -464,7 +464,7 @@ class Uri implements UriInterface {
 	 * @return static A new instance with the specified path.
 	 * @throws \InvalidArgumentException for invalid paths.
 	 */
-	public function withPath($path):self {
+	public function withPath($path):static {
 		ParameterType::check(__METHOD__, func_get_args(), ["string"]);
 
 		$clone = clone $this;
@@ -488,7 +488,7 @@ class Uri implements UriInterface {
 	 * @return static A new instance with the specified query string.
 	 * @throws \InvalidArgumentException for invalid query strings.
 	 */
-	public function withQuery($query):self {
+	public function withQuery($query):static {
 		ParameterType::check(__METHOD__, func_get_args(), ["string"]);
 
 		$clone = clone $this;
@@ -497,7 +497,7 @@ class Uri implements UriInterface {
 		return $clone;
 	}
 
-	public function withQueryValue(string $key, string $value = null):self {
+	public function withQueryValue(string $key, string $value = null):static {
 // TODO: Hotspot for refactoring opportunity.
 // http_build_query should help simplify all of this messy code.
 // Note limitation of http_build_query can be resolved using $replaceQuery below
@@ -536,7 +536,7 @@ class Uri implements UriInterface {
 		return $this->withQuery(implode("&", $result));
 	}
 
-	public function withoutQueryValue(string $key):self {
+	public function withoutQueryValue(string $key):static {
 		$current = $this->getQuery();
 
 		$decodedKey = rawurldecode($key);
@@ -566,7 +566,7 @@ class Uri implements UriInterface {
 	 * @param string $fragment The fragment to use with the new instance.
 	 * @return static A new instance with the specified fragment.
 	 */
-	public function withFragment($fragment):self {
+	public function withFragment($fragment):static {
 		ParameterType::check(__METHOD__, func_get_args(), ["string"]);
 
 		$clone = clone $this;

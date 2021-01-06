@@ -5,12 +5,9 @@ use Gt\Http\Header\Headers;
 use Psr\Http\Message\StreamInterface;
 
 trait Message {
-	/** @var Headers */
-	protected $headers;
-	/** @var string */
-	protected $protocol;
-	/** @var StreamInterface */
-	protected $stream;
+	protected Headers $headers;
+	protected string $protocol;
+	protected StreamInterface $stream;
 
 	/**
 	 * Retrieves the HTTP protocol version as a string.
@@ -43,8 +40,9 @@ trait Message {
 	 * @param string $version HTTP protocol version
 	 * @return static
 	 * @throws InvalidProtocolHttpException
+	 * @noinspection PhpMissingParamTypeInspection
 	 */
-	public function withProtocolVersion($version) {
+	public function withProtocolVersion($version):static {
 		if(!is_numeric($version)) {
 			throw new InvalidProtocolHttpException($version);
 		}
@@ -117,9 +115,10 @@ trait Message {
 	 * @return bool Returns true if any header names match the given header
 	 *     name using a case-insensitive string comparison. Returns false if
 	 *     no matching header name is found in the message.
+	 * @noinspection PhpMissingParamTypeInspection
 	 */
 	public function hasHeader($name):bool {
-		return $this->headers->has($name);
+		return $this->headers->contains($name);
 	}
 
 	/**
@@ -135,6 +134,7 @@ trait Message {
 	 * @return string[] An array of string values as provided for the given
 	 *    header. If the header does not appear in the message, this method MUST
 	 *    return an empty array.
+	 * @noinspection PhpMissingParamTypeInspection
 	 */
 	public function getHeader($name):array {
 		return $this->headers->getAll($name);
@@ -158,6 +158,7 @@ trait Message {
 	 * @return string A string of values as provided for the given header
 	 *    concatenated together using a comma. If the header does not appear in
 	 *    the message, this method MUST return an empty string.
+	 * @noinspection PhpMissingParamTypeInspection
 	 */
 	public function getHeaderLine($name):string {
 		$header = $this->headers->get($name);
@@ -184,14 +185,15 @@ trait Message {
 	 * @param string|string[] $value Header value(s).
 	 * @return static
 	 * @throws \InvalidArgumentException for invalid header names or values.
+	 * @noinspection PhpMissingParamTypeInspection
 	 */
-	public function withHeader($name, $value):self {
+	public function withHeader($name, $value):static {
 		if(!is_array($value)) {
 			$value = [$value];
 		}
 
 		$clone = clone $this;
-		$clone->headers->set($name, ...$value);
+		$clone->headers = $clone->headers->withHeader($name, ...$value);
 		return $clone;
 	}
 
@@ -217,7 +219,7 @@ trait Message {
 		}
 
 		$clone = clone $this;
-		$clone->headers->add($name, ...$value);
+		$clone->headers = $clone->headers->withAddedHeaderValue($name, ...$value);
 		return $clone;
 	}
 
@@ -232,16 +234,11 @@ trait Message {
 	 *
 	 * @param string $name Case-insensitive header field name to remove.
 	 * @return static
+	 * @noinspection PhpMissingParamTypeInspection
 	 */
-	public function withoutHeader($name) {
+	public function withoutHeader($name):static {
 		$clone = clone $this;
-		$clone->headers->remove($name);
-		return $clone;
-	}
-
-	public function setHeaders(array $headers) {
-		$clone = clone $this;
-		$clone->headers->fromArray($headers);
+		$clone->headers = $clone->headers->withoutHeader($name);
 		return $clone;
 	}
 
@@ -250,7 +247,7 @@ trait Message {
 	 *
 	 * @return StreamInterface Returns the body as a stream.
 	 */
-	public function getBody() {
+	public function getBody():StreamInterface {
 		if(!$this->stream) {
 			$this->stream = new Stream("php://memory");
 		}
@@ -270,13 +267,13 @@ trait Message {
 	 * @return static
 	 * @throws \InvalidArgumentException When the body is not valid.
 	 */
-	public function withBody(StreamInterface $body) {
+	public function withBody(StreamInterface $body):static {
 		$clone = clone $this;
 		$clone->stream = $body;
 		return $clone;
 	}
 
-	private function trimHeaderValues(array $valueArray) {
+	private function trimHeaderValues(array $valueArray):array {
 		return array_map(function($value) {
 			return trim($value, " \t");
 		}, $valueArray);

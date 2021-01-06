@@ -72,7 +72,7 @@ class ServerInfo {
 		return $this->server["QUERY_STRING"] ?? "";
 	}
 
-	public function withQueryString(string $queryString):self {
+	public function withQueryString(string $queryString):static {
 		$clone = clone $this;
 		$clone->server["QUERY_STRING"] = $queryString;
 		return $clone;
@@ -90,7 +90,7 @@ class ServerInfo {
 		return $params;
 	}
 
-	public function withQueryParams(array $query):self {
+	public function withQueryParams(array $query):static {
 		$queryString = http_build_query($query);
 		return $this->withQueryString($queryString);
 	}
