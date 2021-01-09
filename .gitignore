@@ -2,3 +2,4 @@
 /.idea
 /test/phpunit/_coverage
 /*.phar
+.phpunit.*
