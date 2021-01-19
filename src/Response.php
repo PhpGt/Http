@@ -15,7 +15,6 @@ use Psr\Http\Message\UriInterface;
  * @property-read string $type The status message corresponding to the status code. (e.g., OK for 200).
  * @property-read Uri $url The status message corresponding to the status code. (e.g., OK for 200).
  * @property-read bool $useFinalURL A boolean indicating whether this is the final URL of the response.
- * @property-read Stream $body A simple getter exposing a readable Stream of the body contents.
  * @property-read bool $bodyUsed Stores a Boolean that declares whether the body has been used in a response yet.
  */
 class Response implements ResponseInterface {
@@ -63,6 +62,7 @@ class Response implements ResponseInterface {
 	}
 
 	public function prop_get_statusText():string {
+
 	}
 
 	public function prop_get_type():string {
@@ -74,10 +74,6 @@ class Response implements ResponseInterface {
 	}
 
 	public function prop_get_useFinalUrl():bool {
-
-	}
-
-	public function prop_get_body():Stream {
 
 	}
 

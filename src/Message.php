@@ -5,14 +5,28 @@ use Gt\Http\Data\ArrayBuffer;
 use Gt\Http\Data\Blob;
 use Gt\Http\Data\UnknownContentLengthException;
 use Gt\Http\Header\Headers;
+use Gt\Http\Header\RequestHeaders;
+use Gt\Http\Header\ResponseHeaders;
 use Gt\Promise\Deferred;
 use Psr\Http\Message\StreamInterface;
 use Gt\Promise\Promise;
 
+/**
+ * @property-read RequestHeaders|ResponseHeaders $headers The Headers object associated with the request/response.
+ * @property-read Stream $body A simple getter exposing a readable Stream of the body contents.
+ */
 trait Message {
 	protected Headers $internalHeaders;
 	protected string $protocol;
 	protected StreamInterface $stream;
+
+	public function prop_get_headers():Headers {
+
+	}
+
+	public function prop_get_body():Stream {
+
+	}
 
 	/**
 	 * Retrieves the HTTP protocol version as a string.
