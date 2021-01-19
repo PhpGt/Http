@@ -3,7 +3,6 @@ namespace Gt\Http;
 
 use Gt\Http\Header\ResponseHeaders;
 use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UriInterface;
 
 /**
@@ -13,14 +12,13 @@ use Psr\Http\Message\UriInterface;
  * @property-read int $status The status code of the response. (This will be 200 for a success).
  * @property-read string $statusText The status message corresponding to the status code. (e.g., OK for 200).
  * @property-read string $type The status message corresponding to the status code. (e.g., OK for 200).
- * @property-read Uri $url The status message corresponding to the status code. (e.g., OK for 200).
- * @property-read bool $useFinalURL A boolean indicating whether this is the final URL of the response.
- * @property-read bool $bodyUsed Stores a Boolean that declares whether the body has been used in a response yet.
  */
 class Response implements ResponseInterface {
 	use Message;
+	use PropertyGetter;
 
 	protected ?int $statusCode;
+	protected bool $hasBeenRedirected;
 
 	public function __construct(
 		int $status = null,
@@ -34,57 +32,38 @@ class Response implements ResponseInterface {
 		if($body) {
 			$this->stream->write($body);
 		}
+
+		$this->streamRead = false;
+		$this->hasBeenRedirected = false;
 	}
 
-	public function __get(string $name):mixed {
-		$methodName = "prop_get_$name";
-		if(method_exists($this, $methodName)) {
-			return call_user_func($methodName);
-		}
-
-		trigger_error(
-			"Undefined property: "
-			. get_class($this)
-			. "::$name"
-		);
-	}
-
-	public function prop_get_ok():bool {
+	public function __getOk():bool {
 		return $this->status >= 200 && $this->status <= 299;
 	}
 
-	public function prop_get_redirected():bool {
-
+	public function __getRedirected():bool {
+		return $this->hasBeenRedirected;
 	}
 
-	public function prop_get_status():int {
-
+	public function __getStatus():int {
+		return $this->statusCode ?? 0;
 	}
 
-	public function prop_get_statusText():string {
-
+	public function __getStatusText():?string {
+		return StatusCode::REASON_PHRASE[$this->statusCode] ?? null;
 	}
 
-	public function prop_get_type():string {
-
-	}
-
-	public function prop_get_url():Uri {
-
-	}
-
-	public function prop_get_useFinalUrl():bool {
-
-	}
-
-	public function prop_get_bodyUsed():bool {
-
+	public function __getType():string {
+// Default value for server-side request.
+// @see https://developer.mozilla.org/en-US/docs/Web/API/Response/type
+		return "cors";
 	}
 
 	public function redirect(string $uri, int $status = 302):static {
 		$clone = clone $this;
 		$clone = $clone->withStatus($status);
 		$clone->internalHeaders = $clone->internalHeaders->withHeader("Location: $uri");
+		$clone->hasBeenRedirected = true;
 		return $clone;
 	}
 
@@ -124,6 +103,23 @@ class Response implements ResponseInterface {
 		$clone = clone $this;
 		$clone->statusCode = $code;
 		return $clone;
+	}
+
+	/**
+	 * @param string|UriInterface $uri
+	 */
+	public function withUri($uri):static {
+		if(is_string($uri)) {
+			$uri = new Uri($uri);
+		}
+
+		$clone = clone $this;
+		$clone->uri = $uri;
+		return $clone;
+	}
+
+	public function getUri():?UriInterface {
+		return $this->uri;
 	}
 
 	/**

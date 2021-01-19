@@ -7,7 +7,6 @@ use Gt\Http\Header\RequestHeaders;
 
 /**
  * @property-read string $cache Contains the cache mode of the request (e.g., default, reload, no-cache).
- * @property-read string $context Contains the context of the request (e.g., audio, image, iframe, etc.)
  * @property-read string $credentials Contains the credentials of the request (e.g., omit, same-origin, include). The default is same-origin.
  * @property-read string $destination Returns a string from the RequestDestination enum describing the request's destination. This is a string indicating the type of content being requested.
  * @property-read RequestHeaders $headers Contains the associated Headers object of the request.
@@ -21,9 +20,9 @@ use Gt\Http\Header\RequestHeaders;
  */
 class Request implements RequestInterface {
 	use Message;
+	use PropertyGetter;
 
 	protected string $method;
-	protected UriInterface $uri;
 	protected string $requestTarget;
 
 	public function __construct(
@@ -41,6 +40,50 @@ class Request implements RequestInterface {
 			0,
 			strpos($firstLine, " ")
 		);
+
+		$this->streamRead = false;
+	}
+
+	public function __getCache():string {
+// Default value for server-side request.
+		return "default";
+	}
+
+	public function __getCredentials():string {
+// Default value for server-side request.
+		return "include";
+	}
+
+	public function __getDestination():string {
+// Default value for server-side request.
+// @see https://developer.mozilla.org/en-US/docs/Web/API/RequestDestination
+		return "";
+	}
+
+	public function __getIntegrity():string {
+// Default value for server-side request.
+// @see https://developer.mozilla.org/en-US/docs/Web/API/Request/integrity
+		return "";
+	}
+
+	public function __getMethod():string {
+		return $this->method;
+	}
+
+	public function __getRedirect():string {
+// Default value for server-side request.
+// @see https://developer.mozilla.org/en-US/docs/Web/API/Request/integrity
+		return "follow";
+	}
+
+	public function __getReferrer():string {
+		return $this->headers->get("Referer") ?? "";
+	}
+
+	public function __getReferrerPolicy():string {
+// Default value for server-side request.
+// @see https://developer.mozilla.org/en-US/docs/Web/API/Request/referrerPolicy
+		return "";
 	}
 
 	/**

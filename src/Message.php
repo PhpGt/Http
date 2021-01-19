@@ -10,22 +10,35 @@ use Gt\Http\Header\ResponseHeaders;
 use Gt\Promise\Deferred;
 use Psr\Http\Message\StreamInterface;
 use Gt\Promise\Promise;
+use Psr\Http\Message\UriInterface;
 
 /**
  * @property-read RequestHeaders|ResponseHeaders $headers The Headers object associated with the request/response.
- * @property-read Stream $body A simple getter exposing a readable Stream of the body contents.
+ * @property-read StreamInterface $body A simple getter exposing a readable Stream of the body contents.
+ * @property-read string $url The URL of the Request/Response.
+ * @property-read bool $bodyUsed Stores a Boolean that declares whether the body has been used in a response yet.
  */
 trait Message {
-	protected Headers $internalHeaders;
+	protected RequestHeaders|ResponseHeaders $internalHeaders;
 	protected string $protocol;
 	protected StreamInterface $stream;
+	protected bool $streamRead;
+	protected ?UriInterface $uri;
 
-	public function prop_get_headers():Headers {
-
+	public function __getHeaders():Headers {
+		return $this->internalHeaders;
 	}
 
-	public function prop_get_body():Stream {
+	public function __getBody():StreamInterface {
+		return $this->getBody();
+	}
 
+	public function __getBodyUsed():bool {
+		return $this->streamRead ?? false;
+	}
+
+	public function __getUrl():string {
+		return (string)$this->uri;
 	}
 
 	/**
@@ -274,6 +287,7 @@ trait Message {
 		if(!$this->stream) {
 			$this->stream = new Stream("php://memory");
 		}
+		$this->streamRead = true;
 		return $this->stream;
 	}
 
@@ -316,6 +330,7 @@ trait Message {
 			$deferred->resolve($arrayBuffer);
 		});
 
+		$this->streamRead = true;
 		return $deferred->getPromise();
 	}
 
@@ -332,18 +347,25 @@ trait Message {
 		$blob = new Blob($chunks);
 		$deferred->resolve($blob);
 
+		$this->streamRead = true;
 		return $deferred->getPromise();
 	}
 
 	public function formData():Promise {
-
+		$deferred = new Deferred();
+		$this->streamRead = true;
+		return $deferred->getPromise();
 	}
 
 	public function json():Promise {
-
+		$deferred = new Deferred();
+		$this->streamRead = true;
+		return $deferred->getPromise();
 	}
 
 	public function text():Promise {
-
+		$deferred = new Deferred();
+		$this->streamRead = true;
+		return $deferred->getPromise();
 	}
 }
