@@ -54,6 +54,10 @@ trait Message {
 
 		$clone = clone $this;
 
+		if(!isset($clone->protocol)) {
+			$clone->protocol = "";
+		}
+
 		if(strstr($clone->protocol, "/")) {
 			$versionStartPos = strpos(
 					$clone->protocol,

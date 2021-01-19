@@ -21,13 +21,12 @@ use Psr\Http\Message\UriInterface;
 class Response implements ResponseInterface {
 	use Message;
 
-	protected $statusCode;
+	protected ?int $statusCode;
 
 	public function __construct(
 		int $status = null,
 		ResponseHeaders $headers = null,
-		string $body = null,
-		string $version = null
+		string $body = null
 	) {
 		$this->statusCode = $status;
 		$this->internalHeaders = $headers ?? new ResponseHeaders();
@@ -36,6 +35,54 @@ class Response implements ResponseInterface {
 		if($body) {
 			$this->stream->write($body);
 		}
+	}
+
+	public function __get(string $name):mixed {
+		$methodName = "prop_get_$name";
+		if(method_exists($this, $methodName)) {
+			return call_user_func($methodName);
+		}
+
+		trigger_error(
+			"Undefined property: "
+			. get_class($this)
+			. "::$name"
+		);
+	}
+
+	public function prop_get_ok():bool {
+		return $this->status >= 200 && $this->status <= 299;
+	}
+
+	public function prop_get_redirected():bool {
+
+	}
+
+	public function prop_get_status():int {
+
+	}
+
+	public function prop_get_statusText():string {
+	}
+
+	public function prop_get_type():string {
+
+	}
+
+	public function prop_get_url():Uri {
+
+	}
+
+	public function prop_get_useFinalUrl():bool {
+
+	}
+
+	public function prop_get_body():Stream {
+
+	}
+
+	public function prop_get_bodyUsed():bool {
+
 	}
 
 	public function redirect(string $uri, int $status = 302):static {
@@ -53,7 +100,7 @@ class Response implements ResponseInterface {
 	 *
 	 * @return int Status code.
 	 */
-	public function getStatusCode() {
+	public function getStatusCode():?int {
 		return $this->statusCode;
 	}
 
@@ -77,7 +124,7 @@ class Response implements ResponseInterface {
 	 * @return static
 	 * @throws \InvalidArgumentException For invalid status code arguments.
 	 */
-	public function withStatus($code, $reasonPhrase = '') {
+	public function withStatus($code, $reasonPhrase = ''):static {
 		$clone = clone $this;
 		$clone->statusCode = $code;
 		return $clone;
@@ -96,8 +143,8 @@ class Response implements ResponseInterface {
 	 * @link http://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml
 	 * @return string Reason phrase; must return an empty string if none present.
 	 */
-	public function getReasonPhrase() {
-		return StatusCode::REASON_PHRASE[$this->statusCode];
+	public function getReasonPhrase():?string {
+		return StatusCode::REASON_PHRASE[$this->statusCode] ?? null;
 	}
 
 	public function getResponseHeaders():ResponseHeaders {
