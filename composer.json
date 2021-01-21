@@ -3,21 +3,14 @@
 	"description": "PSR-7 HTTP message implementation.",
 	"license": "MIT",
 
-	"repositories": [
-		{
-			"type": "path",
-			"url": "/home/g105b/Code/PhpGt/Promise",
-			"options": {
-				"symlink": true
-			}
-		}
-	],
+	"minimum-stability": "dev",
 
 	"require": {
 		"php": ">=8.0",
 		"phpgt/cookie": "1.*",
 		"phpgt/input": "1.*",
-		"phpgt/promise": "dev-master",
+		"phpgt/promise": "^2.0",
+		"phpgt/json": "dev-master",
 		"psr/http-message": "^1.0.1",
 		"willdurand/negotiation": "3.0.*"
 	},
@@ -33,7 +26,27 @@
 	},
 	"autoload-dev": {
 		"psr-4": {
-			"Gt\\Http\\Test\\": "./test/unit"
+			"Gt\\Http\\Test\\": "./test/phpunit"
 		}
-	}
+	},
+
+	"keywords": [
+		"http",
+		"psr-7",
+		"w3c",
+		"request",
+		"response",
+		"uri",
+		"url",
+		"arraybuffer",
+		"blob",
+		"header"
+	],
+
+	"funding": [
+		{
+			"type": "github",
+			"url": "https://github.com/sponsors/PhpGt"
+		}
+	]
 }
