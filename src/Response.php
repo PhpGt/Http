@@ -35,6 +35,10 @@ class Response implements ResponseInterface {
 
 		$this->streamRead = false;
 		$this->hasBeenRedirected = false;
+		
+		$this->setup();
+
+		$this->debugId = uniqid(__CLASS__ . "-", true);
 	}
 
 	public function __getOk():bool {

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6e0e5da8ff45fd3b56a5b579fd3dec8f",
+    "content-hash": "dade9ecadacf207af872a7661973a850",
     "packages": [
         {
             "name": "php-http/httplug",
@@ -287,17 +287,11 @@
         },
         {
             "name": "phpgt/promise",
-            "version": "v2.0.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/PhpGt/Promise.git",
-                "reference": "148ab09fe90bcae5808fdc714a1cdbe029f19ddf"
-            },
+            "version": "dev-12-chained-promises",
             "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/PhpGt/Promise/zipball/148ab09fe90bcae5808fdc714a1cdbe029f19ddf",
-                "reference": "148ab09fe90bcae5808fdc714a1cdbe029f19ddf",
-                "shasum": ""
+                "type": "path",
+                "url": "/home/g105b/Code/PhpGt/Promise",
+                "reference": "16233ddd9849c99d80c75e86d540834b17cdda20"
             },
             "require": {
                 "php": ">=7.4",
@@ -313,13 +307,16 @@
                     "Gt\\Promise\\": "./src"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
+            "autoload-dev": {
+                "psr-4": {
+                    "Gt\\Promise\\Test\\": "./test/phpunit"
+                }
+            },
             "license": [
                 "MIT"
             ],
             "description": "Pleasantly work with asynchronous code.",
             "keywords": [
-                "W3C",
                 "async",
                 "asynchronous",
                 "callback",
@@ -327,15 +324,19 @@
                 "concurrent",
                 "deferred",
                 "promise",
-                "then"
+                "then",
+                "w3c"
             ],
             "funding": [
                 {
-                    "url": "https://github.com/sponsors/PhpGt",
-                    "type": "github"
+                    "type": "github",
+                    "url": "https://github.com/sponsors/PhpGt"
                 }
             ],
-            "time": "2021-01-21T12:03:32+00:00"
+            "transport-options": {
+                "symlink": true,
+                "relative": false
+            }
         },
         {
             "name": "phpgt/typesafegetter",
@@ -2551,6 +2552,7 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
+        "phpgt/promise": 20,
         "phpgt/json": 20
     },
     "prefer-stable": false,

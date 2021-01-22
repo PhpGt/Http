@@ -5,14 +5,26 @@
 
 	"minimum-stability": "dev",
 
+	"repositories": [
+		{
+			"type": "path",
+			"url": "/home/g105b/Code/PhpGt/Promise",
+			"options": {
+				"symlink": true
+			}
+		}
+	],
+
 	"require": {
 		"php": ">=8.0",
 		"phpgt/cookie": "1.*",
 		"phpgt/input": "1.*",
-		"phpgt/promise": "^2.0",
+		"phpgt/promise": "dev-12-chained-promises",
 		"phpgt/json": "dev-master",
 		"psr/http-message": "^1.0.1",
-		"willdurand/negotiation": "3.0.*"
+		"willdurand/negotiation": "3.0.*",
+
+		"ext-intl": "*"
 	},
 	"require-dev": {
 		"phpunit/phpunit": "9.*",

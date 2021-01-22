@@ -8,6 +8,8 @@ use Gt\Http\Header\Headers;
 use Gt\Http\Header\RequestHeaders;
 use Gt\Http\Header\ResponseHeaders;
 use Gt\Promise\Deferred;
+use Gt\Promise\PromiseInterface;
+use NumberFormatter;
 use Psr\Http\Message\StreamInterface;
 use Gt\Promise\Promise;
 use Psr\Http\Message\UriInterface;
@@ -24,6 +26,8 @@ trait Message {
 	protected StreamInterface $stream;
 	protected bool $streamRead;
 	protected ?UriInterface $uri;
+	/** @var Deferred[] */
+	public array $deferredList;
 
 	public function __getHeaders():Headers {
 		return $this->internalHeaders;
@@ -39,6 +43,10 @@ trait Message {
 
 	public function __getUrl():string {
 		return (string)$this->uri;
+	}
+
+	public function setup():void {
+		$this->deferredList = [];
 	}
 
 	/**
@@ -316,26 +324,43 @@ trait Message {
 		}, $valueArray);
 	}
 
-	public function arrayBuffer():Promise {
+	/**
+	 * @return PromiseInterface Returns with an ArrayBuffer object
+	 * representing the Body Stream
+	 */
+	public function arrayBuffer():PromiseInterface {
 		$length = $this->internalHeaders->get("Content-length");
 		if(!$length) {
 			throw new UnknownContentLengthException();
 		}
+		$sizedArrayBuffer = new ArrayBuffer($length);
 
 		$deferred = new Deferred();
 
 		$this->blob()->then(function(Blob $blob):Promise {
 			return $blob->arrayBuffer();
-		})->then(function(ArrayBuffer $arrayBuffer) use($deferred) {
-			$deferred->resolve($arrayBuffer);
+		})->then(function(ArrayBuffer $arrayBuffer) use($deferred, $sizedArrayBuffer) {
+			foreach($arrayBuffer as $i => $byte) {
+				$sizedArrayBuffer[$i] = $byte;
+			}
+
+			$deferred->resolve($sizedArrayBuffer);
 		});
 
 		$this->streamRead = true;
 		return $deferred->getPromise();
 	}
 
-	public function blob():Promise {
+	/**
+	 * @return PromiseInterface Returns with a Blob object representing
+	 * the Body Stream's raw data
+	 */
+	public function blob():PromiseInterface {
 		$deferred = new Deferred();
+
+		$deferred->addProcess(function() {
+			echo "HEEEEE";
+		});
 
 		$chunks = [];
 		while(!$this->stream->eof()) {
@@ -345,27 +370,86 @@ trait Message {
 			);
 		}
 		$blob = new Blob($chunks);
-		$deferred->resolve($blob);
+//		$deferred->resolve($blob);
 
 		$this->streamRead = true;
 		return $deferred->getPromise();
 	}
 
-	public function formData():Promise {
+	/**
+	 * @return PromiseInterface Resolves with a FormData object
+	 * representing the Body Stream as its contained key-value-pairs
+	 */
+	public function formData():PromiseInterface {
 		$deferred = new Deferred();
 		$this->streamRead = true;
 		return $deferred->getPromise();
 	}
 
-	public function json():Promise {
+	/**
+	 * @return PromiseInterface Resolves with a JsonObject object
+	 * representing the Body Stream as a decoded JSON object
+	 */
+	public function json():PromiseInterface {
 		$deferred = new Deferred();
 		$this->streamRead = true;
 		return $deferred->getPromise();
 	}
 
-	public function text():Promise {
+	/**
+	 * @return PromiseInterface Resolves with a string containing the
+	 * Body Stream as text
+	 */
+	public function text():PromiseInterface {
 		$deferred = new Deferred();
+// TODO: Need to hook into an outer Deferred's process.
+
+		$this->blob()->then(function(Blob $blob):Promise {
+			return $blob->text();
+		})->then(function(string $text) use($deferred) {
+			$deferred->resolve($text);
+		});
+
 		$this->streamRead = true;
 		return $deferred->getPromise();
+	}
+
+	/**
+	 * A test promise function that returns a string containing the numbers,
+	 * one to ten, but is built up using the outer loop, as an experiment
+	 * with the Asyncable interface.
+	 */
+	public function numberString(int $to = 10):PromiseInterface {
+		$f = new NumberFormatter("en", NumberFormatter::SPELLOUT);
+		$i = 0;
+		$deferred = new Deferred();
+
+		$deferred->addProcess(function() use($deferred, $to, $f, &$i, &$str) {
+			$i++;
+			$str = trim("$str {$f->format($i)}");
+
+			if($i >= $to) {
+				$deferred->resolve($str);
+			}
+		});
+
+		array_push($this->deferredList, $deferred);
+
+		return $deferred->getPromise();
+	}
+
+	/** @return Deferred[] */
+	public function asyncProcessStream():array {
+		if(!isset($this->deferredList)) {
+			return [];
+		}
+
+		foreach($this->deferredList as $deferred) {
+			foreach($deferred->getProcessList() as $process) {
+				call_user_func($process);
+			}
+		}
+
+		return $this->deferredList;
 	}
 }
