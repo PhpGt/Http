@@ -87,6 +87,7 @@ class Uri implements UriInterface {
 		return $uri;
 	}
 
+	/** @param array<string, int|string> $parts */
 	public function applyParts(array $parts):void {
 		$this->scheme = $this->filterScheme($parts["scheme"] ?? "");
 
@@ -111,16 +112,16 @@ class Uri implements UriInterface {
 		return strtolower($host);
 	}
 
-	protected function filterPort(int $port = null):?int {
+	protected function filterPort(int $port = null):?string {
 		if(is_null($port)) {
 			return null;
 		}
 
 		if($port < 1 || $port > 0xffff) {
-			throw new PortOutOfBoundsException($port);
+			throw new PortOutOfBoundsException((string)$port);
 		}
 
-		return $port;
+		return (string)$port;
 	}
 
 	protected function filterPath(string $path):string {
@@ -145,7 +146,8 @@ class Uri implements UriInterface {
 		);
 	}
 
-	protected function rawurlencodeMatchZero(array $match) {
+	/** @param array<string> $match */
+	protected function rawurlencodeMatchZero(array $match):string {
 		return rawurlencode($match[0]);
 	}
 
@@ -268,7 +270,7 @@ class Uri implements UriInterface {
 			return null;
 		}
 
-		return $this->port;
+		return (int)$this->port;
 	}
 
 	/**
@@ -437,7 +439,7 @@ class Uri implements UriInterface {
 		$port = $this->filterPort($port);
 
 		$clone = clone $this;
-		$clone->port = $this->filterPort($port ?? null);
+		$clone->port = $port;
 		$clone->setDefaults();
 		return $clone;
 	}
@@ -579,7 +581,7 @@ class Uri implements UriInterface {
 		$scheme = $this->scheme;
 		$port = $this->port;
 
-		if(is_null($port)) {
+		if(empty($port)) {
 			return true;
 		}
 
@@ -590,7 +592,7 @@ class Uri implements UriInterface {
 			$defaultPort = constant($defaultPortConstant);
 		}
 
-		return ($defaultPort === $port);
+		return ($defaultPort == $port);
 	}
 
 	public function isAbsolute():bool {

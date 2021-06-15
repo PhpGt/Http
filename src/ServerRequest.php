@@ -8,18 +8,16 @@ use Gt\Input\Input;
 use Gt\Input\InputData\Datum\FileUpload;
 use Gt\Input\InputData\Datum\InputDatum;
 use Gt\Input\InputData\InputData;
+use InvalidArgumentException;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UploadedFileInterface;
 
 class ServerRequest extends Request implements ServerRequestInterface {
-	/** @var ServerInfo */
-	protected $serverInfo;
-	/** @var CookieHandler */
-	protected $cookieHandler;
-	/** @var Input */
-	protected $input;
-	/** @var array */
-	protected $attributes = [];
+	protected ServerInfo $serverInfo;
+	protected CookieHandler $cookieHandler;
+	protected Input $input;
+	/** @var array<string, mixed> */
+	protected array $attributes = [];
 
 	public function __construct(
 		string $method,
@@ -43,7 +41,7 @@ class ServerRequest extends Request implements ServerRequestInterface {
 	 * typically derived from PHP's $_SERVER superglobal. The data IS NOT
 	 * REQUIRED to originate from $_SERVER.
 	 *
-	 * @return array
+	 * @return array<string, string>
 	 */
 	public function getServerParams():array {
 		return $this->serverInfo->getParams();
@@ -57,7 +55,7 @@ class ServerRequest extends Request implements ServerRequestInterface {
 	 * The data MUST be compatible with the structure of the $_COOKIE
 	 * superglobal.
 	 *
-	 * @return array
+	 * @return array<string, string>
 	 */
 	public function getCookieParams():array {
 		return $this->cookieHandler->asArray();
@@ -77,7 +75,7 @@ class ServerRequest extends Request implements ServerRequestInterface {
 	 * immutability of the message, and MUST return an instance that has the
 	 * updated cookie values.
 	 *
-	 * @param array $cookies Array of key/value pairs representing cookies.
+	 * @param array<string, string> $cookies Array of key/value pairs representing cookies.
 	 * @return static
 	 */
 	public function withCookieParams(array $cookies):self {
@@ -96,7 +94,7 @@ class ServerRequest extends Request implements ServerRequestInterface {
 	 * values, you may need to parse the query string from `getUri()->getQuery()`
 	 * or from the `QUERY_STRING` server param.
 	 *
-	 * @return array
+	 * @return array<string, string>
 	 */
 	public function getQueryParams():array {
 		return $this->serverInfo->getQueryParams();
@@ -120,7 +118,7 @@ class ServerRequest extends Request implements ServerRequestInterface {
 	 * immutability of the message, and MUST return an instance that has the
 	 * updated query string arguments.
 	 *
-	 * @param array $query Array of query string arguments, typically from
+	 * @param array<string, string> $query Array of query string arguments, typically from
 	 *     $_GET.
 	 * @return static
 	 */
@@ -139,7 +137,7 @@ class ServerRequest extends Request implements ServerRequestInterface {
 	 * These values MAY be prepared from $_FILES or the message body during
 	 * instantiation, or MAY be injected via withUploadedFiles().
 	 *
-	 * @return array An array tree of UploadedFileInterface instances; an empty
+	 * @return array<string, UploadedFileInterface> An array tree of UploadedFileInterface instances; an empty
 	 *     array MUST be returned if no data is present.
 	 */
 	public function getUploadedFiles():array {
@@ -155,8 +153,8 @@ class ServerRequest extends Request implements ServerRequestInterface {
 	 * updated body parameters.
 	 *
 	 * @param FileUpload[] $uploadedFiles An array tree of UploadedFileInterface instances.
-	 * @return static
-	 * @throws \InvalidArgumentException if an invalid structure is provided.
+	 * @return self
+	 * @throws InvalidArgumentException if an invalid structure is provided.
 	 */
 	public function withUploadedFiles(array $uploadedFiles):self {
 		return $this->withInputData(
@@ -177,10 +175,10 @@ class ServerRequest extends Request implements ServerRequestInterface {
 	 * potential types MUST be arrays or objects only. A null value indicates
 	 * the absence of body content.
 	 *
-	 * @return null|array|object The deserialized body parameters, if any.
+	 * @return InputData The deserialized body parameters, if any.
 	 *     These will typically be an array or object.
 	 */
-	public function getParsedBody() {
+	public function getParsedBody():InputData {
 		return $this->input->getAll(Input::DATA_BODY);
 	}
 
@@ -206,15 +204,15 @@ class ServerRequest extends Request implements ServerRequestInterface {
 	 * immutability of the message, and MUST return an instance that has the
 	 * updated body parameters.
 	 *
-	 * @param InputDatum[] $inputDatumArray The deserialized body data. This will
+	 * @param InputDatum[] $data The deserialized body data. This will
 	 *     typically be in an array or object.
-	 * @return static
-	 * @throws \InvalidArgumentException if an unsupported argument type is
+	 * @return self
+	 * @throws InvalidArgumentException if an unsupported argument type is
 	 *     provided.
 	 */
-	public function withParsedBody($inputDatumArray):self {
+	public function withParsedBody($data):self {
 		return $this->withInputData(
-			$inputDatumArray,
+			$data,
 			Input::DATA_BODY
 		);
 	}
@@ -228,7 +226,7 @@ class ServerRequest extends Request implements ServerRequestInterface {
 	 * deserializing non-form-encoded message bodies; etc. Attributes
 	 * will be application and request specific, and CAN be mutable.
 	 *
-	 * @return array Attributes derived from the request.
+	 * @return array<string, mixed> Attributes derived from the request.
 	 */
 	public function getAttributes():array {
 		return $this->attributes;
@@ -247,7 +245,6 @@ class ServerRequest extends Request implements ServerRequestInterface {
 	 * @see getAttributes()
 	 * @param string $name The attribute name.
 	 * @param mixed $default Default value to return if the attribute does not exist.
-	 * @return mixed
 	 */
 	public function getAttribute($name, $default = null):?string {
 		return $this->attributes[$name] ?? $default;
@@ -294,6 +291,7 @@ class ServerRequest extends Request implements ServerRequestInterface {
 		return $clone;
 	}
 
+	/** @param array<InputDatum> $inputDatumArray */
 	protected function withInputData(
 		array $inputDatumArray,
 		string $method

@@ -29,7 +29,7 @@ class RequestFactory {
 			$input,
 			$cookieHandler
 		))
-		->withProtocolVersion($serverInfo->getServerProtocolVersion())
+		->withProtocolVersion((string)$serverInfo->getServerProtocolVersion())
 		->withBody($input->getStream());
 
 		return $request;

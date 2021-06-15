@@ -5,12 +5,9 @@ use Gt\Http\Header\Headers;
 use Psr\Http\Message\StreamInterface;
 
 trait Message {
-	/** @var Headers */
-	protected $headers;
-	/** @var string */
-	protected $protocol;
-	/** @var StreamInterface */
-	protected $stream;
+	protected Headers $headers;
+	protected string $protocol;
+	protected StreamInterface $stream;
 
 	/**
 	 * Retrieves the HTTP protocol version as a string.
@@ -107,7 +104,7 @@ trait Message {
 	 *     for that header.
 	 */
 	public function getHeaders():array {
-		return $this->headers->asArray();
+		return $this->headers->asArray(true);
 	}
 
 	/**
@@ -119,7 +116,7 @@ trait Message {
 	 *     no matching header name is found in the message.
 	 */
 	public function hasHeader($name):bool {
-		return $this->headers->has($name);
+		return $this->headers->contains($name);
 	}
 
 	/**
@@ -233,13 +230,14 @@ trait Message {
 	 * @param string $name Case-insensitive header field name to remove.
 	 * @return static
 	 */
-	public function withoutHeader($name) {
+	public function withoutHeader($name):self {
 		$clone = clone $this;
 		$clone->headers->remove($name);
 		return $clone;
 	}
 
-	public function setHeaders(array $headers) {
+	/** @param array<string, string|array<int, string>> $headers */
+	public function setHeaders(array $headers):self {
 		$clone = clone $this;
 		$clone->headers->fromArray($headers);
 		return $clone;
@@ -250,8 +248,8 @@ trait Message {
 	 *
 	 * @return StreamInterface Returns the body as a stream.
 	 */
-	public function getBody() {
-		if(!$this->stream) {
+	public function getBody():StreamInterface {
+		if(!isset($this->stream)) {
 			$this->stream = new Stream("php://memory");
 		}
 		return $this->stream;
@@ -270,13 +268,17 @@ trait Message {
 	 * @return static
 	 * @throws \InvalidArgumentException When the body is not valid.
 	 */
-	public function withBody(StreamInterface $body) {
+	public function withBody(StreamInterface $body):self {
 		$clone = clone $this;
 		$clone->stream = $body;
 		return $clone;
 	}
 
-	private function trimHeaderValues(array $valueArray) {
+	/**
+	 * @param array<string> $valueArray
+	 * @return array<string>
+	 */
+	private function trimHeaderValues(array $valueArray):array {
 		return array_map(function($value) {
 			return trim($value, " \t");
 		}, $valueArray);

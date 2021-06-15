@@ -5,16 +5,17 @@ use Gt\Http\Header\ResponseHeaders;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
 
+/**
+ * @property ResponseHeaders $headers
+ */
 class Response implements ResponseInterface {
 	use Message;
 
-	protected $statusCode;
+	protected ?int $statusCode;
 
 	public function __construct(
 		int $status = null,
-		ResponseHeaders $headers = null,
-		string $body = null,
-		string $version = null
+		ResponseHeaders $headers = null
 	) {
 		$this->statusCode = $status;
 		$this->headers = $headers ?? new ResponseHeaders();
