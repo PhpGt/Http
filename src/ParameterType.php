@@ -8,11 +8,16 @@ use TypeError;
  * before PHP 7's type hints were introduced.
  */
 class ParameterType {
+	/**
+	 * @param string $method
+	 * @param array<mixed> $parameters
+	 * @param array<string> $types Array of type names
+	 */
 	public static function check(
 		string $method,
 		array $parameters,
 		array $types
-	) {
+	):void {
 		foreach($types as $i => $type) {
 			$nullable = false;
 			if($type[0] === "?") {

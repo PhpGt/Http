@@ -4,6 +4,7 @@ namespace Gt\Http;
 use Psr\Http\Message\UriInterface;
 
 class UriFactory {
+	/** @param array<string, int|string> $parts */
 	public static function createFromParts(array $parts):Uri {
 		$uri = new Uri();
 		$uri->applyParts($parts);

@@ -1,7 +1,6 @@
 <?php
 namespace Gt\Http\Test;
 
-use Gt\Http\InvalidAcceptHeaderException;
 use Gt\Http\Request;
 use Gt\Http\Response;
 use Gt\Http\ResponseFactory;

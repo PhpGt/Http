@@ -2,7 +2,7 @@
 namespace Gt\Http\Header;
 
 class Parser {
-	protected $rawHeaders;
+	protected string $rawHeaders;
 
 	public function __construct(string $rawHeaders) {
 		$this->rawHeaders = $rawHeaders;
@@ -13,9 +13,12 @@ class Parser {
 	}
 
 	public function getStatusCode():int {
-		return $this->pregMatchProtocol("code");
+		return (int)$this->pregMatchProtocol("code");
 	}
 
+	/** @return array<string, string> Associative array of key value pairs
+	 * containing each header name and value.
+	 */
 	public function getKeyValues():array {
 		$keyValues = [];
 
@@ -35,7 +38,7 @@ class Parser {
 		return $keyValues;
 	}
 
-	protected function pregMatchProtocol(string $matchName) {
+	protected function pregMatchProtocol(string $matchName):string {
 		$headerLine = strtok($this->rawHeaders, "\n");
 		preg_match(
 			"/HTTP\/(?P<version>[0-9\.]+)\s*(?P<code>\d+)?/",

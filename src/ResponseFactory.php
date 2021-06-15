@@ -1,6 +1,7 @@
 <?php
 namespace Gt\Http;
 
+use Negotiation\Accept;
 use Negotiation\BaseAccept;
 use Negotiation\Exception\InvalidArgument;
 use Negotiation\Negotiator;
@@ -8,9 +9,9 @@ use Psr\Http\Message\RequestInterface;
 
 class ResponseFactory {
 	const DEFAULT_ACCEPT = "text/html";
-	protected static $responseClassLookup = [];
-	/** @var BaseAccept|null */
-	protected static $mediaType;
+	/** @var array<string, string> key=mime type, value=class name */
+	protected static array $responseClassLookup = [];
+	protected static ?BaseAccept $mediaType;
 
 	/**
 	 * A Response object is a PSR-7 compatible object that is created here from the current
@@ -27,10 +28,12 @@ class ResponseFactory {
 			"application/xml;q=0.5",
 		];
 
-		static::$mediaType = $negotiator->getBest(
+		/** @var ?Accept $best */
+		$best = $negotiator->getBest(
 			$acceptHeader,
 			$priorities
 		);
+		static::$mediaType = $best;
 
 		if(static::$mediaType) {
 			$accept = static::$mediaType->getType();

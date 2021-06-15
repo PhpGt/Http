@@ -4,6 +4,9 @@ namespace Gt\Http\Header;
 use Countable;
 use Iterator;
 
+/**
+ * @implements Iterator<int, HeaderLine>
+ */
 class Headers implements Iterator, Countable {
 	const COMMA_HEADERS = [
 // These cookies use commas within the value, so can't be comma separated.
@@ -13,19 +16,33 @@ class Headers implements Iterator, Countable {
 	];
 
 	/** @var HeaderLine[] */
-	protected $headerLines = [];
-	protected $iteratorIndex = 0;
+	protected array $headerLines = [];
+	protected int $iteratorIndex;
 
+	/** @param array<string, string> $headerArray Associative array of
+	 * headers (key = header name, value = header value).
+	 */
 	public function __construct(array $headerArray = []) {
+		$this->iteratorIndex = 0;
 		if(!empty($headerArray)) {
 			$this->fromArray($headerArray);
 		}
 	}
 
-	public function asArray():array {
+	/** @return array<string, string|array<int, string>> Associative array of headers
+	 * (key = header name, value = header value).
+	 */
+	public function asArray(bool $nested = false):array {
 		$array = [];
+
 		foreach($this->headerLines as $header) {
 			$name = $header->getName();
+
+			if($nested) {
+				$array[$name] = $header->getValues();
+				continue;
+			}
+
 			if(in_array(strtolower($name), self::COMMA_HEADERS)) {
 				$array[$name] = $header->getValuesNewlineSeparated();
 			}
@@ -37,6 +54,7 @@ class Headers implements Iterator, Countable {
 		return $array;
 	}
 
+	/** @param array<string, string|array<int, string>> $headerArray */
 	public function fromArray(array $headerArray):void {
 		foreach($headerArray as $key => $value) {
 			if(!is_array($value)) {
@@ -105,6 +123,7 @@ class Headers implements Iterator, Countable {
 		return null;
 	}
 
+	/** @return null|array<int, string> */
 	public function getAll(string $name):?array {
 		foreach($this->headerLines as $i => $line) {
 			if($line->isNamed($name)) {
