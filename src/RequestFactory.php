@@ -4,6 +4,7 @@ namespace Gt\Http;
 use Gt\Cookie\CookieHandler;
 use Gt\Input\Input;
 use Gt\Http\Header\RequestHeaders;
+use Psr\Http\Message\ServerRequestInterface;
 
 class RequestFactory {
 	/**
@@ -17,22 +18,18 @@ class RequestFactory {
 		ServerInfo $serverInfo,
 		Input $input,
 		CookieHandler $cookieHandler
-	):Request {
+	):ServerRequestInterface {
 		$uri = new Uri($serverInfo->getRequestUri());
 		$headers = new RequestHeaders($serverInfo->getHttpHeadersArray());
 
-		$request = (new ServerRequest(
+		return (new ServerRequest(
 			$serverInfo->getRequestMethod(),
 			$uri,
 			$headers,
-			$serverInfo,
-			$input,
-			$cookieHandler
+			$serverInfo->getParams()
 		))
 		->withProtocolVersion((string)$serverInfo->getServerProtocolVersion())
 		->withBody($input->getStream());
-
-		return $request;
 	}
 
 	/**
@@ -40,13 +37,17 @@ class RequestFactory {
 	 * from the current global state (as passed in via the appropriate
 	 * associative arrays).
 	 * @param array<string, string> $server
+	 * @param array<string, array<string, string>> $files
 	 *
 	 * @link http://www.php-fig.org/psr/psr-7/
 	 */
 	public function createServerRequestFromGlobalState(
 		array $server,
+		array $files,
+		array $get,
+		array $post,
 		string $inputPath = "php://input"
-	):Request {
+	):ServerRequestInterface {
 		$method = $server["REQUEST_METHOD"] ?? "";
 		$uri = new Uri($server["REQUEST_URI"] ?? null);
 		$headers = new RequestHeaders();
@@ -58,7 +59,15 @@ class RequestFactory {
 			}
 		}
 
-		$request = new Request($method, $uri, $headers);
+		$request = new ServerRequest(
+			$method,
+			$uri,
+			$headers,
+			$server,
+			$files,
+			$get,
+			$post
+		);
 		$stream = new Stream($inputPath);
 		$request = $request->withBody($stream);
 

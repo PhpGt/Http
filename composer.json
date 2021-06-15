@@ -5,9 +5,7 @@
 
 	"require": {
 		"php": ">=8.0",
-		"phpgt/cookie": "1.*",
 		"phpgt/input": "1.*",
-		"phpgt/propfunc": "^v1.0.1",
 		"psr/http-message": "^1.0.1",
 		"willdurand/negotiation": "3.0.*"
 	},
