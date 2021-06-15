@@ -6,9 +6,10 @@ use Psr\Http\Message\UriInterface;
  * @see http://php.net/manual/en/reserved.variables.server.php
  */
 class ServerInfo {
-	/** @var array */
-	protected $server;
+	/** @var array<string, string> The original _server array */
+	protected array $server;
 
+	/** @param array<string, string> $server */
 	public function __construct(array $server) {
 		$this->server = $server;
 	}
@@ -16,7 +17,8 @@ class ServerInfo {
 // Non-nullable values: ----------------------------------------------------------------------------
 	/**
 	 * HTTP headers are case-insensitive, so headers are transformed to uppercase.
-	 * @see https://www.w3.org/Protocols/rfc2616/rfc2616-sec4.html#sec4.2
+	 * @link https://www.w3.org/Protocols/rfc2616/rfc2616-sec4.html#sec4.2
+	 * @return array<string, string>
 	 */
 	public function getHttpHeadersArray():array {
 		$headers = [];
@@ -62,7 +64,7 @@ class ServerInfo {
 	 * The timestamp of the start of the request, with microsecond precision
 	 */
 	public function getRequestTime():float {
-		return $this->server["REQUEST_TIME_FLOAT"];
+		return (float)$this->server["REQUEST_TIME_FLOAT"];
 	}
 
 	/**
@@ -80,6 +82,7 @@ class ServerInfo {
 
 	/**
 	 * The deserialized query string arguments, if any.
+	 * @return array<string, string>
 	 */
 	public function getQueryParams():array {
 		$params = [];
@@ -90,6 +93,7 @@ class ServerInfo {
 		return $params;
 	}
 
+	/** @param array<string, string> $query */
 	public function withQueryParams(array $query):self {
 		$queryString = http_build_query($query);
 		return $this->withQueryString($queryString);
@@ -278,7 +282,11 @@ class ServerInfo {
 	 * The port being used on the user's machine to communicate with the web server.
 	 */
 	public function getRemotePort():?int {
-		return $this->server["REMOTE_PORT"] ?? null;
+		if($port = $this->server["REMOTE_PORT"] ?? null) {
+			return (int)$port;
+		}
+
+		return null;
 	}
 
 	/**
@@ -307,7 +315,11 @@ class ServerInfo {
 	 * The port on the server machine being used by the web server for communication.
 	 */
 	public function getServerPort():?int {
-		return $this->server["SERVER_PORT"] ?? null;
+		if($port = $this->server["SERVER_PORT"] ?? null) {
+			return (int)$port;
+		}
+
+		return null;
 	}
 
 	/**
@@ -354,6 +366,7 @@ class ServerInfo {
 		return $this->server["REQUEST_SCHEME"] ?? null;
 	}
 
+	/** @return array<string, string> */
 	public function getParams():array {
 		return $this->server;
 	}

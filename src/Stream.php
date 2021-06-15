@@ -7,11 +7,12 @@ class Stream implements StreamInterface {
 	const READABLE_MODES = ["r", "w+", "r+", "x+", "c+", "rb", "w+b", "r+b", "x+b", "c+b", "rt", "w+t", "r+t", "x+t", "c+t", "a+"];
 	const WRITABLE_MODES = ["w", "w+", "rw", "r+", "x+", "c+", "wb", "w+b", "r+b", "x+b", "c+b", "w+t", "r+t", "x+t", "c+t", "a", "a+"];
 
+	/** @var resource */
 	protected $stream;
-	protected $isSeekable;
-	protected $isReadable;
-	protected $isWritable;
-	protected $uri;
+	protected bool $isSeekable;
+	protected bool $isReadable;
+	protected bool $isWritable;
+	protected string $uri;
 
 	public function __construct(string $path = "php://memory", string $mode = "r+") {
 		$this->stream = fopen($path, $mode);

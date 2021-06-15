@@ -8,16 +8,13 @@ use Gt\Http\Header\RequestHeaders;
 class Request implements RequestInterface {
 	use Message;
 
-	/** @var string */
-	protected $method;
-	/** @var Uri */
-	protected $uri;
-	/** @var string */
-	protected $requestTarget;
+	protected string $method;
+	protected UriInterface $uri;
+	protected string $requestTarget;
 
 	public function __construct(
 		string $method,
-		Uri $uri,
+		UriInterface $uri,
 		RequestHeaders $headers
 	) {
 		$this->method = RequestMethod::filterMethodName($method);
@@ -48,8 +45,8 @@ class Request implements RequestInterface {
 	 *
 	 * @return string
 	 */
-	public function getRequestTarget() {
-		if(!is_null($this->requestTarget)) {
+	public function getRequestTarget():string {
+		if(isset($this->requestTarget)) {
 			return $this->requestTarget;
 		}
 

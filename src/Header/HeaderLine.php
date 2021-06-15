@@ -24,9 +24,9 @@ class HeaderLine {
 		}
 	}
 
-	public function addValue(string...$values) {
+	public function addValue(string...$values):void {
 		foreach($values as $v) {
-			$this->values []= $v;
+			array_push($this->values, $v);
 		}
 	}
 
@@ -38,6 +38,7 @@ class HeaderLine {
 		return $this->values[$position] ?? null;
 	}
 
+	/** @return string[] */
 	public function getValues():array {
 		return $this->values;
 	}
