@@ -24,7 +24,7 @@ class ServerInfo {
 		$headers = [];
 
 		foreach($this->server as $key => $value) {
-			if(strpos($key, "HTTP_") !== 0) {
+			if(!str_starts_with($key, "HTTP_")) {
 				continue;
 			}
 
