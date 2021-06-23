@@ -1,18 +1,11 @@
 <?php
 namespace Gt\Http\Test;
 
-use Gt\Cookie\Cookie;
-use Gt\Cookie\CookieHandler;
 use Gt\Http\Header\RequestHeaders;
 use Gt\Http\ServerInfo;
 use Gt\Http\ServerRequest;
 use Gt\Http\Uri;
-use Gt\Input\Input;
-use Gt\Input\InputData\BodyInputData;
 use Gt\Input\InputData\Datum\FileUpload;
-use Gt\Input\InputData\Datum\InputDatum;
-use Gt\Input\InputData\FileUploadInputData;
-use Gt\Input\InputData\InputData;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -28,7 +21,8 @@ class ServerRequestTest extends TestCase {
 			[],
 			$serverParams
 		);
-		self::assertEquals($serverParams, $sut->getServerParams());
+		self::assertEquals("VALUE1", $sut->getServerParams()["KEY1"]);
+		self::assertEquals("VALUE2", $sut->getServerParams()["KEY2"]);
 	}
 
 	public function testGetCookieParams() {
@@ -128,7 +122,7 @@ class ServerRequestTest extends TestCase {
 					],
 					"file2" => [
 						"name" => "image.jpg",
-					],
+					]
 				]
 			]
 		);
@@ -161,7 +155,6 @@ class ServerRequestTest extends TestCase {
 			[],
 			[],
 			[
-				"files" => [],
 			]
 		);
 		self::assertEmpty($sutEmpty->getUploadedFiles());
@@ -198,23 +191,17 @@ class ServerRequestTest extends TestCase {
 			]
 		);
 
-		/** @var InputData $inputData */
-		$inputData = $sut->getParsedBody();
-		self::assertInstanceOf(InputData::class, $inputData);
-		self::assertCount(2, $inputData->asArray());
+		$body = $sut->getParsedBody();
+		self::assertCount(2, $body);
 	}
 
 	public function testWithParsedBody() {
 		$sut = self::getServerRequest();
-		$inputData = $sut->getParsedBody();
-		self::assertEmpty($inputData->asArray());
+		$body = $sut->getParsedBody();
+		self::assertEmpty($body);
 
-		$inputDatumArray = [];
-		$inputDatumArray []= self::createMock(InputDatum::class);
-		$inputDatumArray []= self::createMock(InputDatum::class);
-
-		$sut = $sut->withParsedBody($inputDatumArray);
-		self::assertCount(2, $sut->getParsedBody()->asArray());
+		$sut = $sut->withParsedBody(["one" => "1", "two" => "2"]);
+		self::assertCount(2, $sut->getParsedBody());
 	}
 
 	public function testGetAttributesEmpty() {
@@ -261,30 +248,32 @@ class ServerRequestTest extends TestCase {
 		string $uri = null,
 		array $headerArray = [],
 		array $serverArray = [],
-		array $inputArray = [],
+		array $globalsArray = [],
 		array $cookieArray = []
 	):ServerRequest {
 		$method = $method ?? "GET";
 		$uri = self::getMockUri($uri ?? "/");
 		$headers = self::getMockHeaders($headerArray);
-		$serverInfo = self::getMockServerInfo($serverArray);
-		$input = self::getMockInput(
-			$inputArray["get"] ?? [],
-			$inputArray["post"] ?? [],
-			$inputArray["files"] ?? []
-		);
-		$cookieHandler = self::getMockCookieHandler($cookieArray);
 
-		$sut = new ServerRequest(
+		$serverArray["HTTP_COOKIE"] = http_build_query(
+			$cookieArray,
+			'',
+			'; ',
+			PHP_QUERY_RFC3986
+		);
+
+		/** @var MockObject|ServerInfo $serverInfo */
+		$serverInfo = self::getMockServerInfo($serverArray);
+
+		return new ServerRequest(
 			$method,
 			$uri,
 			$headers,
-			$serverInfo,
-			$input,
-			$cookieHandler
+			$serverInfo->getParams(),
+			$globalsArray["files"] ?? [],
+			$globalsArray["get"] ?? [],
+			$globalsArray["post"] ?? [],
 		);
-
-		return $sut;
 	}
 
 	/** @return MockObject|Uri */
