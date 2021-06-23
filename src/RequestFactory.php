@@ -1,7 +1,6 @@
 <?php
 namespace Gt\Http;
 
-use Gt\Cookie\CookieHandler;
 use Gt\Input\Input;
 use Gt\Http\Header\RequestHeaders;
 use Psr\Http\Message\ServerRequestInterface;
@@ -16,8 +15,7 @@ class RequestFactory {
 	 */
 	public function createServerRequest(
 		ServerInfo $serverInfo,
-		Input $input,
-		CookieHandler $cookieHandler
+		Input $input
 	):ServerRequestInterface {
 		$uri = new Uri($serverInfo->getRequestUri());
 		$headers = new RequestHeaders($serverInfo->getHttpHeadersArray());
