@@ -10,7 +10,7 @@ use Gt\Http\StatusCode;
  * modifications at any later time."
  * @linkhttps://httpstatuses.com/408
  */
-class HttpRequestTimeout extends AbstractClientErrorException {
+class HttpRequestTimeout extends ClientErrorException {
 	public function getHttpCode():int {
 		return StatusCode::REQUEST_TIME_OUT;
 	}

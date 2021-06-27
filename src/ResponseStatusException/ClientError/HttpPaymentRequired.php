@@ -15,7 +15,7 @@ use Gt\Http\StatusCode;
  * parameters were correct, for example blocked fraudulent payments.
  * @linkhttps://httpstatuses.com/402
  */
-class HttpPaymentRequired extends AbstractClientErrorException {
+class HttpPaymentRequired extends ClientErrorException {
 	public function getHttpCode():int {
 		return StatusCode::PAYMENT_REQUIRED;
 	}

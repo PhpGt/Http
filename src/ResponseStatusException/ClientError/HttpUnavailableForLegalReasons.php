@@ -9,7 +9,7 @@ use Gt\Http\StatusCode;
  * was chosen as a reference to the novel Fahrenheit 451.
  * @link https://httpstatuses.com/451
  */
-class HttpUnavailableForLegalReasons extends AbstractClientErrorException {
+class HttpUnavailableForLegalReasons extends ClientErrorException {
 	public function getHttpCode():int {
 		return StatusCode::UNAVAILABLE_FOR_LEGAL_REASONS;
 	}

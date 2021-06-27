@@ -8,7 +8,7 @@ use Gt\Http\StatusCode;
  * response from the upstream server.
  * @link https://httpstatuses.com/504
  */
-class HttpGatewayTimeout extends AbstractServerErrorException {
+class HttpGatewayTimeout extends ServerErrorException {
 	public function getHttpCode():int {
 		return StatusCode::GATEWAY_TIMEOUT;
 	}

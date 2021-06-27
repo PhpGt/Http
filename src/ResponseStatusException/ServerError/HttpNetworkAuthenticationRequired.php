@@ -10,7 +10,7 @@ use Gt\Http\StatusCode;
  * Internet access via a Wi-Fi hotspot).
  * @link https://httpstatuses.com/511
  */
-class HttpNetworkAuthenticationRequired extends AbstractServerErrorException {
+class HttpNetworkAuthenticationRequired extends ServerErrorException {
 	public function getHttpCode():int {
 		return StatusCode::NETWORK_AUTHENTICATION_REQUIRED;
 	}

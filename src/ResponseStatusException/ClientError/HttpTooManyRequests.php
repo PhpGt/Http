@@ -8,7 +8,7 @@ use Gt\Http\StatusCode;
  * for use with rate-limiting schemes.
  * @link https://httpstatuses.com/429
  */
-class HttpTooManyRequests extends AbstractClientErrorException {
+class HttpTooManyRequests extends ClientErrorException {
 	public function getHttpCode():int {
 		return StatusCode::TOO_MANY_REQUESTS;
 	}

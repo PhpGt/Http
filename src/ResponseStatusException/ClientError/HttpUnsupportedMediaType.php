@@ -9,7 +9,7 @@ use Gt\Http\StatusCode;
  * server requires that images use a different format.
  * @link https://httpstatuses.com/415
  */
-class HttpUnsupportedMediaType extends AbstractClientErrorException {
+class HttpUnsupportedMediaType extends ClientErrorException {
 	public function getHttpCode():int {
 		return StatusCode::UNSUPPORTED_MEDIA_TYPE;
 	}

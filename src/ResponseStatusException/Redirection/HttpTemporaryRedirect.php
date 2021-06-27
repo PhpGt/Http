@@ -11,7 +11,7 @@ use Gt\Http\StatusCode;
  * repeated using another POST request.
  * @link https://httpstatuses.com/307
  */
-class HttpTemporaryRedirect extends AbstractRedirectionException {
+class HttpTemporaryRedirect extends RedirectionException {
 	public function getHttpCode():int {
 		return StatusCode::TEMPORARY_REDIRECT;
 	}

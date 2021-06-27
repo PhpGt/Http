@@ -8,7 +8,7 @@ use Gt\Http\StatusCode;
  * the Upgrade header field.
  * @link https://httpstatuses.com/426
  */
-class HttpUpgradeRequired extends AbstractClientErrorException {
+class HttpUpgradeRequired extends ClientErrorException {
 	public function getHttpCode():int {
 		return StatusCode::UPGRADE_REQUIRED;
 	}

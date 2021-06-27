@@ -8,7 +8,7 @@ use Gt\Http\StatusCode;
  * errors.
  * @link https://httpstatuses.com/422
  */
-class HttpUnprocessableEntity extends AbstractClientErrorException {
+class HttpUnprocessableEntity extends ClientErrorException {
 	public function getHttpCode():int {
 		return StatusCode::UNPROCESSABLE_ENTITY;
 	}

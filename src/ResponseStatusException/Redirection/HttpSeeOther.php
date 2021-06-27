@@ -10,7 +10,7 @@ use Gt\Http\StatusCode;
  * GET request to the given URI.
  * @link https://httpstatuses.com/303
  */
-class HttpSeeOther extends AbstractRedirectionException {
+class HttpSeeOther extends RedirectionException {
 	public function getHttpCode():int {
 		return StatusCode::SEE_OTHER;
 	}

@@ -13,7 +13,7 @@ use Gt\Http\StatusCode;
  * accept that authentication. The request should not be repeated.
  * @link https://httpstatuses.com/403
  */
-class HttpForbidden extends AbstractResponseStatusException {
+class HttpForbidden extends ResponseStatusException {
 	public function getHttpCode():int {
 		return StatusCode::FORBIDDEN;
 	}

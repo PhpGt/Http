@@ -8,7 +8,7 @@ use Gt\Http\StatusCode;
  * and no more specific message is suitable.
  * @link https://httpstatuses.com/500
  */
-class HttpInternalServerError extends AbstractServerErrorException {
+class HttpInternalServerError extends ServerErrorException {
 	public function getHttpCode():int {
 		return StatusCode::INTERNAL_SERVER_ERROR;
 	}

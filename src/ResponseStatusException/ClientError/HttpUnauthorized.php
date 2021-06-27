@@ -15,7 +15,7 @@ use Gt\Http\StatusCode;
  * refused permission to access a website.
  * @link https://httpstatuses.com/401
  */
-class HttpUnauthorized extends AbstractClientErrorException {
+class HttpUnauthorized extends ClientErrorException {
 	public function getHttpCode():int {
 		return StatusCode::UNAUTHORIZED;
 	}

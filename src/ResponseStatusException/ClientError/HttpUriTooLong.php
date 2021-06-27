@@ -10,7 +10,7 @@ use Gt\Http\StatusCode;
  * Called "Request-URI Too Long" previously.
  * @link https://httpstatuses.com/414
  */
-class HttpUriTooLong extends AbstractClientErrorException {
+class HttpUriTooLong extends ClientErrorException {
 	public function getHttpCode():int {
 		return StatusCode::REQUEST_URI_TOO_LONG;
 	}

@@ -8,7 +8,7 @@ use Gt\Http\StatusCode;
  * from the upstream server.
  * @link https://httpstatuses.com/502
  */
-class HttpBadGateway extends AbstractResponseStatusException {
+class HttpBadGateway extends ResponseStatusException {
 	public function getHttpCode():int {
 		return StatusCode::BAD_GATEWAY;
 	}
