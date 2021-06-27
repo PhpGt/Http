@@ -8,7 +8,7 @@ use Gt\Http\StatusCode;
  * might be replayed.
  * @link https://tools.ietf.org/html/rfc8470
  */
-class HttpTooEarly extends AbstractClientErrorException {
+class HttpTooEarly extends ClientErrorException {
 	public function getHttpCode():int {
 		return StatusCode::TOO_EARLY;
 	}

@@ -9,7 +9,7 @@ use Gt\Http\StatusCode;
  * (e.g., a new feature of a web-service API).
  * @link https://httpstatuses.com/501
  */
-class HttpNotImplemented extends AbstractServerErrorException {
+class HttpNotImplemented extends ServerErrorException {
 	public function getHttpCode():int {
 		return StatusCode::NOT_IMPLEMENTED;
 	}

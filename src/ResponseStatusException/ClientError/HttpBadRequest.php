@@ -9,7 +9,7 @@ use Gt\Http\StatusCode;
  * message framing, or deceptive request routing).
  * @link https://httpstatuses.com/400
  */
-class HttpBadRequest extends AbstractResponseStatusException {
+class HttpBadRequest extends ResponseStatusException {
 	public function getHttpCode():int {
 		return StatusCode::BAD_REQUEST;
 	}

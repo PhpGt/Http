@@ -8,7 +8,7 @@ use Gt\Http\StatusCode;
  * request.
  * @link https://httpstatuses.com/507
  */
-class HttpInsufficientStorage extends AbstractServerErrorException {
+class HttpInsufficientStorage extends ServerErrorException {
 	public function getHttpCode():int {
 		return StatusCode::INSUFFICIENT_STORAGE;
 	}

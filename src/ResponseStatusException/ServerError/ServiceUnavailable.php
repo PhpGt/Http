@@ -8,7 +8,7 @@ use Gt\Http\StatusCode;
  * maintenance). Generally, this is a temporary state.
  * @link https://httpstatuses.com/503
  */
-class ServiceUnavailable extends AbstractServerErrorException {
+class ServiceUnavailable extends ServerErrorException {
 	public function getHttpCode():int {
 		return StatusCode::SERVICE_UNAVAILABLE;
 	}

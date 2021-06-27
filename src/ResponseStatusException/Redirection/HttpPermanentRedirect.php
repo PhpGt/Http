@@ -10,7 +10,7 @@ use Gt\Http\StatusCode;
  * redirected resource may continue smoothly.
  * @link https://httpstatuses.com/308
  */
-class HttpPermanentRedirect extends AbstractRedirectionException {
+class HttpPermanentRedirect extends RedirectionException {
 	public function getHttpCode():int {
 		return StatusCode::PERMANENT_REDIRECT;
 	}

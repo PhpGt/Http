@@ -3,7 +3,7 @@ namespace Gt\Http\ResponseStatusException;
 
 use Gt\Http\HttpException;
 
-abstract class AbstractResponseStatusException extends HttpException {
+abstract class ResponseStatusException extends HttpException {
 	public function __construct(string $message = "") {
 		parent::__construct(
 			$message,

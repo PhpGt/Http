@@ -10,7 +10,7 @@ use Gt\Http\StatusCode;
  * filename extensions, or to suggest word-sense disambiguation.
  * @link https://httpstatuses.com/300
  */
-class HttpMultipleChoices extends AbstractRedirectionException {
+class HttpMultipleChoices extends RedirectionException {
 	public function getHttpCode():int {
 		return StatusCode::MULTIPLE_CHOICES;
 	}

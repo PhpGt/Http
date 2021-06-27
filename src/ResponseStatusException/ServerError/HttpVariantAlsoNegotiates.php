@@ -8,7 +8,7 @@ use Gt\Http\StatusCode;
  * reference.
  * @link https://httpstatuses.com/506
  */
-class HttpVariantAlsoNegotiates extends AbstractServerErrorException {
+class HttpVariantAlsoNegotiates extends ServerErrorException {
 	public function getHttpCode():int {
 		return StatusCode::VARIANT_ALSO_NEGOTIATES;
 	}

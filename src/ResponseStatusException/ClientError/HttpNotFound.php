@@ -8,7 +8,7 @@ use Gt\Http\StatusCode;
  * Subsequent requests by the client are permissible.
  * @link https://httpstatuses.com/404
  */
-class HttpNotFound extends AbstractClientErrorException {
+class HttpNotFound extends ClientErrorException {
 	public function getHttpCode():int {
 		return StatusCode::NOT_FOUND;
 	}

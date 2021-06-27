@@ -10,7 +10,7 @@ use Gt\Http\StatusCode;
  * previously-downloaded copy.
  * @link https://httpstatuses.com/304
  */
-class HttpNotModified extends AbstractRedirectionException {
+class HttpNotModified extends RedirectionException {
 	public function getHttpCode():int {
 		return StatusCode::NOT_MODIFIED;
 	}

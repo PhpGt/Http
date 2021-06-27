@@ -14,7 +14,7 @@ use Gt\Http\StatusCode;
  * applications and frameworks use the 302 status code as if it were the 303.
  * @link https://httpstatuses.com/302
  */
-class HttpFound extends AbstractRedirectionException {
+class HttpFound extends RedirectionException {
 	public function getHttpCode():int {
 		return StatusCode::FOUND;
 	}
