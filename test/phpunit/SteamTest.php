@@ -3,6 +3,7 @@ namespace Gt\Http\Test;
 
 use Gt\Http\Stream;
 use Gt\Http\StreamException;
+use Gt\Http\StreamNotOpenableException;
 use PHPUnit\Framework\TestCase;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
@@ -170,5 +171,10 @@ class SteamTest extends TestCase {
 		$stream->read(12345);
 		$eof = $stream->getMetadata("eof");
 		self::assertTrue($eof);
+	}
+
+	public function testNotOpenable() {
+		self::expectException(StreamNotOpenableException::class);
+		new Stream("http://example.com");
 	}
 }

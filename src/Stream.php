@@ -1,6 +1,7 @@
 <?php
 namespace Gt\Http;
 
+use Exception;
 use Psr\Http\Message\StreamInterface;
 
 class Stream implements StreamInterface {
@@ -15,7 +16,17 @@ class Stream implements StreamInterface {
 	protected string $uri;
 
 	public function __construct(string $path = "php://memory", string $mode = "r+") {
-		$this->stream = fopen($path, $mode);
+		try {
+			$this->stream = fopen($path, $mode);
+		}
+		catch(Exception) {
+			$this->stream = false;
+		}
+
+		if($this->stream === false) {
+			throw new StreamNotOpenableException();
+		}
+
 		$streamInfo = stream_get_meta_data($this->stream);
 		$this->isSeekable = $streamInfo["seekable"];
 		$this->uri = $streamInfo["uri"];
