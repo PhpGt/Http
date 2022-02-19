@@ -79,10 +79,10 @@ class Stream implements StreamInterface {
 	}
 
 	/**
-	 * @return resource The file handle opened by fopen
+	 * @return resource|null The file handle opened by fopen
 	 */
 	public function getFileHandle() {
-		return $this->stream;
+		return $this->stream ?? null;
 	}
 
 	/**
