@@ -8,7 +8,7 @@ class Stream implements StreamInterface {
 	const READABLE_MODES = ["r", "w+", "r+", "x+", "c+", "rb", "w+b", "r+b", "x+b", "c+b", "rt", "w+t", "r+t", "x+t", "c+t", "a+"];
 	const WRITABLE_MODES = ["w", "w+", "rw", "r+", "x+", "c+", "wb", "w+b", "r+b", "x+b", "c+b", "w+t", "r+t", "x+t", "c+t", "a", "a+"];
 
-	/** @var resource */
+	/** @var resource|null */
 	protected $stream;
 	protected bool $isSeekable;
 	protected bool $isReadable;
