@@ -8,7 +8,7 @@ class Stream implements StreamInterface {
 	const READABLE_MODES = ["r", "w+", "r+", "x+", "c+", "rb", "w+b", "r+b", "x+b", "c+b", "rt", "w+t", "r+t", "x+t", "c+t", "a+"];
 	const WRITABLE_MODES = ["w", "w+", "rw", "r+", "x+", "c+", "wb", "w+b", "r+b", "x+b", "c+b", "w+t", "r+t", "x+t", "c+t", "a", "a+"];
 
-	/** @var resource|bool|null */
+	/** @var resource */
 	protected $stream;
 	protected bool $isSeekable;
 	protected bool $isReadable;
@@ -17,15 +17,16 @@ class Stream implements StreamInterface {
 
 	public function __construct(string $path = "php://memory", string $mode = "r+") {
 		try {
-			$this->stream = fopen($path, $mode);
+			$stream = fopen($path, $mode);
 		}
 		catch(Exception) {
-			$this->stream = false;
+			$stream = false;
 		}
 
-		if($this->stream === false) {
+		if($stream === false) {
 			throw new StreamNotOpenableException();
 		}
+		$this->stream = $stream;
 
 		$streamInfo = stream_get_meta_data($this->stream);
 		$this->isSeekable = $streamInfo["seekable"];
@@ -81,9 +82,7 @@ class Stream implements StreamInterface {
 	 * @return resource The file handle opened by fopen
 	 */
 	public function getFileHandle() {
-		/** @noinspection PhpUnnecessaryLocalVariableInspection */
-		$stream = $this->stream;
-		return $stream;
+		return $this->stream;
 	}
 
 	/**
@@ -176,7 +175,7 @@ class Stream implements StreamInterface {
 			throw new StreamException("Stream is not writable");
 		}
 
-		return fwrite($this->stream, $string);
+		return fwrite($this->stream, $string) ?: 0;
 	}
 
 	/**
@@ -207,7 +206,7 @@ class Stream implements StreamInterface {
 			throw new StreamException("Stream read length must be positive");
 		}
 
-		return fread($this->stream, $length);
+		return fread($this->stream, $length) ?: "";
 	}
 
 	/**
@@ -228,7 +227,7 @@ class Stream implements StreamInterface {
 		$string = stream_get_contents($this->stream);
 		$this->seek($position);
 
-		return $string;
+		return $string ?: "";
 	}
 
 	/**

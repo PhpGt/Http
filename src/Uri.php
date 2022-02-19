@@ -83,18 +83,18 @@ class Uri implements UriInterface {
 
 	/** @param array<string, int|string> $parts */
 	public function applyParts(array $parts):void {
-		$this->scheme = $this->filterScheme($parts["scheme"] ?? "");
+		$this->scheme = $this->filterScheme((string)($parts["scheme"] ?? ""));
 
 		$this->userInfo = $this->filterUserInfo(
-			$parts["user"] ?? "",
-			$parts["pass"] ?? ""
+			(string)($parts["user"] ?? ""),
+			(string)($parts["pass"] ?? ""),
 		);
 
-		$this->host = $this->filterHost($parts["host"] ?? "");
-		$this->port = $this->filterPort($parts["port"] ?? null);
-		$this->path = $this->filterPath($parts["path"] ?? "");
-		$this->query = $this->filterQueryAndFragment($parts["query"] ?? "");
-		$this->fragment = $this->filterQueryAndFragment($parts["fragment"] ?? "");
+		$this->host = $this->filterHost((string)($parts["host"] ?? ""));
+		$this->port = $this->filterPort(isset($parts["port"]) ? (int)$parts["port"] : null);
+		$this->path = $this->filterPath((string)($parts["path"] ?? ""));
+		$this->query = $this->filterQueryAndFragment((string)($parts["query"] ?? ""));
+		$this->fragment = $this->filterQueryAndFragment((string)($parts["fragment"] ?? ""));
 		$this->setDefaults();
 	}
 
