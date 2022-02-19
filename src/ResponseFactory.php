@@ -45,7 +45,11 @@ class ResponseFactory {
 		if(!isset(static::$responseClassLookup[$accept])) {
 			throw new UnknownAcceptHeaderException($accept);
 		}
-		return new static::$responseClassLookup[$accept];
+
+		/** @var Response $response */
+		/** @noinspection PhpUnnecessaryLocalVariableInspection */
+		$response = new static::$responseClassLookup[$accept];
+		return $response;
 	}
 
 	/**

@@ -8,6 +8,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UploadedFileInterface;
 
 class ServerRequest extends Request implements ServerRequestInterface {
+	/** @var array<string, string> */
 	protected array $serverData;
 	/** @var array<string, mixed> */
 	protected array $attributes;
@@ -21,6 +22,8 @@ class ServerRequest extends Request implements ServerRequestInterface {
 	/**
 	 * @param array<string, string> $serverData From the _SERVER superglobal
 	 * @param array<string, array<string, int|string>> $files From the _FILES superglobal
+	 * @param array<string, string> $get From the _GET superglobal
+	 * @param array<string, string> $post From the _POST superglobal
 	 */
 	public function __construct(
 		string $method,
@@ -163,10 +166,10 @@ class ServerRequest extends Request implements ServerRequestInterface {
 
 		foreach($this->files as $name => $data) {
 			$uploadFileArray[$name] = new FileUpload(
-				$data["name"],
-				$data["type"] ?? "",
-				$data["size"] ?? 0,
-				$data["tmp_name"] ?? "",
+				(string)$data["name"],
+				(string)($data["type"] ?? ""),
+				(int)($data["size"] ?? 0),
+				(string)($data["tmp_name"] ?? ""),
 			);
 		}
 
@@ -212,7 +215,7 @@ class ServerRequest extends Request implements ServerRequestInterface {
 	 * potential types MUST be arrays or objects only. A null value indicates
 	 * the absence of body content.
 	 *
-	 * @return null|array|object The deserialized body parameters, if any.
+	 * @return null|array<string, string>|object The deserialized body parameters, if any.
 	 *     These will typically be an array or object.
 	 */
 	public function getParsedBody():array|object|null {
@@ -241,8 +244,8 @@ class ServerRequest extends Request implements ServerRequestInterface {
 	 * immutability of the message, and MUST return an instance that has the
 	 * updated body parameters.
 	 *
-	 * @param null|array|object $data The deserialized body data. This will
-	 *     typically be in an array or object.
+	 * @param null|array<string, string>|object $data The deserialized body
+	 * data. This will typically be in an array or object.
 	 * @return static
 	 * @throws \InvalidArgumentException if an unsupported argument type is
 	 *     provided.

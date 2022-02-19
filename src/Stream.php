@@ -8,7 +8,7 @@ class Stream implements StreamInterface {
 	const READABLE_MODES = ["r", "w+", "r+", "x+", "c+", "rb", "w+b", "r+b", "x+b", "c+b", "rt", "w+t", "r+t", "x+t", "c+t", "a+"];
 	const WRITABLE_MODES = ["w", "w+", "rw", "r+", "x+", "c+", "wb", "w+b", "r+b", "x+b", "c+b", "w+t", "r+t", "x+t", "c+t", "a", "a+"];
 
-	/** @var resource */
+	/** @var resource|bool|null */
 	protected $stream;
 	protected bool $isSeekable;
 	protected bool $isReadable;
@@ -58,7 +58,9 @@ class Stream implements StreamInterface {
 	 * @return void
 	 */
 	public function close() {
-		fclose($this->stream);
+		if(is_resource($this->stream)) {
+			fclose($this->stream);
+		}
 	}
 
 	/**
@@ -69,16 +71,19 @@ class Stream implements StreamInterface {
 	 * @return resource|null Underlying PHP stream, if any
 	 */
 	public function detach() {
+		/** @var resource|null $stream */
 		$stream = $this->stream;
 		unset($this->stream);
 		return $stream;
 	}
 
 	/**
-	 * @return resource|null The file handle opened by fopen
+	 * @return resource The file handle opened by fopen
 	 */
 	public function getFileHandle() {
-		return $this->stream ?? null;
+		/** @noinspection PhpUnnecessaryLocalVariableInspection */
+		$stream = $this->stream;
+		return $stream;
 	}
 
 	/**
@@ -97,7 +102,7 @@ class Stream implements StreamInterface {
 	 * @throws \RuntimeException on error.
 	 */
 	public function tell():int {
-		return ftell($this->stream);
+		return ftell($this->stream) ?: 0;
 	}
 
 	/**
