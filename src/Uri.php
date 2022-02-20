@@ -1,6 +1,7 @@
-<?php
+<?php /** @noinspection RegExpRedundantEscape */
 namespace Gt\Http;
 
+use InvalidArgumentException;
 use Psr\Http\Message\UriInterface;
 
 class Uri implements UriInterface {
@@ -8,20 +9,13 @@ class Uri implements UriInterface {
 	const CHAR_UNRESERVED = 'a-zA-Z0-9_\-\.~';
 	const CHAR_SUBDELIMS = '!\$&\'\(\)\*\+,;=';
 
-	/** @var string */
-	protected $scheme;
-	/** @var string */
-	protected $userInfo;
-	/** @var string */
-	protected $host;
-	/** @var string */
-	protected $port;
-	/** @var string */
-	protected $path;
-	/** @var string */
-	protected $query;
-	/** @var string */
-	protected $fragment;
+	protected string $scheme;
+	protected string $userInfo;
+	protected string $host;
+	protected ?string $port;
+	protected string $path;
+	protected string $query;
+	protected string $fragment;
 
 	public function __construct(string $uri = null) {
 		if(is_null($uri)) {
@@ -72,16 +66,16 @@ class Uri implements UriInterface {
 			$uri .= $this->getAuthority();
 		}
 
-		$uri .= $this->path;
+		$uri .= $this->getPath();
 
-		if(strlen($this->query) > 0) {
+		if(strlen($this->getQuery()) > 0) {
 			$uri .= "?";
-			$uri .= $this->query;
+			$uri .= $this->getQuery();
 		}
 
-		if(strlen($this->fragment) > 0) {
+		if(strlen($this->getFragment()) > 0) {
 			$uri .= "#";
-			$uri .= $this->fragment;
+			$uri .= $this->getFragment();
 		}
 
 		return $uri;
@@ -89,18 +83,18 @@ class Uri implements UriInterface {
 
 	/** @param array<string, int|string> $parts */
 	public function applyParts(array $parts):void {
-		$this->scheme = $this->filterScheme($parts["scheme"] ?? "");
+		$this->scheme = $this->filterScheme((string)($parts["scheme"] ?? ""));
 
 		$this->userInfo = $this->filterUserInfo(
-			$parts["user"] ?? "",
-			$parts["pass"] ?? ""
+			(string)($parts["user"] ?? ""),
+			(string)($parts["pass"] ?? ""),
 		);
 
-		$this->host = $this->filterHost($parts["host"] ?? "");
-		$this->port = $this->filterPort($parts["port"] ?? null);
-		$this->path = $this->filterPath($parts["path"] ?? "");
-		$this->query = $this->filterQueryAndFragment($parts["query"] ?? "");
-		$this->fragment = $this->filterQueryAndFragment($parts["fragment"] ?? "");
+		$this->host = $this->filterHost((string)($parts["host"] ?? ""));
+		$this->port = $this->filterPort(isset($parts["port"]) ? (int)$parts["port"] : null);
+		$this->path = $this->filterPath((string)($parts["path"] ?? ""));
+		$this->query = $this->filterQueryAndFragment((string)($parts["query"] ?? ""));
+		$this->fragment = $this->filterQueryAndFragment((string)($parts["fragment"] ?? ""));
 		$this->setDefaults();
 	}
 
@@ -125,6 +119,8 @@ class Uri implements UriInterface {
 	}
 
 	protected function filterPath(string $path):string {
+		/** @noinspection RegExpUnnecessaryNonCapturingGroup */
+		/** @noinspection RegExpDuplicateCharacterInClass */
 		return preg_replace_callback(
 			'/(?:[^'
 			. self::CHAR_UNRESERVED
@@ -136,6 +132,8 @@ class Uri implements UriInterface {
 	}
 
 	protected function filterQueryAndFragment(string $query):string {
+		/** @noinspection RegExpUnnecessaryNonCapturingGroup */
+		/** @noinspection RegExpDuplicateCharacterInClass */
 		return preg_replace_callback(
 			'/(?:[^'
 				. self::CHAR_UNRESERVED
@@ -201,8 +199,8 @@ class Uri implements UriInterface {
 	public function getAuthority():string {
 		$authority = "";
 
-		if(strlen($this->userInfo) > 0) {
-			$authority .= $this->userInfo;
+		if(strlen($this->getUserInfo()) > 0) {
+			$authority .= $this->getUserInfo();
 			$authority .= "@";
 		}
 
@@ -210,7 +208,7 @@ class Uri implements UriInterface {
 
 		if(!$this->isDefaultPort()) {
 			$authority .= ":";
-			$authority .= $this->port;
+			$authority .= $this->getPort();
 		}
 
 		return $authority;
@@ -359,14 +357,14 @@ class Uri implements UriInterface {
 	 *
 	 * @param string $scheme The scheme to use with the new instance.
 	 * @return static A new instance with the specified scheme.
-	 * @throws \InvalidArgumentException for invalid or unsupported schemes.
+	 * @throws InvalidArgumentException for invalid or unsupported schemes.
 	 */
 	public function withScheme($scheme):self {
 		ParameterType::check(__METHOD__, func_get_args(), ["string"]);
 		$scheme = $this->filterScheme($scheme);
 
 		$clone = clone $this;
-		$clone->scheme = $this->filterScheme($scheme ?? "");
+		$clone->scheme = $this->filterScheme($scheme);
 		$clone->setDefaults();
 		return $clone;
 	}
@@ -381,7 +379,7 @@ class Uri implements UriInterface {
 	 * user; an empty string for the user is equivalent to removing user
 	 * information.
 	 *
-	 * @param string $user The user name to use for authority.
+	 * @param string $user The username to use for authority.
 	 * @param null|string $password The password associated with $user.
 	 * @return static A new instance with the specified user information.
 	 */
@@ -390,7 +388,7 @@ class Uri implements UriInterface {
 		$userInfo = $this->filterUserInfo($user, $password);
 
 		$clone = clone $this;
-		$clone->userInfo = $this->filterUserInfo($userInfo ?? "");
+		$clone->userInfo = $this->filterUserInfo($userInfo);
 		$clone->setDefaults();
 		return $clone;
 	}
@@ -405,14 +403,14 @@ class Uri implements UriInterface {
 	 *
 	 * @param string $host The hostname to use with the new instance.
 	 * @return static A new instance with the specified host.
-	 * @throws \InvalidArgumentException for invalid hostnames.
+	 * @throws InvalidArgumentException for invalid hostnames.
 	 */
 	public function withHost($host):self {
 		ParameterType::check(__METHOD__, func_get_args(), ["string"]);
 		$host = $this->filterHost($host);
 
 		$clone = clone $this;
-		$clone->host = $this->filterHost($host ?? "");
+		$clone->host = $this->filterHost($host);
 		$clone->setDefaults();
 		return $clone;
 	}
@@ -432,7 +430,7 @@ class Uri implements UriInterface {
 	 * @param null|int $port The port to use with the new instance; a null value
 	 *     removes the port information.
 	 * @return static A new instance with the specified port.
-	 * @throws \InvalidArgumentException for invalid ports.
+	 * @throws InvalidArgumentException for invalid ports.
 	 */
 	public function withPort($port):self {
 		ParameterType::check(__METHOD__, func_get_args(), ["?integer"]);
@@ -464,13 +462,13 @@ class Uri implements UriInterface {
 	 *
 	 * @param string $path The path to use with the new instance.
 	 * @return static A new instance with the specified path.
-	 * @throws \InvalidArgumentException for invalid paths.
+	 * @throws InvalidArgumentException for invalid paths.
 	 */
 	public function withPath($path):self {
 		ParameterType::check(__METHOD__, func_get_args(), ["string"]);
 
 		$clone = clone $this;
-		$clone->path = $this->filterPath($path ?? "");
+		$clone->path = $this->filterPath($path);
 		$clone->setDefaults();
 		return $clone;
 	}
@@ -488,13 +486,13 @@ class Uri implements UriInterface {
 	 *
 	 * @param string $query The query string to use with the new instance.
 	 * @return static A new instance with the specified query string.
-	 * @throws \InvalidArgumentException for invalid query strings.
+	 * @throws InvalidArgumentException for invalid query strings.
 	 */
 	public function withQuery($query):self {
 		ParameterType::check(__METHOD__, func_get_args(), ["string"]);
 
 		$clone = clone $this;
-		$clone->query = $this->filterQueryAndFragment($query ?? "");
+		$clone->query = $this->filterQueryAndFragment($query);
 		$clone->setDefaults();
 		return $clone;
 	}
@@ -524,7 +522,8 @@ class Uri implements UriInterface {
 // (while preventing double-encoding) before setting the query string. All other
 // chars that need percent-encoding will be encoded by withQuery().
 
-// This function is taken from Guzzle's Uri implementation, just to get tests to pass.
+// This function is taken from Guzzle's Uri implementation, just to get tests
+// to pass.
 // It must be refactored before v1 release, as it has a major bug as shown here:
 		$key = strtr($key, $replaceQuery);
 		if ($value !== null) {
@@ -572,14 +571,14 @@ class Uri implements UriInterface {
 		ParameterType::check(__METHOD__, func_get_args(), ["string"]);
 
 		$clone = clone $this;
-		$clone->fragment = $this->filterQueryAndFragment($fragment ?? "");
+		$clone->fragment = $this->filterQueryAndFragment($fragment);
 		$clone->setDefaults();
 		return $clone;
 	}
 
 	public function isDefaultPort():bool {
-		$scheme = $this->scheme;
-		$port = $this->port;
+		$scheme = $this->getScheme();
+		$port = $this->port ?? null;
 
 		if(empty($port)) {
 			return true;
@@ -647,26 +646,26 @@ class Uri implements UriInterface {
 	}
 
 	protected function setDefaults():void {
-		if(strlen($this->host) === 0) {
-			if($this->scheme === "http"
-			|| $this->scheme === "https") {
+		if(strlen($this->getHost()) === 0) {
+			if($this->getScheme() === "http"
+			|| $this->getScheme() === "https") {
 				$this->host = self::DEFAULT_HOST_HTTP;
 			}
 		}
 
 		if($this->getAuthority() === "") {
-			if(strpos($this->path, "//") === 0) {
-				throw new \InvalidArgumentException("The path of a URI without an authority must not start with two slashes \"//\"");
+			if(str_starts_with($this->getPath(), "//")) {
+				throw new InvalidArgumentException("The path of a URI without an authority must not start with two slashes \"//\"");
 			}
-			if(strlen($this->scheme) === 0
-			&& strpos(explode('/', $this->path, 2)[0], ':')) {
-				throw new \InvalidArgumentException("A relative URI must not have a path beginning with a segment containing a colon");
+			if(strlen($this->getScheme()) === 0
+			&& strpos(explode('/', $this->getPath(), 2)[0], ':')) {
+				throw new InvalidArgumentException("A relative URI must not have a path beginning with a segment containing a colon");
 			}
 		}
 		else {
-			if(strlen($this->path) > 0
-			&& $this->path[0] !== "/") {
-				$this->path = "/" . $this->path;
+			if(strlen($this->getPath()) > 0
+			&& $this->getPath()[0] !== "/") {
+				$this->path = "/" . $this->getPath();
 			}
 		}
 	}

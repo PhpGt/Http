@@ -25,7 +25,7 @@ class Request implements RequestInterface {
 		$this->protocol = substr(
 			$firstLine,
 			0,
-			strpos($firstLine, " ")
+			strpos($firstLine, " ") ?: 0
 		);
 	}
 

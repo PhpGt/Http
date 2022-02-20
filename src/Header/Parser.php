@@ -39,7 +39,8 @@ class Parser {
 	}
 
 	protected function pregMatchProtocol(string $matchName):string {
-		$headerLine = strtok($this->rawHeaders, "\n");
+		$headerLine = strtok($this->rawHeaders, "\n") ?: "";
+		/** @noinspection RegExpRedundantEscape */
 		preg_match(
 			"/HTTP\/(?P<version>[0-9\.]+)\s*(?P<code>\d+)?/",
 			$headerLine,

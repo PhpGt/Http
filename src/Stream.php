@@ -1,13 +1,14 @@
 <?php
 namespace Gt\Http;
 
+use Exception;
 use Psr\Http\Message\StreamInterface;
 
 class Stream implements StreamInterface {
 	const READABLE_MODES = ["r", "w+", "r+", "x+", "c+", "rb", "w+b", "r+b", "x+b", "c+b", "rt", "w+t", "r+t", "x+t", "c+t", "a+"];
 	const WRITABLE_MODES = ["w", "w+", "rw", "r+", "x+", "c+", "wb", "w+b", "r+b", "x+b", "c+b", "w+t", "r+t", "x+t", "c+t", "a", "a+"];
 
-	/** @var resource */
+	/** @var resource|null */
 	protected $stream;
 	protected bool $isSeekable;
 	protected bool $isReadable;
@@ -15,7 +16,18 @@ class Stream implements StreamInterface {
 	protected string $uri;
 
 	public function __construct(string $path = "php://memory", string $mode = "r+") {
-		$this->stream = fopen($path, $mode);
+		try {
+			$stream = fopen($path, $mode);
+		}
+		catch(Exception) {
+			$stream = false;
+		}
+
+		if($stream === false) {
+			throw new StreamNotOpenableException();
+		}
+		$this->stream = $stream;
+
 		$streamInfo = stream_get_meta_data($this->stream);
 		$this->isSeekable = $streamInfo["seekable"];
 		$this->uri = $streamInfo["uri"];
@@ -47,7 +59,9 @@ class Stream implements StreamInterface {
 	 * @return void
 	 */
 	public function close() {
-		fclose($this->stream);
+		if(is_resource($this->stream)) {
+			fclose($this->stream);
+		}
 	}
 
 	/**
@@ -58,6 +72,7 @@ class Stream implements StreamInterface {
 	 * @return resource|null Underlying PHP stream, if any
 	 */
 	public function detach() {
+		/** @var resource|null $stream */
 		$stream = $this->stream;
 		unset($this->stream);
 		return $stream;
@@ -86,7 +101,7 @@ class Stream implements StreamInterface {
 	 * @throws \RuntimeException on error.
 	 */
 	public function tell():int {
-		return ftell($this->stream);
+		return ftell($this->stream) ?: 0;
 	}
 
 	/**
@@ -160,7 +175,7 @@ class Stream implements StreamInterface {
 			throw new StreamException("Stream is not writable");
 		}
 
-		return fwrite($this->stream, $string);
+		return fwrite($this->stream, $string) ?: 0;
 	}
 
 	/**
@@ -191,7 +206,7 @@ class Stream implements StreamInterface {
 			throw new StreamException("Stream read length must be positive");
 		}
 
-		return fread($this->stream, $length);
+		return fread($this->stream, $length) ?: "";
 	}
 
 	/**
@@ -212,7 +227,7 @@ class Stream implements StreamInterface {
 		$string = stream_get_contents($this->stream);
 		$this->seek($position);
 
-		return $string;
+		return $string ?: "";
 	}
 
 	/**

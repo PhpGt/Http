@@ -40,7 +40,7 @@ jobs:
         run: tar -xvf /tmp/github-actions/build.tar ./
 
       - name: PHP Unit tests
-        uses: php-actions/phpunit@v2
+        uses: php-actions/phpunit@v3
         with:
           php_version: 8.0
           php_extensions: xdebug
@@ -62,6 +62,7 @@ jobs:
         run: tar -xvf /tmp/github-actions/build.tar ./
 
       - name: PHP Static Analysis
-        uses: php-actions/phpstan@v2
+        uses: php-actions/phpstan@v3
         with:
           path: src/
+          level: 6

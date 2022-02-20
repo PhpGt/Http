@@ -151,7 +151,7 @@ class ServerInfo {
 
 		if(isset($this->server["HTTP_HOST"])) {
 			$uri = $uri->withHost(
-				strtok($this->server["HTTP_HOST"], ":")
+				strtok($this->server["HTTP_HOST"], ":") ?: ""
 			);
 		}
 
@@ -161,7 +161,7 @@ class ServerInfo {
 
 		if(isset($this->server["REQUEST_URI"])) {
 			$uri = $uri->withPath(
-				strtok($this->server["REQUEST_URI"], "?")
+				strtok($this->server["REQUEST_URI"], "?") ?: ""
 			);
 		}
 

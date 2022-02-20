@@ -56,7 +56,7 @@ trait Message {
 			$versionEndPos = strpos(
 				$clone->protocol,
 				" "
-			);
+			) ?: 0;
 
 			$protocol = "";
 			$protocol .= substr(
@@ -99,12 +99,15 @@ trait Message {
 	 * While header names are not case-sensitive, getHeaders() will preserve the
 	 * exact case in which headers were originally specified.
 	 *
-	 * @return string[][] Returns an associative array of the message's headers. Each
+	 * @return array<string, array<string>> Returns an associative array of the message's headers. Each
 	 *     key MUST be a header name, and each value MUST be an array of strings
 	 *     for that header.
 	 */
 	public function getHeaders():array {
-		return $this->headers->asArray(true);
+		/** @var array<string, array<string>> $headers */
+		/** @noinspection PhpUnnecessaryLocalVariableInspection */
+		$headers = $this->headers->asArray(true);
+		return $headers;
 	}
 
 	/**

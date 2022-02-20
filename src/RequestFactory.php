@@ -36,6 +36,8 @@ class RequestFactory {
 	 * associative arrays).
 	 * @param array<string, string> $server
 	 * @param array<string, array<string, string>> $files
+	 * @param array<string, string> $get
+	 * @param array<string, string> $post
 	 *
 	 * @link http://www.php-fig.org/psr/psr-7/
 	 */
