@@ -82,7 +82,7 @@ class SteamTest extends TestCase {
 		$streamContent = "";
 
 		while(!$stream->eof()) {
-			$streamContent .= $stream->read(1);
+			$streamContent .= $stream->read(10);
 		}
 
 		self::assertEquals($actualContent, $streamContent);
