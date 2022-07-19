@@ -324,6 +324,11 @@ class Uri implements UriInterface {
 		return $this->query ?? "";
 	}
 
+	public function getQueryValue(string $key):?string {
+		parse_str($this->getQuery(), $queryVariables);
+		return $queryVariables[$key] ?? null;
+	}
+
 	/**
 	 * Retrieve the fragment component of the URI.
 	 *
