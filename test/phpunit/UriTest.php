@@ -579,4 +579,11 @@ class UriTest extends TestCase {
 		$this->assertNotSame($uri, $uri->withQuery('q=abc'));
 		$this->assertNotSame($uri, $uri->withFragment('test'));
 	}
+
+	public function testGetQueryValue() {
+		$uri = new Uri("example.com/test?name=cody&colour=orange");
+		self::assertSame("cody", $uri->getQueryValue("name"));
+		self::assertSame("orange", $uri->getQueryValue("colour"));
+		self::assertNull($uri->getQueryValue("age"));
+	}
 }
