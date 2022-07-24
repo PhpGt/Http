@@ -43,10 +43,8 @@ class ResponseTest extends TestCase {
 			$callbackCount++;
 		};
 
-		$sut = new Response(
-			200,
-			exitCallback: $callback,
-		);
+		$sut = new Response(200);
+		$sut->setExitCallback($callback);
 
 		self::assertSame(0, $callbackCount);
 		$sut->redirect("/somewhere/");

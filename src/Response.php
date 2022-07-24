@@ -13,17 +13,19 @@ use Psr\Http\Message\UriInterface;
 class Response implements ResponseInterface {
 	use Message;
 
-	/** @var null|callable */
+	/** @var callable */
 	protected $exitCallback;
 
 	public function __construct(
 		private ?int $statusCode = null,
 		ResponseHeaders $headers = null,
-		?callable $exitCallback = null
 	) {
 		$this->headers = $headers ?? new ResponseHeaders();
 		$this->stream = new Stream();
-		$this->exitCallback = $exitCallback;
+	}
+
+	public function setExitCallback(callable $callback):void {
+		$this->exitCallback = $callback;
 	}
 
 	public function reload():void {
