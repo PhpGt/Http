@@ -13,7 +13,7 @@ use Psr\Http\Message\UriInterface;
 class Response implements ResponseInterface {
 	use Message;
 
-	/** @var callable */
+	/** @var null|callable */
 	protected $exitCallback;
 
 	public function __construct(
@@ -34,7 +34,7 @@ class Response implements ResponseInterface {
 
 	public function redirect(string|UriInterface $uri):void {
 		$this->headers->set("Location", $uri);
-		if($this->exitCallback) {
+		if(isset($this->exitCallback)) {
 			call_user_func($this->exitCallback);
 		}
 	}
