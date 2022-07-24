@@ -32,7 +32,8 @@ class Response implements ResponseInterface {
 		$this->redirect("./");
 	}
 
-	public function redirect(string|UriInterface $uri):void {
+	public function redirect(string|UriInterface $uri, int $statusCode = 303):void {
+		$this->statusCode = $statusCode;
 		$this->headers->set("Location", $uri);
 		if(isset($this->exitCallback)) {
 			call_user_func($this->exitCallback);
