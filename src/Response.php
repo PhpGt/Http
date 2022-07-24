@@ -2,8 +2,10 @@
 namespace Gt\Http;
 
 use Gt\Http\Header\ResponseHeaders;
+use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
+use Psr\Http\Message\UriInterface;
 
 /**
  * @property ResponseHeaders $headers
@@ -11,15 +13,28 @@ use Psr\Http\Message\StreamInterface;
 class Response implements ResponseInterface {
 	use Message;
 
-	protected ?int $statusCode;
+	/** @var null|callable */
+	protected $exitCallback;
 
 	public function __construct(
-		int $status = null,
-		ResponseHeaders $headers = null
+		private ?int $statusCode = null,
+		ResponseHeaders $headers = null,
+		?callable $exitCallback = null
 	) {
-		$this->statusCode = $status;
 		$this->headers = $headers ?? new ResponseHeaders();
 		$this->stream = new Stream();
+		$this->exitCallback = $exitCallback;
+	}
+
+	public function reload():void {
+		$this->redirect("./");
+	}
+
+	public function redirect(string|UriInterface $uri):void {
+		$this->headers->set("Location", $uri);
+		if($this->exitCallback) {
+			call_user_func($this->exitCallback);
+		}
 	}
 
 	/**
