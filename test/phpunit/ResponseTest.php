@@ -36,4 +36,23 @@ class ResponseTest extends TestCase {
 		self::assertInstanceOf(ResponseHeaders::class, $headers);
 		self::assertCount(0, $headers);
 	}
+
+	public function testRedirect() {
+		$callbackCount = 0;
+		$callback = function()use(&$callbackCount) {
+			$callbackCount++;
+		};
+
+		$sut = new Response(200);
+		$sut->setExitCallback($callback);
+
+		self::assertSame(0, $callbackCount);
+		$sut->redirect("/somewhere/");
+		self::assertSame(1, $callbackCount);
+
+		self::assertSame(
+			"/somewhere/",
+			$sut->getHeaderLine("Location")
+		);
+	}
 }

@@ -7,7 +7,7 @@
 		"php": ">=8.0",
 		"phpgt/input": "^v1",
 		"psr/http-message": "^v1.0.1",
-		"willdurand/negotiation": "v3.1.*"
+		"willdurand/negotiation": "v3.1.0"
 	},
 	"require-dev": {
 		"phpstan/phpstan": "v1.8.1",
