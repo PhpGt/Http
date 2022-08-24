@@ -98,6 +98,34 @@ class Uri implements UriInterface {
 		$this->setDefaults();
 	}
 
+	public function getNormalisedPath(string $basePath):string {
+		$relativePath = $this->getPath();
+
+		$baseParts = explode("/", $basePath);
+		$relativeParts = explode("/", $relativePath);
+
+		array_pop($baseParts);
+		for($i = 0, $len = count($relativeParts); $i < $len; $i++) {
+			if($relativeParts[$i] === ".") {
+				continue;
+			}
+			if($relativeParts[$i] === "..") {
+				array_pop($baseParts);
+			}
+			else {
+				array_push($baseParts, $relativeParts[$i]);
+			}
+		}
+
+		for($i = count($baseParts) - 1; $i > 1; $i--) {
+			if($baseParts[$i] === "" && $baseParts[$i - 1] === "") {
+				unset($baseParts[$i]);
+			}
+		}
+
+		return (new self(implode("/", $baseParts)))->getPath();
+	}
+
 	protected function filterScheme(string $scheme):string {
 		return strtolower($scheme);
 	}
@@ -118,9 +146,11 @@ class Uri implements UriInterface {
 		return (string)$port;
 	}
 
+	/**
+	 * @noinspection RegExpUnnecessaryNonCapturingGroup
+	 * @noinspection RegExpDuplicateCharacterInClass
+	 */
 	protected function filterPath(string $path):string {
-		/** @noinspection RegExpUnnecessaryNonCapturingGroup */
-		/** @noinspection RegExpDuplicateCharacterInClass */
 		return preg_replace_callback(
 			'/(?:[^'
 			. self::CHAR_UNRESERVED
@@ -152,7 +182,7 @@ class Uri implements UriInterface {
 	protected function filterUserInfo(string $user, string $pass = null):string {
 		$userInfo = $user;
 
-		if(strlen($pass) > 0) {
+		if(strlen($pass ?? "") > 0) {
 			$userInfo .= ":";
 			$userInfo .= $pass;
 		}

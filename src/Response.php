@@ -19,6 +19,7 @@ class Response implements ResponseInterface {
 	public function __construct(
 		private ?int $statusCode = null,
 		ResponseHeaders $headers = null,
+		protected ?Uri $requestUri = null,
 	) {
 		$this->headers = $headers ?? new ResponseHeaders();
 		$this->stream = new Stream();
@@ -33,6 +34,28 @@ class Response implements ResponseInterface {
 	}
 
 	public function redirect(string|UriInterface $uri, int $statusCode = 303):void {
+		if(!$uri instanceof Uri) {
+			$uri = new Uri($uri);
+		}
+
+		$baseUri = new Uri();
+		if(!is_null($this->requestUri)) {
+			$baseUri = new Uri($this->requestUri);
+		}
+
+		if($uri->getAuthority()
+		&& $baseUri->getAuthority() !== $uri->getAuthority()) {
+			if(!$uri->getScheme()) {
+				$uri = $uri->withScheme($baseUri->getScheme());
+			}
+		}
+		else {
+			$uri = $uri->withPath(
+				$uri->getNormalisedPath($baseUri->getPath())
+			);
+		}
+
+
 		$this->statusCode = $statusCode;
 		$this->headers->set("Location", $uri);
 		if(isset($this->exitCallback)) {

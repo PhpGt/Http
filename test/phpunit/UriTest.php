@@ -586,4 +586,44 @@ class UriTest extends TestCase {
 		self::assertSame("orange", $uri->getQueryValue("colour"));
 		self::assertNull($uri->getQueryValue("age"));
 	}
+
+	public function testGetNormalisedPath_currentDirectory() {
+		$sut = new Uri("./");
+		self::assertSame(
+			"/directory/",
+			$sut->getNormalisedPath("/directory/")
+		);
+	}
+
+	public function testGetNormalisedPath_parentDirectory() {
+		$sut = new Uri("../");
+		self::assertSame(
+			"/directory/",
+			$sut->getNormalisedPath("/directory/nested/")
+		);
+	}
+
+	public function testGetNormalisedPath_currentDirectoryFile() {
+		$sut = new Uri("./filename");
+		self::assertSame(
+			"/directory/filename",
+			$sut->getNormalisedPath("/directory/")
+		);
+	}
+
+	public function testGetNormalisedPath_weirdStupidNesting() {
+		$sut = new Uri("./../../../go-in-then-out/../in/in-again");
+		self::assertSame(
+			"/directory/in/in-again",
+			$sut->getNormalisedPath("/directory/one/two/three/")
+		);
+	}
+
+	public function testGetNormalisedPath_fullUri() {
+		$sut = new Uri("../http/");
+		self::assertSame(
+			"/docs/http/",
+			$sut->getNormalisedPath("https://www.php.gt/docs/webengine/")
+		);
+	}
 }
