@@ -19,6 +19,7 @@ class Response implements ResponseInterface {
 	public function __construct(
 		private ?int $statusCode = null,
 		ResponseHeaders $headers = null,
+		private ?Request $request = null,
 	) {
 		$this->headers = $headers ?? new ResponseHeaders();
 		$this->stream = new Stream();
@@ -29,7 +30,8 @@ class Response implements ResponseInterface {
 	}
 
 	public function reload():void {
-		$this->redirect("./");
+		$uri = $this->request?->getUri() ?? new Uri();
+		$this->redirect($uri->withPath("./"));
 	}
 
 	public function redirect(string|UriInterface $uri, int $statusCode = 303):void {

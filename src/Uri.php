@@ -152,7 +152,7 @@ class Uri implements UriInterface {
 	protected function filterUserInfo(string $user, string $pass = null):string {
 		$userInfo = $user;
 
-		if(strlen($pass) > 0) {
+		if(strlen($pass ?? "") > 0) {
 			$userInfo .= ":";
 			$userInfo .= $pass;
 		}
