@@ -29,14 +29,18 @@ class Response implements ResponseInterface {
 		$this->exitCallback = $callback;
 	}
 
-	public function reload():void {
+	public function reload(bool $keepQuery = true):void {
 		$uri = $this->request?->getUri() ?? new Uri();
-		$this->redirect($uri->withPath("./"));
+		$uri = $uri->withPath("./");
+		if(!$keepQuery) {
+			$uri = $uri->withQuery("");
+		}
+		$this->redirect($uri);
 	}
 
 	public function redirect(string|UriInterface $uri, int $statusCode = 303):void {
 		$this->statusCode = $statusCode;
-		$this->headers->set("Location", $uri);
+		$this->headers->set("Location", (string)$uri);
 		if(isset($this->exitCallback)) {
 			call_user_func($this->exitCallback);
 		}
