@@ -52,6 +52,26 @@ class RequestFactory {
 		$uri = new Uri($server["REQUEST_URI"] ?? null);
 		$headers = new RequestHeaders();
 
+		if($secure = $server["HTTPS"] ?? false) {
+			$uri = $uri->withScheme("https");
+		}
+		else {
+			$uri = $uri->withScheme("http");
+		}
+
+		if($port = $server["SERVER_PORT"]) {
+			$uri = $uri->withPort($port);
+		}
+
+		if($host = $server["HTTP_HOST"]) {
+			$host = strtok($host, ":");
+			$uri = $uri->withHost($host);
+		}
+
+		if($query = $server["QUERY_STRING"]) {
+			$uri = $uri->withQuery($query);
+		}
+
 		foreach($server as $key => $value) {
 			if(str_starts_with($key, "HTTP_")) {
 				$headerKey = substr($key, strlen("HTTP_"));
