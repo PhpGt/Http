@@ -60,7 +60,7 @@ class RequestFactory {
 		}
 
 		if($port = $server["SERVER_PORT"] ?? null) {
-			$uri = $uri->withPort($port);
+			$uri = $uri->withPort((int)$port);
 		}
 
 		if($host = $server["HTTP_HOST"] ?? null) {
