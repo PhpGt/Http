@@ -2,7 +2,10 @@
 namespace Gt\Http\Test;
 
 use Gt\Http\Header\ResponseHeaders;
+use Gt\Http\Request;
 use Gt\Http\Response;
+use Gt\Http\StatusCode;
+use Gt\Http\Uri;
 use PHPUnit\Framework\TestCase;
 
 class ResponseTest extends TestCase {
@@ -54,5 +57,54 @@ class ResponseTest extends TestCase {
 			"/somewhere/",
 			$sut->getHeaderLine("Location")
 		);
+	}
+
+	public function testReloadKeepsQuery() {
+		$expectedRelativePath = "./?test=123";
+
+		$uri = self::createMock(Uri::class);
+		$uri->expects(self::once())
+			->method("withPath")
+			->with("./")
+			->willReturn($uri);
+		$uri->expects(self::never())
+			->method("withQuery");
+		$uri->method("__toString")
+			->willReturn($expectedRelativePath);
+
+		$request = self::createMock(Request::class);
+		$request->method("getUri")
+			->willReturn($uri);
+
+		$sut = new Response(200, request: $request);
+		self::assertSame(StatusCode::OK, $sut->getStatusCode());
+		$sut->reload();
+		self::assertSame(StatusCode::SEE_OTHER, $sut->getStatusCode());
+		self::assertSame($expectedRelativePath, $sut->getHeaderLine("Location"));
+	}
+
+	public function testReloadWithoutKeepQuery() {
+		$expectedRelativePath = "./";
+
+		$uri = self::createMock(Uri::class);
+		$uri->expects(self::once())
+			->method("withPath")
+			->with("./")
+			->willReturn($uri);
+		$uri->expects(self::once())
+			->method("withQuery")
+			->with("")
+			->willReturn($uri);
+		$uri->method("__toString")
+			->willReturn($expectedRelativePath);
+
+		$request = self::createMock(Request::class);
+		$request->method("getUri")
+			->willReturn($uri);
+
+		$sut = new Response(200, request: $request);
+		$sut->reload(false);
+		self::assertSame(StatusCode::SEE_OTHER, $sut->getStatusCode());
+		self::assertSame($expectedRelativePath, $sut->getHeaderLine("Location"));
 	}
 }

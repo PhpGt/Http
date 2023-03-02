@@ -19,6 +19,7 @@ class Response implements ResponseInterface {
 	public function __construct(
 		private ?int $statusCode = null,
 		ResponseHeaders $headers = null,
+		private ?Request $request = null,
 	) {
 		$this->headers = $headers ?? new ResponseHeaders();
 		$this->stream = new Stream();
@@ -28,13 +29,18 @@ class Response implements ResponseInterface {
 		$this->exitCallback = $callback;
 	}
 
-	public function reload():void {
-		$this->redirect("./");
+	public function reload(bool $keepQuery = true):void {
+		$uri = $this->request?->getUri() ?? new Uri();
+		$uri = $uri->withPath("./");
+		if(!$keepQuery) {
+			$uri = $uri->withQuery("");
+		}
+		$this->redirect($uri);
 	}
 
 	public function redirect(string|UriInterface $uri, int $statusCode = 303):void {
 		$this->statusCode = $statusCode;
-		$this->headers->set("Location", $uri);
+		$this->headers->set("Location", (string)$uri);
 		if(isset($this->exitCallback)) {
 			call_user_func($this->exitCallback);
 		}

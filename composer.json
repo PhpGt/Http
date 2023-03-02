@@ -4,7 +4,7 @@
 	"license": "MIT",
 
 	"require": {
-		"php": ">=8.0",
+		"php": ">=8.1",
 		"phpgt/input": "^v1",
 		"psr/http-message": "^v1.0.1",
 		"willdurand/negotiation": "v3.1.0"

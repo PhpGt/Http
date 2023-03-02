@@ -5,7 +5,7 @@ use Gt\Http\Header\Headers;
 use Psr\Http\Message\StreamInterface;
 
 trait Message {
-	protected Headers $headers;
+	public readonly Headers $headers;
 	protected string $protocol;
 	protected StreamInterface $stream;
 
@@ -17,7 +17,7 @@ trait Message {
 	 * @return string HTTP protocol version.
 	 */
 	public function getProtocolVersion():string {
-		if(strstr($this->protocol, "/")) {
+		if(str_contains($this->protocol, "/")) {
 			return substr(
 				$this->protocol,
 				strpos($this->protocol, "/") + 1
@@ -41,7 +41,7 @@ trait Message {
 	 * @return static
 	 * @throws InvalidProtocolHttpException
 	 */
-	public function withProtocolVersion($version) {
+	public function withProtocolVersion($version):self {
 		if(!is_numeric($version)) {
 			throw new InvalidProtocolHttpException($version);
 		}

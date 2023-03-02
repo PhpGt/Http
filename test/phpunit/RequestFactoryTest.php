@@ -48,6 +48,22 @@ class RequestFactoryTest extends TestCase {
 		self::assertEquals("/path/to/somewhere", $request->getUri()->getPath());
 	}
 
+	public function testCreateServerRequestFromGlobals_uri_withAllParts():void {
+		$sut = new RequestFactory();
+		$request = $sut->createServerRequestFromGlobalState([
+			"REQUEST_METHOD" => "POST",
+			"REQUEST_URI" => "/path/to/somewhere/",
+			"SERVER_PORT" => 8080,
+			"HTTP_HOST" => "localhost:8080",
+			"QUERY_STRING" => "example=123",
+		], [], [], []);
+
+		self::assertSame(
+			"http://localhost:8080/path/to/somewhere/?example=123",
+			(string)$request->getUri()
+		);
+	}
+
 	public function testCreateServerRequestFromGlobals_header():void {
 		$sut = new RequestFactory();
 		$request = $sut->createServerRequestFromGlobalState([
