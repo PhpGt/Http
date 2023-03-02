@@ -15,6 +15,7 @@ class Response implements ResponseInterface {
 
 	/** @var null|callable */
 	protected $exitCallback;
+	public bool $autoReloadPost;
 
 	public function __construct(
 		private ?int $statusCode = null,
@@ -23,6 +24,7 @@ class Response implements ResponseInterface {
 	) {
 		$this->headers = $headers ?? new ResponseHeaders();
 		$this->stream = new Stream();
+		$this->autoReloadPost = true;
 	}
 
 	public function setExitCallback(callable $callback):void {
