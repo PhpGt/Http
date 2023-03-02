@@ -27,36 +27,37 @@ class ResponseFactoryTest extends TestCase {
 	}
 
 	public function testCreateAfterRegisteringResponseClass() {
-		$mockResponseClass = self::getMockClass(Response::class);
+		$mockResponseClass = new class extends Response {};
 		/** @var MockObject|Request $request */
 		$request = self::createMock(Request::class);
 		$request->method("getHeaderLine")
 			->with("accept")
 			->willReturn("test/example");
 		ResponseFactory::registerResponseClass(
-			$mockResponseClass,
+			$mockResponseClass::class,
 			"test/example"
 		);
 
 		self::assertInstanceOf(
-			$mockResponseClass,
+			$mockResponseClass::class,
 			ResponseFactory::create($request)
 		);
 	}
 
 	public function testRegisterResponseClassDefault() {
-		$mockResponseClass = self::getMockClass(Response::class);
+		$mockResponseClass = new class extends Response {};
+
 		/** @var MockObject|Request $request */
 		$request = self::createMock(Request::class);
 		$request->method("getHeaderLine")
 			->with("accept")
 			->willReturn(ResponseFactory::DEFAULT_ACCEPT);
 		ResponseFactory::registerResponseClass(
-			$mockResponseClass
+			$mockResponseClass::class
 		);
 
 		self::assertInstanceOf(
-			$mockResponseClass,
+			$mockResponseClass::class,
 			ResponseFactory::create($request)
 		);
 	}
