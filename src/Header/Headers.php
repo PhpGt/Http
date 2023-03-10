@@ -92,7 +92,10 @@ class Headers implements Iterator, Countable {
 		}
 
 		if(is_null($headerLineToAdd) || $isCommaHeader) {
-			$this->headerLines []= new HeaderLine($name,...$values);
+			array_push(
+				$this->headerLines,
+				new HeaderLine($name, ...$values)
+			);
 		}
 		else {
 			$headerLineToAdd->addValue(...$values);

@@ -61,7 +61,7 @@ class Uri implements UriInterface {
 		}
 
 		if(strlen($this->getAuthority()) > 0
-		|| $scheme === "file") {
+			|| $scheme === "file") {
 			$uri .= "//";
 			$uri .= $this->getAuthority();
 		}
@@ -136,9 +136,9 @@ class Uri implements UriInterface {
 		/** @noinspection RegExpDuplicateCharacterInClass */
 		return preg_replace_callback(
 			'/(?:[^'
-				. self::CHAR_UNRESERVED
-				. self::CHAR_SUBDELIMS
-				. '%:@\/\?]++|%(?![A-Fa-f0-9]{2}))/',
+			. self::CHAR_UNRESERVED
+			. self::CHAR_SUBDELIMS
+			. '%:@\/\?]++|%(?![A-Fa-f0-9]{2}))/',
 			[$this, 'rawurlencodeMatchZero'],
 			$query
 		);
@@ -509,7 +509,7 @@ class Uri implements UriInterface {
 		$replaceQuery = ["=" => "%3D", "&" => "%26", "^" => "%5E"];
 		$current = $this->getQuery();
 
-		if ($current === "") {
+		if($current === "") {
 			$result = [];
 		}
 		else {
@@ -519,9 +519,9 @@ class Uri implements UriInterface {
 				explode("&", $current),
 				function($part) use ($decodedKey) {
 					return rawurldecode(
-						explode("=", $part)[0]
-					) !== $decodedKey;
-			});
+							explode("=", $part)[0]
+						) !== $decodedKey;
+				});
 		}
 // Query string separators ("=", "&") within the key or value need to be encoded
 // (while preventing double-encoding) before setting the query string. All other
@@ -531,7 +531,7 @@ class Uri implements UriInterface {
 // to pass.
 // It must be refactored before v1 release, as it has a major bug as shown here:
 		$key = strtr($key, $replaceQuery);
-		if ($value !== null) {
+		if($value !== null) {
 			$result[] = $key . "=" . strtr($value, $replaceQuery);
 		}
 		else {
@@ -550,9 +550,9 @@ class Uri implements UriInterface {
 			explode("&", $current),
 			function($part) use ($decodedKey) {
 				return rawurldecode(
-					explode("=", $part)[0]
-				) !== $decodedKey;
-		});
+						explode("=", $part)[0]
+					) !== $decodedKey;
+			});
 
 		$this->setDefaults();
 		return $this->withQuery(implode("&", $result));
@@ -600,60 +600,46 @@ class Uri implements UriInterface {
 	}
 
 	public function isAbsolute():bool {
-		return (
-			$this->getScheme() !== ""
-		);
+		return $this->getScheme() !== "";
 	}
 
 	public function isNetworkPathReference():bool {
-		return (
-			$this->getScheme() === ""
-			&& $this->getAuthority() !== ""
-		);
+		return $this->getScheme() === "" && $this->getAuthority() !== "";
 	}
 
 	public function isAbsolutePathReference():bool {
-		return (
-			$this->getScheme() === ""
+		return $this->getScheme() === ""
 			&& $this->getAuthority() === ""
 			&& isset($this->getPath()[0])
-			&& $this->getPath()[0] === "/"
-		);
-
+			&& $this->getPath()[0] === "/";
 	}
 
 	public function isRelativePathReference():bool {
-		return (
-			$this->getScheme() === ""
+		return $this->getScheme() === ""
 			&& $this->getAuthority() === ""
-			&& (!isset($this->getPath()[0]) || $this->getPath()[0] !== '/')
-		);
+			&& (!isset($this->getPath()[0]) || $this->getPath()[0] !== '/');
 	}
 
 	public function isSameDocumentReference(Uri $baseUri = null):bool {
-		if (!is_null($baseUri)) {
+		if(!is_null($baseUri)) {
 			$resolved = UriResolver::resolve($baseUri, $this);
 
-			return (
-				$resolved->getScheme() === $baseUri->getScheme()
+			return $resolved->getScheme() === $baseUri->getScheme()
 				&& $resolved->getAuthority() === $baseUri->getAuthority()
 				&& $resolved->getPath() === $baseUri->getPath()
-				&& $resolved->getQuery() === $baseUri->getQuery()
-			);
+				&& $resolved->getQuery() === $baseUri->getQuery();
 		}
 
-		return (
-			$this->getScheme() === ""
+		return $this->getScheme() === ""
 			&& $this->getAuthority() === ""
 			&& $this->getPath() === ""
-			&& $this->getQuery() === ""
-		);
+			&& $this->getQuery() === "";
 	}
 
 	protected function setDefaults():void {
 		if(strlen($this->getHost()) === 0) {
 			if($this->getScheme() === "http"
-			|| $this->getScheme() === "https") {
+				|| $this->getScheme() === "https") {
 				$this->host = self::DEFAULT_HOST_HTTP;
 			}
 		}
@@ -663,13 +649,16 @@ class Uri implements UriInterface {
 				throw new InvalidArgumentException("The path of a URI without an authority must not start with two slashes \"//\"");
 			}
 			if(strlen($this->getScheme()) === 0
-			&& strpos(explode('/', $this->getPath(), 2)[0], ':')) {
-				throw new InvalidArgumentException("A relative URI must not have a path beginning with a segment containing a colon");
+				&& strpos(explode('/', $this->getPath(), 2)[0], ':')) {
+				throw new InvalidArgumentException(
+					"A relative URI must not have a path beginning "
+					. "with a segment containing a colon"
+				);
 			}
 		}
 		else {
 			if(strlen($this->getPath()) > 0
-			&& $this->getPath()[0] !== "/") {
+				&& $this->getPath()[0] !== "/") {
 				$this->path = "/" . $this->getPath();
 			}
 		}

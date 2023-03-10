@@ -10,8 +10,10 @@
 		"willdurand/negotiation": "v3.1.0"
 	},
 	"require-dev": {
-		"phpstan/phpstan": "^v1.8",
-		"phpunit/phpunit": "^v9.5"
+		"phpstan/phpstan": "^1.9",
+		"phpunit/phpunit": "^10.0",
+		"phpmd/phpmd": "^2.13",
+		"squizlabs/php_codesniffer": "^3.7"
 	},
 
 	"autoload": {

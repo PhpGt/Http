@@ -1,5 +1,4 @@
 <?php
-
 namespace Gt\Http;
 
 class StatusCode {
