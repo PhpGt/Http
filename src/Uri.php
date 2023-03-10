@@ -365,7 +365,7 @@ class Uri implements UriInterface {
 	 * @throws InvalidArgumentException for invalid or unsupported schemes.
 	 */
 	public function withScheme($scheme):self {
-		ParameterType::check(__METHOD__, func_get_args(), ["string"]);
+		new ParameterType(__METHOD__, func_get_args(), ["string"]);
 		$scheme = $this->filterScheme($scheme);
 
 		$clone = clone $this;
@@ -389,7 +389,7 @@ class Uri implements UriInterface {
 	 * @return static A new instance with the specified user information.
 	 */
 	public function withUserInfo($user, $password = null):self {
-		ParameterType::check(__METHOD__, func_get_args(), ["string"]);
+		new ParameterType(__METHOD__, func_get_args(), ["string"]);
 		$userInfo = $this->filterUserInfo($user, $password);
 
 		$clone = clone $this;
@@ -411,7 +411,7 @@ class Uri implements UriInterface {
 	 * @throws InvalidArgumentException for invalid hostnames.
 	 */
 	public function withHost($host):self {
-		ParameterType::check(__METHOD__, func_get_args(), ["string"]);
+		new ParameterType(__METHOD__, func_get_args(), ["string"]);
 		$host = $this->filterHost($host);
 
 		$clone = clone $this;
@@ -438,7 +438,7 @@ class Uri implements UriInterface {
 	 * @throws InvalidArgumentException for invalid ports.
 	 */
 	public function withPort($port):self {
-		ParameterType::check(__METHOD__, func_get_args(), ["?integer"]);
+		new ParameterType(__METHOD__, func_get_args(), ["?integer"]);
 		$port = $this->filterPort($port);
 
 		$clone = clone $this;
@@ -470,7 +470,7 @@ class Uri implements UriInterface {
 	 * @throws InvalidArgumentException for invalid paths.
 	 */
 	public function withPath($path):self {
-		ParameterType::check(__METHOD__, func_get_args(), ["string"]);
+		new ParameterType(__METHOD__, func_get_args(), ["string"]);
 
 		$clone = clone $this;
 		$clone->path = $this->filterPath($path);
@@ -494,7 +494,7 @@ class Uri implements UriInterface {
 	 * @throws InvalidArgumentException for invalid query strings.
 	 */
 	public function withQuery($query):self {
-		ParameterType::check(__METHOD__, func_get_args(), ["string"]);
+		new ParameterType(__METHOD__, func_get_args(), ["string"]);
 
 		$clone = clone $this;
 		$clone->query = $this->filterQueryAndFragment($query);
@@ -573,7 +573,7 @@ class Uri implements UriInterface {
 	 * @return static A new instance with the specified fragment.
 	 */
 	public function withFragment($fragment):self {
-		ParameterType::check(__METHOD__, func_get_args(), ["string"]);
+		new ParameterType(__METHOD__, func_get_args(), ["string"]);
 
 		$clone = clone $this;
 		$clone->fragment = $this->filterQueryAndFragment($fragment);
@@ -622,7 +622,7 @@ class Uri implements UriInterface {
 
 	public function isSameDocumentReference(Uri $baseUri = null):bool {
 		if(!is_null($baseUri)) {
-			$resolved = UriResolver::resolve($baseUri, $this);
+			$resolved = (new UriResolver())->resolve($baseUri, $this);
 
 			return $resolved->getScheme() === $baseUri->getScheme()
 				&& $resolved->getAuthority() === $baseUri->getAuthority()
@@ -636,6 +636,7 @@ class Uri implements UriInterface {
 			&& $this->getQuery() === "";
 	}
 
+	/** @SuppressWarnings(PHPMD) */
 	protected function setDefaults():void {
 		if(strlen($this->getHost()) === 0) {
 			if($this->getScheme() === "http"

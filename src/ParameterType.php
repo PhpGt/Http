@@ -9,15 +9,14 @@ use TypeError;
  */
 class ParameterType {
 	/**
-	 * @param string $method
-	 * @param array<mixed> $parameters
+	 * @param array<string> $parameters
 	 * @param array<string> $types Array of type names
 	 */
-	public static function check(
+	public function __construct(
 		string $method,
 		array $parameters,
-		array $types
-	):void {
+		array $types,
+	) {
 		foreach($types as $i => $type) {
 			$nullable = false;
 			if($type[0] === "?") {

@@ -1,11 +1,9 @@
 <?php
 namespace Gt\Http;
 
-use Psr\Http\Message\UriInterface;
-
 class UriFactory {
 	/** @param array<string, int|string> $parts */
-	public static function createFromParts(array $parts):Uri {
+	public function createFromParts(array $parts):Uri {
 		$uri = new Uri();
 		$uri->applyParts($parts);
 		return $uri;
@@ -29,40 +27,35 @@ class UriFactory {
 	 *
 	 * @link https://tools.ietf.org/html/rfc3986#section-5.3
 	 */
-	public static function composeFromComponents(
+	public function composeFromComponents(
 		string $scheme = null,
 		string $authority = null,
 		string $path = null,
 		string $query = null,
 		string $fragment = null
 	):Uri {
-		$uri = "";
+		$uriString = "";
 
-		if(!is_null($scheme )
-		&& strlen($scheme) > 0) {
-			$uri .= $scheme . ":";
+		if($scheme) {
+			$uriString .= $scheme . ":";
 		}
 
-		if((!is_null($authority)
-		&& strlen($authority) > 0)
-		|| $scheme === "file") {
-			$uri .= "//" . $authority;
+		if($authority || $scheme === "file") {
+			$uriString .= "//" . $authority;
 		}
 
-		$uri .= $path;
+		$uriString .= $path;
 
-		if(!is_null($query)
-		&& strlen($query) > 0) {
-			$uri .= "?";
-			$uri .= $query;
+		if($query) {
+			$uriString .= "?";
+			$uriString .= $query;
 		}
 
-		if(!is_null($fragment)
-		&& strlen($fragment) > 0) {
-			$uri .= "#";
-			$uri .= $fragment;
+		if($fragment) {
+			$uriString .= "#";
+			$uriString .= $fragment;
 		}
 
-		return new Uri($uri);
+		return new Uri($uriString);
 	}
 }

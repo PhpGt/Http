@@ -1,23 +1,23 @@
 <?php
 namespace Gt\Http;
 
-class RequestMethod {
-	const METHOD_GET = "GET";
-	const METHOD_HEAD = "HEAD";
-	const METHOD_POST = "POST";
-	const METHOD_PUT = "PUT";
-	const METHOD_OPTIONS = "OPTIONS";
-	const METHOD_DELETE = "DELETE";
-	const METHOD_TRACE = "TRACE";
+enum RequestMethod {
+	case GET;
+	case HEAD;
+	case POST;
+	case PUT;
+	case OPTIONS;
+	case DELETE;
+	case TRACE;
 
 	const ALLOWED_METHODS = [
-		self::METHOD_GET,
-		self::METHOD_HEAD,
-		self::METHOD_POST,
-		self::METHOD_PUT,
-		self::METHOD_OPTIONS,
-		self::METHOD_DELETE,
-		self::METHOD_TRACE,
+		self::GET,
+		self::HEAD,
+		self::POST,
+		self::PUT,
+		self::OPTIONS,
+		self::DELETE,
+		self::TRACE,
 	];
 
 	public static function filterMethodName(string $name):string {

@@ -8,6 +8,7 @@
 
 	<rule ref="rulesets/codesize.xml">
 		<exclude name="TooManyPublicMethods" />
+		<exclude name="ExcessiveClassComplexity" />
 	</rule>
 
 	<rule ref="rulesets/cleancode.xml">

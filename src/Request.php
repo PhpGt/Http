@@ -12,12 +12,13 @@ class Request implements RequestInterface {
 	protected UriInterface $uri;
 	protected string $requestTarget;
 
+	/** @SuppressWarnings(PHPMD.StaticAccess) */
 	public function __construct(
 		string $method,
 		UriInterface $uri,
 		RequestHeaders $headers
 	) {
-		$this->method = RequestMethod::filterMethodName($method);
+		$this->method = RequestMethod::cases()[strtoupper($method)]->name;
 		$this->uri = $uri;
 		$this->headers = $headers;
 
@@ -111,6 +112,7 @@ class Request implements RequestInterface {
 	 * @param string $method Case-sensitive method.
 	 * @return static
 	 * @throws \InvalidArgumentException for invalid HTTP methods.
+	 * @SuppressWarnings(PHPMD.StaticAccess)
 	 */
 	public function withMethod($method) {
 		$method = RequestMethod::filterMethodName($method);
@@ -161,6 +163,7 @@ class Request implements RequestInterface {
 	 * @param UriInterface $uri New request URI to use.
 	 * @param bool $preserveHost Preserve the original state of the Host header.
 	 * @return static
+	 * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
 	 */
 	public function withUri(UriInterface $uri, $preserveHost = false) {
 		$clone = clone $this;
