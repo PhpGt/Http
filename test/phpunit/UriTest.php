@@ -173,9 +173,7 @@ class UriTest extends TestCase {
 		$this->assertSame('0://0:0@0/0?0#0', (string)$uri);
 	}
 
-	/**
-	 * @dataProvider getPortTestCases
-	 */
+	/** @dataProvider getPortTestCases */
 	public function testIsDefaultPort($scheme, $port, $isDefaultPort) {
 		$uri = (new Uri())
 			->withScheme($scheme)

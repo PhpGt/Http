@@ -18,7 +18,7 @@ class Request implements RequestInterface {
 		UriInterface $uri,
 		RequestHeaders $headers
 	) {
-		$this->method = RequestMethod::cases()[strtoupper($method)]->name;
+		$this->method = RequestMethod::filterMethodName($method);
 		$this->uri = $uri;
 		$this->headers = $headers;
 

@@ -23,7 +23,15 @@ enum RequestMethod {
 	public static function filterMethodName(string $name):string {
 		$name = strtoupper($name);
 
-		if(!in_array($name, self::ALLOWED_METHODS)) {
+		$found = false;
+		foreach(self::cases() as $case) {
+			if($name === $case->name) {
+				$found = true;
+				break;
+			}
+		}
+
+		if(!$found) {
 			throw new InvalidRequestMethodHttpException($name);
 		}
 

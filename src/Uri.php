@@ -589,7 +589,7 @@ class Uri implements UriInterface {
 			return true;
 		}
 
-		$defaultPortConstant = "\\Gt\\Http\\DefaultPort::$scheme";
+		$defaultPortConstant = "\\Gt\\Http\\DefaultPort::" . strtoupper($scheme);
 		$defaultPort = null;
 
 		if(defined($defaultPortConstant)) {
