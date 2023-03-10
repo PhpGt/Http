@@ -31,7 +31,6 @@ class Response implements ResponseInterface {
 
 	public function reload(bool $keepQuery = true):void {
 		$uri = $this->request?->getUri() ?? new Uri();
-		$uri = $uri->withPath("./");
 		if(!$keepQuery) {
 			$uri = $uri->withQuery("");
 		}
