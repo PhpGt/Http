@@ -5,9 +5,9 @@
 
 	"require": {
 		"php": ">=8.1",
-		"phpgt/input": "^v1",
-		"psr/http-message": "^v1.0.1",
-		"willdurand/negotiation": "v3.1.0"
+		"phpgt/input": "^1.1",
+		"psr/http-message": "v1.0",
+		"willdurand/negotiation": "3.1.0"
 	},
 	"require-dev": {
 		"phpstan/phpstan": "^1.9",
