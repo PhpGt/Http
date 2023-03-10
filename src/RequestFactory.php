@@ -1,6 +1,5 @@
 <?php
 namespace Gt\Http;
-
 use Gt\Input\Input;
 use Gt\Http\Header\RequestHeaders;
 use Psr\Http\Message\ServerRequestInterface;
@@ -49,36 +48,38 @@ class RequestFactory {
 		string $inputPath = "php://input"
 	):ServerRequestInterface {
 		$method = $server["REQUEST_METHOD"] ?? "";
-		$uri = new Uri($server["REQUEST_URI"] ?? null);
-		$headers = new RequestHeaders();
 
-		if($secure = $server["HTTPS"] ?? null) {
-			$uri = $uri->withScheme("https");
-		}
-		else {
-			$uri = $uri->withScheme("http");
-		}
+		$uri = $this->createUri($server);
+		$headers = $this->createRequestHeaders($server);
 
-		if($port = $server["SERVER_PORT"] ?? null) {
-			$uri = $uri->withPort((int)$port);
-		}
+		return $this->setupServerRequest(
+			$method,
+			$uri,
+			$headers,
+			$server,
+			$files,
+			$get,
+			$post,
+			$inputPath
+		);
+	}
 
-		if($host = $server["HTTP_HOST"] ?? null) {
-			$host = strtok($host, ":");
-			$uri = $uri->withHost($host);
-		}
-
-		if($query = $server["QUERY_STRING"] ?? null) {
-			$uri = $uri->withQuery($query);
-		}
-
-		foreach($server as $key => $value) {
-			if(str_starts_with($key, "HTTP_")) {
-				$headerKey = substr($key, strlen("HTTP_"));
-				$headers->add($headerKey, $value);
-			}
-		}
-
+	/**
+	 * @param array<string, string> $server
+	 * @param array<string, string|array<string>> $files
+	 * @param array<string, string> $get
+	 * @param array<string, string> $post
+	 */
+	protected function setupServerRequest(
+		string $method,
+		Uri $uri,
+		RequestHeaders $headers,
+		array $server,
+		array $files,
+		array $get,
+		array $post,
+		string $inputPath,
+	):ServerRequest {
 		$request = new ServerRequest(
 			$method,
 			$uri,
@@ -100,5 +101,43 @@ class RequestFactory {
 		}
 
 		return $request;
+	}
+
+	/** @param array<string, string> $server */
+	protected function createUri(array $server):Uri {
+		$uri = new Uri($server["REQUEST_URI"] ?? null);
+		if($server["HTTPS"] ?? null) {
+			$uri = $uri->withScheme("https");
+		}
+		else {
+			$uri = $uri->withScheme("http");
+		}
+
+		if($port = $server["SERVER_PORT"] ?? null) {
+			$uri = $uri->withPort((int)$port);
+		}
+
+		if($host = $server["HTTP_HOST"] ?? null) {
+			$host = strtok($host, ":");
+			$uri = $uri->withHost($host);
+		}
+
+		if($query = $server["QUERY_STRING"] ?? null) {
+			$uri = $uri->withQuery($query);
+		}
+
+		return $uri;
+	}
+
+	/** @param array<string, string> $server */
+	protected function createRequestHeaders(array $server):RequestHeaders {
+		$headers = new RequestHeaders();
+		foreach($server as $key => $value) {
+			if(str_starts_with($key, "HTTP_")) {
+				$headerKey = substr($key, strlen("HTTP_"));
+				$headers->add($headerKey, $value);
+			}
+		}
+		return $headers;
 	}
 }

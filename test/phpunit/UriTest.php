@@ -54,7 +54,8 @@ class UriTest extends TestCase {
 	 * @dataProvider getValidUris
 	 */
 	public function testFromParts($input) {
-		$uri = UriFactory::createFromParts(parse_url($input));
+		$uriFactory = new UriFactory();
+		$uri = $uriFactory->createFromParts(parse_url($input));
 		$this->assertSame($input, (string)$uri);
 	}
 
@@ -172,9 +173,7 @@ class UriTest extends TestCase {
 		$this->assertSame('0://0:0@0/0?0#0', (string)$uri);
 	}
 
-	/**
-	 * @dataProvider getPortTestCases
-	 */
+	/** @dataProvider getPortTestCases */
 	public function testIsDefaultPort($scheme, $port, $isDefaultPort) {
 		$uri = (new Uri())
 			->withScheme($scheme)
