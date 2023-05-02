@@ -6,6 +6,7 @@ use Iterator;
 
 /**
  * @implements Iterator<int, HeaderLine>
+ * @SuppressWarnings("TooManyPublicMethods")
  */
 class Headers implements Iterator, Countable {
 	const COMMA_HEADERS = [
@@ -29,8 +30,9 @@ class Headers implements Iterator, Countable {
 		}
 	}
 
-	/** @return array<string, string|array<int, string>> Associative array of headers
-	 * (key = header name, value = header value).
+	/**
+	 * @return array<string, string|array<int, string>> Associative array
+	 * of headers (key = header name, value = header value).
 	 */
 	public function asArray(bool $nested = false):array {
 		$array = [];
@@ -66,7 +68,7 @@ class Headers implements Iterator, Countable {
 	}
 
 	public function contains(string $name):bool {
-		foreach($this->headerLines as $i => $line) {
+		foreach($this->headerLines as $line) {
 			if($line->isNamed($name)) {
 				return true;
 			}
@@ -92,7 +94,10 @@ class Headers implements Iterator, Countable {
 		}
 
 		if(is_null($headerLineToAdd) || $isCommaHeader) {
-			$this->headerLines []= new HeaderLine($name,...$values);
+			array_push(
+				$this->headerLines,
+				new HeaderLine($name, ...$values)
+			);
 		}
 		else {
 			$headerLineToAdd->addValue(...$values);
@@ -114,7 +119,7 @@ class Headers implements Iterator, Countable {
 	}
 
 	public function get(string $name):?HeaderLine {
-		foreach($this->headerLines as $i => $line) {
+		foreach($this->headerLines as $line) {
 			if($line->isNamed($name)) {
 				return $line;
 			}
@@ -125,7 +130,7 @@ class Headers implements Iterator, Countable {
 
 	/** @return null|array<int, string> */
 	public function getAll(string $name):?array {
-		foreach($this->headerLines as $i => $line) {
+		foreach($this->headerLines as $line) {
 			if($line->isNamed($name)) {
 				return $line->getValues();
 			}

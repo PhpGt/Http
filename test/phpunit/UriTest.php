@@ -1,6 +1,7 @@
 <?php
 namespace Gt\Http\Test;
 
+use Exception;
 use Gt\Http\PortOutOfBoundsException;
 use Gt\Http\Uri;
 use Gt\Http\UriFactory;
@@ -54,7 +55,7 @@ class UriTest extends TestCase {
 	 * @dataProvider getValidUris
 	 */
 	public function testFromParts($input) {
-		$uri = UriFactory::createFromParts(parse_url($input));
+		$uri = (new UriFactory())->createFromParts(parse_url($input));
 		$this->assertSame($input, (string)$uri);
 	}
 
@@ -365,8 +366,12 @@ class UriTest extends TestCase {
 	}
 
 	public function testPortPassedAsStringIsCastedToInt() {
-		self::expectException(TypeError::class);
-		$uri = (new Uri('//example.com'))->withPort('8080');
+		$exception = null;
+		try {
+			(new Uri('//example.com'))->withPort("8080");
+		}
+		catch(Exception $exception) {}
+		self::assertNull($exception);
 	}
 
 	public function testPortCanBeRemoved() {

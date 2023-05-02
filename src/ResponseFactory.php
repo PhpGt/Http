@@ -14,8 +14,10 @@ class ResponseFactory {
 	protected static ?BaseAccept $mediaType;
 
 	/**
-	 * A Response object is a PSR-7 compatible object that is created here from the current
-	 * Request. The type of Response that is returned is determined by the type of request.
+	 * A Response object is a PSR-7 compatible object that is created here
+	 * from the current Request. The type of Response that is returned is
+	 * determined by the type of request.
+	 *
 	 * @see http://www.php-fig.org/psr/psr-7
 	 */
 	public static function create(RequestInterface $request):Response {
@@ -47,15 +49,15 @@ class ResponseFactory {
 		}
 
 		/** @var Response $response */
-		/** @noinspection PhpUnnecessaryLocalVariableInspection */
 		$response = new static::$responseClassLookup[$accept];
 		return $response;
 	}
 
 	/**
-	 * In order for this factory to create the correct type of Response, class names need
-	 * to be registered to match the request's "accept" header. This allows the web client to
-	 * request a web page in HTML format, over a web API in JSON format, for example.
+	 * In order for this factory to create the correct type of Response,
+	 * class names need to be registered to match the request's "accept"
+	 * header. This allows the web client to request a web page in HTML
+	 * format, over a web API in JSON format, for example.
 	 */
 	public static function registerResponseClass(
 		string $responseClassName,

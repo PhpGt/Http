@@ -2,6 +2,7 @@
 
 namespace Gt\Http;
 
+// TODO: Convert this to two enum classes
 class StatusCode {
 	const CONTINUE = 100;
 	const SWITCHING_PROTOCOLS = 101;
