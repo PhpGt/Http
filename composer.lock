@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "258c6f0db40f9f269eea4aceb32e4ac0",
+    "content-hash": "626a56cc534e5962d6b19bf280102ce4",
     "packages": [
         {
             "name": "phpgt/input",
