@@ -82,14 +82,14 @@ class ServerInfo {
 
 	/**
 	 * The deserialized query string arguments, if any.
-	 * @return array<string, string>
+	 * @return array<string, string|array<string>>
 	 */
 	public function getQueryParams():array {
 		$params = [];
 
 		$queryString = $this->getQueryString();
 		parse_str($queryString, $params);
-
+		/** @var array<string, string|array<string>> $params */
 		return $params;
 	}
 

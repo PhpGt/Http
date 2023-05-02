@@ -324,7 +324,8 @@ class Uri implements UriInterface {
 		return $this->query ?? "";
 	}
 
-	public function getQueryValue(string $key):?string {
+	/** @return null|string|array<string, string> */
+	public function getQueryValue(string $key):null|string|array {
 		parse_str($this->getQuery(), $queryVariables);
 		return $queryVariables[$key] ?? null;
 	}

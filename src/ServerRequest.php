@@ -73,6 +73,7 @@ class ServerRequest extends Request implements ServerRequestInterface {
 			),
 			$cookieParams
 		);
+		/** @var array<string, string> $cookieParams */
 		return $cookieParams;
 	}
 
@@ -114,10 +115,11 @@ class ServerRequest extends Request implements ServerRequestInterface {
 	 * values, you may need to parse the query string from `getUri()->getQuery()`
 	 * or from the `QUERY_STRING` server param.
 	 *
-	 * @return array<string, string>
+	 * @return array<string, string|array<string>>
 	 */
 	public function getQueryParams():array {
 		parse_str($this->serverData["QUERY_STRING"], $params);
+		/** @var array<string, string|array<string>> $params */
 		return $params;
 	}
 
