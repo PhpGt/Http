@@ -12,7 +12,10 @@
 
 	"require": {
 		"php": ">=8.1",
+		"ext-dom": "*",
 		"phpgt/input": "^1.2",
+		"phpgt/typesafegetter": "^1.3",
+		"phpgt/propfunc": "^1.0",
 		"psr/http-message": "^2.0",
 		"willdurand/negotiation": "3.1.0"
 	},
