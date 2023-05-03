@@ -145,7 +145,7 @@ class ServerInfo {
 	 * The URI which was given in order to access this page.
 	 */
 	public function getRequestUri():UriInterface {
-		$uri = new Uri();
+		$uri = new Url();
 
 		if(isset($this->server["HTTPS"])) {
 			$uri = $uri->withScheme("https");
@@ -203,7 +203,7 @@ class ServerInfo {
 			$query .= http_build_query($queryParams);
 		}
 
-		$uri = new Uri(
+		$uri = new Url(
 			$scheme
 			. "://"
 			. $host

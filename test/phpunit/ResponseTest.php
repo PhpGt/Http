@@ -5,7 +5,7 @@ use Gt\Http\Header\ResponseHeaders;
 use Gt\Http\Request;
 use Gt\Http\Response;
 use Gt\Http\StatusCode;
-use Gt\Http\Uri;
+use Gt\Http\Url;
 use PHPUnit\Framework\TestCase;
 
 class ResponseTest extends TestCase {
@@ -62,7 +62,7 @@ class ResponseTest extends TestCase {
 	public function testReloadKeepsQuery() {
 		$expectedRelativePath = "./?test=123";
 
-		$uri = self::createMock(Uri::class);
+		$uri = self::createMock(Url::class);
 		$uri->expects(self::never())
 			->method("withQuery");
 		$uri->method("__toString")
@@ -82,7 +82,7 @@ class ResponseTest extends TestCase {
 	public function testReloadWithoutQuery() {
 		$expectedRelativePath = "./";
 
-		$uri = self::createMock(Uri::class);
+		$uri = self::createMock(Url::class);
 		$uri->expects(self::once())
 			->method("withQuery")
 			->with("")

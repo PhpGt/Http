@@ -5,7 +5,7 @@ use Gt\Http\Header\RequestHeaders;
 use Gt\Http\InvalidRequestMethodHttpException;
 use Gt\Http\Request;
 use Gt\Http\RequestMethod;
-use Gt\Http\Uri;
+use Gt\Http\Url;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -97,12 +97,12 @@ class RequestTest extends TestCase {
 		$req->withUri(self::getUriMock("https://example2.com/something"));
 	}
 
-	/** @return MockObject|Uri */
+	/** @return MockObject|Url */
 	protected function getUriMock(string $uriPath = ""):MockObject {
 		$partPath = parse_url($uriPath, PHP_URL_PATH);
 		$partQuery = parse_url($uriPath, PHP_URL_QUERY);
 		$partHost = parse_url($uriPath, PHP_URL_HOST);
-		$uri = self::createMock(Uri::class);
+		$uri = self::createMock(Url::class);
 		$uri->method("getPath")
 			->willReturn($partPath ?? "");
 		$uri->method("getQuery")

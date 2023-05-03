@@ -4,7 +4,7 @@ namespace Gt\Http\Test;
 use Gt\Http\Header\RequestHeaders;
 use Gt\Http\Request;
 use Gt\Http\RequestMethod;
-use Gt\Http\Uri;
+use Gt\Http\Url;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\UriInterface;
@@ -16,7 +16,7 @@ class MessageTest extends TestCase {
 		string $uriString,
 		array $headersArray
 	) {
-		/** @var MockObject|Uri $uri */
+		/** @var MockObject|Url $uri */
 		$uri = self::createMock(UriInterface::class);
 		$uri->method("__toString")
 			->willReturn($uriString);

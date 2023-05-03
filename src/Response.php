@@ -31,11 +31,11 @@ class Response implements ResponseInterface {
 	}
 
 	public function reload():void {
-		$this->redirect($this->request?->getUri() ?? new Uri());
+		$this->redirect($this->request?->getUri() ?? new Url());
 	}
 
 	public function reloadWithoutQuery():void {
-		$uri = $this->request?->getUri() ?? new Uri();
+		$uri = $this->request?->getUri() ?? new Url();
 		$uri = $uri->withQuery("");
 		$this->redirect($uri);
 	}

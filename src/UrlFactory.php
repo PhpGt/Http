@@ -1,10 +1,10 @@
 <?php
 namespace Gt\Http;
 
-class UriFactory {
+class UrlFactory {
 	/** @param array<string, int|string> $parts */
-	public function createFromParts(array $parts):Uri {
-		$uri = new Uri();
+	public function createFromParts(array $parts):Url {
+		$uri = new Url();
 		$uri->applyParts($parts);
 		return $uri;
 	}
@@ -35,7 +35,7 @@ class UriFactory {
 		string $path = null,
 		string $query = null,
 		string $fragment = null
-	):Uri {
+	):Url {
 		$uri = "";
 
 		if(strlen($scheme ?? "") > 0) {
@@ -58,6 +58,6 @@ class UriFactory {
 			$uri .= $fragment;
 		}
 
-		return new Uri($uri);
+		return new Url($uri);
 	}
 }

@@ -8,7 +8,7 @@ namespace Gt\Http;
  *
  * @link https://tools.ietf.org/html/rfc3986#section-5
  */
-class UriResolver {
+class UrlResolver {
 	/**
 	 * Removes dot segments from a path and returns the new path.
 	 * @link http://tools.ietf.org/html/rfc3986#section-5.2.4
@@ -54,7 +54,7 @@ class UriResolver {
 	 * @link http://tools.ietf.org/html/rfc3986#section-5.2
 	 * @SuppressWarnings("CyclomaticComplexity") // TODO: Refactor one day :)
 	 */
-	public function resolve(Uri $base, Uri $rel):Uri {
+	public function resolve(Url $base, Url $rel):Url {
 		if((string)$rel === "") {
 // We can return the same base URI instance for this same-document reference.
 			return $base;
@@ -104,7 +104,7 @@ class UriResolver {
 			}
 		}
 
-		$uriFactory = new UriFactory();
+		$uriFactory = new UrlFactory();
 		return $uriFactory->composeFromComponents(
 			$base->getScheme(),
 			$targetAuthority,

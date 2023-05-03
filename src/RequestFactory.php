@@ -97,7 +97,7 @@ class RequestFactory {
 	 * @param array<string, string> $server
 	 */
 	protected function buildUri(array $server):UriInterface {
-		$uri = new Uri($server["REQUEST_URI"] ?? null);
+		$uri = new Url($server["REQUEST_URI"] ?? null);
 
 		if($server["HTTPS"] ?? null) {
 			$uri = $uri->withScheme("https");

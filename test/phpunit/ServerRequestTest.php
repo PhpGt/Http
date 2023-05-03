@@ -4,7 +4,7 @@ namespace Gt\Http\Test;
 use Gt\Http\Header\RequestHeaders;
 use Gt\Http\ServerInfo;
 use Gt\Http\ServerRequest;
-use Gt\Http\Uri;
+use Gt\Http\Url;
 use Gt\Input\InputData\Datum\FileUpload;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -276,9 +276,9 @@ class ServerRequestTest extends TestCase {
 		);
 	}
 
-	/** @return MockObject|Uri */
+	/** @return MockObject|Url */
 	protected function getMockUri(string $uriPath):MockObject {
-		$mock = self::createMock(Uri::class);
+		$mock = self::createMock(Url::class);
 		return $mock;
 	}
 
