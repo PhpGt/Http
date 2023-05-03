@@ -4,6 +4,7 @@ use Psr\Http\Message\UriInterface;
 
 /**
  * @see http://php.net/manual/en/reserved.variables.server.php
+ * @SuppressWarnings("ExcessiveClassComplexity")
  */
 class ServerInfo {
 	/** @var array<string, string> The original _server array */
@@ -14,9 +15,10 @@ class ServerInfo {
 		$this->server = $server;
 	}
 
-// Non-nullable values: ----------------------------------------------------------------------------
+// Non-nullable values: --------------------------------------------------------
 	/**
-	 * HTTP headers are case-insensitive, so headers are transformed to uppercase.
+	 * HTTP headers are case-insensitive, so headers are transformed to
+	 * uppercase.
 	 * @link https://www.w3.org/Protocols/rfc2616/rfc2616-sec4.html#sec4.2
 	 * @return array<string, string>
 	 */
@@ -38,7 +40,8 @@ class ServerInfo {
 	}
 
 	/**
-	 * Name and revision of the information protocol via which the page was requested.
+	 * Name and revision of the information protocol via which the page
+	 * was requested.
 	 */
 	public function getServerProtocol():string {
 		return $this->server["SERVER_PROTOCOL"];
@@ -54,14 +57,16 @@ class ServerInfo {
 	}
 
 	/**
-	 * The timestamp of the start of the request, with microsecond precision
+	 * The timestamp of the start of the request, with microsecond
+	 * precision.
 	 */
 	public function getRequestMethod():string {
 		return $this->server["REQUEST_METHOD"];
 	}
 
 	/**
-	 * The timestamp of the start of the request, with microsecond precision
+	 * The timestamp of the start of the request, with microsecond
+	 * precision.
 	 */
 	public function getRequestTime():float {
 		return (float)$this->server["REQUEST_TIME_FLOAT"];
@@ -82,14 +87,14 @@ class ServerInfo {
 
 	/**
 	 * The deserialized query string arguments, if any.
-	 * @return array<string, string>
+	 * @return array<string, string|array<string>>
 	 */
 	public function getQueryParams():array {
 		$params = [];
 
 		$queryString = $this->getQueryString();
 		parse_str($queryString, $params);
-
+		/** @var array<string, string|array<string>> $params */
 		return $params;
 	}
 
@@ -100,8 +105,8 @@ class ServerInfo {
 	}
 
 	/**
-	 * The document root directory under which the current script is executing, as defined in
-	 * the server's configuration file.
+	 * The document root directory under which the current script is
+	 * executing, as defined in the server's configuration file.
 	 */
 	public function getDocumentRoot():string {
 		return $this->server["DOCUMENT_ROOT"];
@@ -129,8 +134,8 @@ class ServerInfo {
 	}
 
 	/**
-	 * Contains the current script's path. This is useful for pages which need to point
-	 * to themselves.
+	 * Contains the current script's path. This is useful for pages which
+	 * need to point to themselves.
 	 */
 	public function getScriptName():string {
 		return $this->server["SCRIPT_NAME"];
@@ -212,43 +217,48 @@ class ServerInfo {
 // Nullable values: --------------------------------------------------------------------------------
 
 	/**
-	 * The filename of the currently executing script, relative to the document root.
+	 * The filename of the currently executing script, relative to the
+	 * document root.
 	 */
 	public function getPhpSelf():?string {
 		return $this->server["PHP_SELF"] ?? null;
 	}
 
 	/**
-	 * What revision of the CGI specification the server is using; i.e. 'CGI/1.1'.
+	 * What revision of the CGI specification the server is using;
+	 * i.e. 'CGI/1.1'.
 	 */
 	public function getGatewayInterface():?string {
 		return $this->server["GATEWAY_INTERFACE"] ?? null;
 	}
 
 	/**
-	 * The IP address of the server under which the current script is executing.
+	 * The IP address of the server under which the current script
+	 * is executing.
 	 */
 	public function getServerAddress():?string {
 		return $this->server["SERVER_ADDR"] ?? null;
 	}
 
 	/**
-	 * The name of the server host under which the current script is executing.
+	 * The name of the server host under which the current script
+	 * is executing.
 	 */
 	public function getServerName():?string {
 		return $this->server["SERVER_NAME"] ?? null;
 	}
 
 	/**
-	 * Server identification string, given in the headers when responding to requests.
+	 * Server identification string, given in the headers when responding
+	 * to requests.
 	 */
 	public function getServerSoftware():?string {
 		return $this->server["SERVER_SOFTWARE"] ?? null;
 	}
 
 	/**
-	 * The Host name from which the user is viewing the current page. The reverse dns lookup
-	 * is based off the REMOTE_ADDR of the user.
+	 * The Host name from which the user is viewing the current page.
+	 * The reverse dns lookup is based off the REMOTE_ADDR of the user.
 	 */
 	public function getRemoteHost():?string {
 		return $this->server["REMOTE_HOST"] ?? null;
@@ -279,7 +289,8 @@ class ServerInfo {
 	}
 
 	/**
-	 * The port being used on the user's machine to communicate with the web server.
+	 * The port being used on the user's machine to communicate with
+	 * the web server.
 	 */
 	public function getRemotePort():?int {
 		if($port = $this->server["REMOTE_PORT"] ?? null) {
@@ -304,7 +315,8 @@ class ServerInfo {
 	}
 
 	/**
-	 * The value given to the SERVER_ADMIN (for Apache) directive in the web server
+	 * The value given to the SERVER_ADMIN (for Apache) directive in the
+	 * web server
 	 * configuration file.
 	 */
 	public function getServerAdmin():?string {
@@ -312,7 +324,8 @@ class ServerInfo {
 	}
 
 	/**
-	 * The port on the server machine being used by the web server for communication.
+	 * The port on the server machine being used by the web server for
+	 * communication.
 	 */
 	public function getServerPort():?int {
 		if($port = $this->server["SERVER_PORT"] ?? null) {
@@ -323,37 +336,41 @@ class ServerInfo {
 	}
 
 	/**
-	 * ng containing the server version and virtual host name which are added to
-	 * server-generated pages, if enabled.
+	 * ng containing the server version and virtual host name which are
+	 * added to server-generated pages, if enabled.
 	 */
 	public function getServerSignature():?string {
 		return $this->server["SERVER_SIGNATURE"] ?? null;
 	}
 
 	/**
-	 * When doing Digest HTTP authentication this variable is set to the 'Authorization'
-	 * header sent by the client (which you should then use to make the appropriate validation).
+	 * When doing Digest HTTP authentication this variable is set to the
+	 * 'Authorization' header sent by the client (which you should then use
+	 * to make the appropriate validation).
 	 */
 	public function getAuthDigest():?string {
 		return $this->server["PHP_AUTH_DIGEST"] ?? null;
 	}
 
 	/**
-	 * When doing HTTP authentication this variable is set to the username provided by the user.
+	 * When doing HTTP authentication this variable is set to the username
+	 * provided by the user.
 	 */
 	public function getAuthUser():?string {
 		return $this->server["PHP_AUTH_USER"] ?? null;
 	}
 
 	/**
-	 * When doing HTTP authentication this variable is set to the password provided by the user.
+	 * When doing HTTP authentication this variable is set to the password
+	 * provided by the user.
 	 */
 	public function getAuthPassword():?string {
 		return $this->server["PHP_AUTH_PW"] ?? null;
 	}
 
 	/**
-	 * When doing HTTP authentication this variable is set to the authentication type.
+	 * When doing HTTP authentication this variable is set to the
+	 * authentication type.
 	 */
 	public function getAuthType():?string {
 		return $this->server["AUTH_TYPE"] ?? null;

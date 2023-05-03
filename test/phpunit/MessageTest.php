@@ -1,14 +1,13 @@
 <?php
 namespace Gt\Http\Test;
 
-use Gt\Http\Header\Headers;
 use Gt\Http\Header\RequestHeaders;
-use Gt\Http\Message;
 use Gt\Http\Request;
 use Gt\Http\RequestMethod;
 use Gt\Http\Uri;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Psr\Http\Message\UriInterface;
 
 class MessageTest extends TestCase {
 	/** @dataProvider data_request */
@@ -18,7 +17,7 @@ class MessageTest extends TestCase {
 		array $headersArray
 	) {
 		/** @var MockObject|Uri $uri */
-		$uri = self::createMock(Uri::class);
+		$uri = self::createMock(UriInterface::class);
 		$uri->method("__toString")
 			->willReturn($uriString);
 
@@ -47,7 +46,7 @@ class MessageTest extends TestCase {
 		self::assertEquals($expected, $protocolVersion);
 	}
 
-	public function data_request():array {
+	public static function data_request():array {
 		$data = [];
 
 		for($i = 0; $i < 10; $i++) {

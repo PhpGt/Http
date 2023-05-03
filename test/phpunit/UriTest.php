@@ -1,6 +1,7 @@
 <?php
 namespace Gt\Http\Test;
 
+use Exception;
 use Gt\Http\PortOutOfBoundsException;
 use Gt\Http\Uri;
 use Gt\Http\UriFactory;
@@ -42,24 +43,19 @@ class UriTest extends TestCase {
 		$this->assertSame('https://user:pass@example.com:8080/path/123?q=abc#test', (string)$uri);
 	}
 
-	/**
-	 * @dataProvider getValidUris
-	 */
+	/** @dataProvider getValidUris */
 	public function testValidUrisStayValid($input) {
 		$uri = new Uri($input);
-		$this->assertSame($input, (string)$uri);
+		self::assertSame($input, (string)$uri);
 	}
 
-	/**
-	 * @dataProvider getValidUris
-	 */
+	/** @dataProvider getValidUris */
 	public function testFromParts($input) {
-		$uriFactory = new UriFactory();
-		$uri = $uriFactory->createFromParts(parse_url($input));
-		$this->assertSame($input, (string)$uri);
+		$uri = (new UriFactory())->createFromParts(parse_url($input));
+		self::assertSame($input, (string)$uri);
 	}
 
-	public function getValidUris() {
+	public static function getValidUris():array {
 		return [
 			['urn:path-rootless'],
 			['urn:path:with:colon'],
@@ -93,7 +89,7 @@ class UriTest extends TestCase {
 		new Uri($invalidUri);
 	}
 
-	public function getInvalidUris() {
+	public static function getInvalidUris() {
 		return [
 			// parse_url() requires the host component which makes sense for http(s)
 			// but not when the scheme is not known or different. So '//' or '///' is
@@ -173,7 +169,9 @@ class UriTest extends TestCase {
 		$this->assertSame('0://0:0@0/0?0#0', (string)$uri);
 	}
 
-	/** @dataProvider getPortTestCases */
+	/**
+	 * @dataProvider getPortTestCases
+	 */
 	public function testIsDefaultPort($scheme, $port, $isDefaultPort) {
 		$uri = (new Uri())
 			->withScheme($scheme)
@@ -186,7 +184,7 @@ class UriTest extends TestCase {
 		);
 	}
 
-	public function getPortTestCases() {
+	public static function getPortTestCases() {
 		return [
 			['http', null, true],
 			['http', 80, true],
@@ -364,8 +362,12 @@ class UriTest extends TestCase {
 	}
 
 	public function testPortPassedAsStringIsCastedToInt() {
-		self::expectException(TypeError::class);
-		$uri = (new Uri('//example.com'))->withPort('8080');
+		$exception = null;
+		try {
+			(new Uri('//example.com'))->withPort("8080");
+		}
+		catch(Exception $exception) {}
+		self::assertNull($exception);
 	}
 
 	public function testPortCanBeRemoved() {
@@ -411,7 +413,7 @@ class UriTest extends TestCase {
 		$this->assertSame('file:///tmp/filename.ext', (string)$uri);
 	}
 
-	public function uriComponentsEncodingProvider() {
+	public static function uriComponentsEncodingProvider() {
 		$unreserved = 'a-zA-Z0-9.-_~!$&\'()*+,;=:@';
 
 		return [
@@ -477,7 +479,7 @@ class UriTest extends TestCase {
 	/**
 	 * @dataProvider uriComponentsEncodingProvider
 	 */
-	public function testUriComponentsGetEncodedProperly(
+	public static function testUriComponentsGetEncodedProperly(
 		$input,
 		$path,
 		$query,
@@ -485,10 +487,10 @@ class UriTest extends TestCase {
 		$output
 	) {
 		$uri = new Uri($input);
-		$this->assertSame($path, $uri->getPath());
-		$this->assertSame($query, $uri->getQuery());
-		$this->assertSame($fragment, $uri->getFragment());
-		$this->assertSame($output, (string)$uri);
+		self::assertSame($path, $uri->getPath());
+		self::assertSame($query, $uri->getQuery());
+		self::assertSame($fragment, $uri->getFragment());
+		self::assertSame($output, (string)$uri);
 	}
 
 	public function testWithPathEncodesProperly() {

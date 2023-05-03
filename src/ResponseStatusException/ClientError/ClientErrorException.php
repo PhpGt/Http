@@ -3,5 +3,5 @@ namespace Gt\Http\ResponseStatusException\ClientError;
 
 use Gt\Http\ResponseStatusException\ResponseStatusException;
 
-/** @SuppressWarnings(PHPMD.NumberOfChildren) */
+// phpmd:ignore
 abstract class ClientErrorException extends ResponseStatusException {}

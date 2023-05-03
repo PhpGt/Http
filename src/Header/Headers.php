@@ -6,6 +6,7 @@ use Iterator;
 
 /**
  * @implements Iterator<int, HeaderLine>
+ * @SuppressWarnings("TooManyPublicMethods")
  */
 class Headers implements Iterator, Countable {
 	const COMMA_HEADERS = [
@@ -29,9 +30,9 @@ class Headers implements Iterator, Countable {
 		}
 	}
 
-	/** @return array<string, string|array<int, string>> Associative array of headers
-	 * (key = header name, value = header value).
-	 * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
+	/**
+	 * @return array<string, string|array<int, string>> Associative array
+	 * of headers (key = header name, value = header value).
 	 */
 	public function asArray(bool $nested = false):array {
 		$array = [];

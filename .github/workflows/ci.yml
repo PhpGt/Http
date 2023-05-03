@@ -20,6 +20,8 @@ jobs:
 
       - name: Composer install
         uses: php-actions/composer@v6
+        env:
+          COMPOSER_ROOT_VERSION: dev-master
         with:
           php_version: ${{ matrix.php }}
 
@@ -58,8 +60,6 @@ jobs:
         with:
           php_version: ${{ matrix.php }}
           php_extensions: xdebug
-          configuration: test/phpunit/phpunit.xml
-          bootstrap: vendor/autoload.php
           coverage_text: _coverage/coverage.txt
           coverage_clover: _coverage/clover.xml
 
@@ -108,6 +108,7 @@ jobs:
         with:
           php_version: ${{ matrix.php }}
           path: src/
+          level: 7
 
   phpmd:
     runs-on: ubuntu-latest
