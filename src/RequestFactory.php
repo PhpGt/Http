@@ -1,9 +1,7 @@
 <?php
 namespace Gt\Http;
 
-use Gt\Input\Input;
 use Gt\Http\Header\RequestHeaders;
-use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriInterface;
 
 class RequestFactory {
