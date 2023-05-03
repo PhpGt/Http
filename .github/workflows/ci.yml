@@ -20,6 +20,8 @@ jobs:
 
       - name: Composer install
         uses: php-actions/composer@v6
+        env:
+          COMPOSER_ROOT_VERSION: dev-master
         with:
           php_version: ${{ matrix.php }}
 
