@@ -63,10 +63,6 @@ class ResponseTest extends TestCase {
 		$expectedRelativePath = "./?test=123";
 
 		$uri = self::createMock(Uri::class);
-		$uri->expects(self::once())
-			->method("withPath")
-			->with("./")
-			->willReturn($uri);
 		$uri->expects(self::never())
 			->method("withQuery");
 		$uri->method("__toString")
@@ -83,14 +79,10 @@ class ResponseTest extends TestCase {
 		self::assertSame($expectedRelativePath, $sut->getHeaderLine("Location"));
 	}
 
-	public function testReloadWithoutKeepQuery() {
+	public function testReloadWithoutQuery() {
 		$expectedRelativePath = "./";
 
 		$uri = self::createMock(Uri::class);
-		$uri->expects(self::once())
-			->method("withPath")
-			->with("./")
-			->willReturn($uri);
 		$uri->expects(self::once())
 			->method("withQuery")
 			->with("")
@@ -103,7 +95,7 @@ class ResponseTest extends TestCase {
 			->willReturn($uri);
 
 		$sut = new Response(200, request: $request);
-		$sut->reload(false);
+		$sut->reloadWithoutQuery();
 		self::assertSame(StatusCode::SEE_OTHER, $sut->getStatusCode());
 		self::assertSame($expectedRelativePath, $sut->getHeaderLine("Location"));
 	}

@@ -1,5 +1,4 @@
 <?php
-
 namespace Gt\Http;
 
 // TODO: Convert this to two enum classes

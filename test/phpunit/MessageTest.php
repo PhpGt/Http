@@ -57,7 +57,7 @@ class MessageTest extends TestCase {
 			$headersArray = self::generateHeaders();
 
 			$data []= [
-				$method,
+				$method->name,
 				$uriString,
 				$headersArray,
 			];

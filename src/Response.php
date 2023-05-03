@@ -30,12 +30,13 @@ class Response implements ResponseInterface {
 		$this->exitCallback = $callback;
 	}
 
-	public function reload(bool $keepQuery = true):void {
+	public function reload():void {
+		$this->redirect($this->request?->getUri() ?? new Uri());
+	}
+
+	public function reloadWithoutQuery():void {
 		$uri = $this->request?->getUri() ?? new Uri();
-		$uri = $uri->withPath("./");
-		if(!$keepQuery) {
-			$uri = $uri->withQuery("");
-		}
+		$uri = $uri->withQuery("");
 		$this->redirect($uri);
 	}
 

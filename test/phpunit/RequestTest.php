@@ -47,7 +47,7 @@ class RequestTest extends TestCase {
 			self::getHeadersMock()
 		);
 		self::assertEquals(
-			RequestMethod::METHOD_GET,
+			RequestMethod::GET->name,
 			$req->getMethod()
 		);
 	}
@@ -60,7 +60,7 @@ class RequestTest extends TestCase {
 		);
 		$sut = $req->withMethod("post");
 		self::assertEquals(
-			RequestMethod::METHOD_POST,
+			RequestMethod::POST->name,
 			$sut->getMethod()
 		);
 	}
