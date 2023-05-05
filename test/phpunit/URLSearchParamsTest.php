@@ -294,4 +294,39 @@ class URLSearchParamsTest extends TestCase {
 		$sut = new URLSearchParams("name=Cody&food[]=mushroom&food[]=pepper");
 		self::assertSame(["Cody", "mushroom", "pepper"], $sut->values());
 	}
+
+	public function testIterator_empty():void {
+		$sut = new URLSearchParams();
+		$key = $value = null;
+		foreach($sut as $key => $value) {
+			self::assertNull($key, "Iterator should not run");
+		}
+		self::assertNull($key);
+		self::assertNull($value);
+	}
+
+	public function testIterator():void {
+		$sut = new URLSearchParams("name=Cody&colour=orange");
+		$iterations = [];
+		foreach($sut as $key => $value) {
+			array_push($iterations, [$key, $value]);
+		}
+
+		self::assertCount(2, $iterations);
+		self::assertSame(["name", "Cody"], $iterations[0]);
+		self::assertSame(["colour", "orange"], $iterations[1]);
+	}
+
+	public function testIterator_multipleKeys():void {
+		$sut = new URLSearchParams("name=Cody&food[]=mushrooms&food[]=biscuits");
+		$iterations = [];
+		foreach($sut as $key => $value) {
+			array_push($iterations, [$key, $value]);
+		}
+
+		self::assertCount(3, $iterations);
+		self::assertSame(["name", "Cody"], $iterations[0]);
+		self::assertSame(["food[]", "mushrooms"], $iterations[1]);
+		self::assertSame(["food[]", "biscuits"], $iterations[2]);
+	}
 }

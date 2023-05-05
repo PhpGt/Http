@@ -5,18 +5,23 @@ use Countable;
 use Generator;
 use Gt\PropFunc\MagicProp;
 use Gt\TypeSafeGetter\NullableTypeSafeGetter;
+use Iterator;
 use Stringable;
 
 /**
  * @property-read int $size The read-only URLSearchParams.size property
  * indicates the total number of search parameter entries.
+ * @implements Iterator<string, string>
  */
-class URLSearchParams implements Stringable, Countable {
+class URLSearchParams implements Stringable, Countable, Iterator {
 	use MagicProp;
 	use NullableTypeSafeGetter;
 
 	/** @var array<string, string|array<string>> */
 	private array $kvp;
+	private int $iteratorIndex;
+	/** @var array<string, string> */
+	private array $iteratorCache;
 
 	/**
 	 * @param string|array<string, string>|FormData $options
@@ -47,6 +52,8 @@ class URLSearchParams implements Stringable, Countable {
 		else {
 			$this->kvp = $options;
 		}
+
+		$this->rewind();
 	}
 
 	/**
@@ -296,5 +303,35 @@ class URLSearchParams implements Stringable, Countable {
 			}
 		}
 		return $values;
+	}
+
+	public function rewind():void {
+		$this->iteratorIndex = 0;
+		$this->iteratorCache = $this->cacheIterator();
+	}
+
+	public function valid():bool {
+		return isset($this->iteratorCache[$this->iteratorIndex]);
+	}
+
+	public function current():string {
+		return $this->iteratorCache[$this->iteratorIndex][1];
+	}
+
+	public function key():string {
+		return $this->iteratorCache[$this->iteratorIndex][0];
+	}
+
+	public function next():void {
+		$this->iteratorIndex++;
+	}
+
+	/** array<string, string|array<string>> */
+	private function cacheIterator():array {
+		$cache = [];
+		foreach($this->entries() as $key => $value) {
+			array_push($cache, [$key, $value]);
+		}
+		return $cache;
 	}
 }
