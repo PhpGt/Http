@@ -2,6 +2,8 @@
 namespace Gt\Http;
 
 use DOMElement;
+use DOMNodeList;
+use DOMXPath;
 use Generator;
 use Gt\TypeSafeGetter\NullableTypeSafeGetter;
 use Stringable;
@@ -9,10 +11,20 @@ use Countable;
 use Iterator;
 
 /**
- * @implements Iterator<string, string|Blob|FileUpload>
+ * @method Generator<string|Blob> entries()
+ * @method array<string|Blob> getAll(string $name)
+ * @method array<string|Blob> values()
+ * @implements Iterator<string, string|Blob>
+ * @see https://developer.mozilla.org/en-US/docs/Web/API/FormData
  */
 class FormData extends KeyValuePairStore implements Stringable, Countable, Iterator {
 	use NullableTypeSafeGetter;
+
+	const USER_INPUT_ELEMENTS = [
+		"input",
+		"textarea",
+		"select",
+	];
 
 	/**
 	 * @param ?DOMElement $form An HTML <form> element — when specified,
@@ -20,15 +32,22 @@ class FormData extends KeyValuePairStore implements Stringable, Countable, Itera
 	 * keys/values using the name property of each element for the keys and
 	 * their submitted value for the values. It will also encode file
 	 * input content.
-	 * @param ?DOMElement|null $submitter A submit button that is a member
+	 * @param ?DOMElement $submitter A submit button that is a member
 	 * of the form. If the submitter has a name attribute or is an
 	 * <input type="image">, its data will be included in the FormData
 	 * object (e.g. btnName=btnValue).
 	 */
 	public function __construct(
 		private readonly ?DOMElement $form = null,
-		private readonly ?DOMElement $submitter = null,
+		?DOMElement $submitter = null,
 	) {
+		if($form) {
+			$this->kvp = $this->extractKvpFromForm($form);
+		}
+		else {
+			$this->kvp = [];
+		}
+
 		if($submitter) {
 			$foundForm = false;
 			while($parent = $submitter->parentNode) {
@@ -43,6 +62,11 @@ class FormData extends KeyValuePairStore implements Stringable, Countable, Itera
 					"Submitter is not part of the form"
 				);
 			}
+
+			$this->append(
+				$submitter->getAttribute("name"),
+				$submitter->getAttribute("value"),
+			);
 		}
 
 		$this->rewind();
@@ -72,140 +96,77 @@ class FormData extends KeyValuePairStore implements Stringable, Countable, Itera
 	 */
 	public function append(
 		string $name,
-		Blob|FileUpload|string $value,
+		Blob|File|string $value,
 		string $filename = null
 	):void {
-
+		$this->appendAnyValue($name, $value, $filename);
 	}
 
-	/**
-	 * The delete() method of the FormData interface deletes a key and its
-	 * value(s) from a FormData object.
-	 *
-	 * @see https://developer.mozilla.org/en-US/docs/Web/API/FormData/delete
-	 */
-	public function delete(string $name):void {
-
-	}
-
-	/**
-	 * The FormData.entries() method returns an iterator which iterates
-	 * through all key/value pairs contained in the FormData. The key of
-	 * each pair is a string object, and the value is either a string
-	 * or a Blob.
-	 *
-	 * @return array<string, string|Blob|FileUpload>
-	 *
-	 * @see https://developer.mozilla.org/en-US/docs/Web/API/FormData/entries
-	 */
-	public function entries():Generator {
-
-	}
-
-	/**
-	 * The forEach() method of the FormData interface allows
-	 * iteration through all values contained in this object via a
-	 * callback function.
-	 *
-	 * @see https://developer.mozilla.org/en-US/docs/Web/API/FormData/forEach
-	 */
-	public function forEach(callable $callback):void {
-
-	}
-
-	/**
-	 * The get() method of the FormData interface returns the first value
-	 * associated with a given key from within a FormData object. If you
-	 * expect multiple values and want all of them, use the getAll()
-	 * method instead.
-	 *
-	 * This class provides type-safe getters: getInt, getBool, etc.
-	 *
-	 * @see https://developer.mozilla.org/en-US/docs/Web/API/FormData/get
-	 */
-	public function get(string $name):mixed {
-
-	}
-
-	/**
-	 * The getAll() method of the FormData interface returns all the values associated with a given key from within a FormData object.
-	 *
-	 * @param string $name A string representing the name of the key you
-	 * want to retrieve.
-	 *
-	 * @return array<string|Blob|FileUpload>
-	 *
-	 * @see https://developer.mozilla.org/en-US/docs/Web/API/FormData/getAll
-	 */
-	public function getAll(string $name):array {
-
-	}
-
-	/**
-	 * The has() method of the FormData interface returns whether a
-	 * FormData object contains a certain key.
-	 *
-	 * @param string $name A string representing the name of the key you
-	 * want to test for.
-	 *
-	 * @see https://developer.mozilla.org/en-US/docs/Web/API/FormData/has
-	 */
-	public function has(string $name):bool {
-
-	}
-
-	/**
-	 * The FormData.keys() method returns an iterator which iterates
-	 * through all keys contained in the FormData. The keys are strings.
-	 *
-	 * @return array<string>
-	 *
-	 * @see https://developer.mozilla.org/en-US/docs/Web/API/FormData/keys
-	 */
-	public function keys():array {
-
-	}
-
-	/**
-	 * The set() method of the FormData interface sets a new value for an
-	 * existing key inside a FormData object, or adds the key/value if it
-	 * does not already exist.
-	 *
-	 * The difference between set() and append() is that if the specified
-	 * key does already exist, set() will overwrite all existing values
-	 * with the new one, whereas append() will append the new value onto
-	 * the end of the existing set of values.
-	 *
-	 * @param string $name The name of the field whose data is contained
-	 * in value.
-	 * @param Blob|FileUpload|string $value The field's value. This can be
-	 * a string or Blob (including subclasses such as File). If none of
-	 * these are specified the value is converted to a string.
-	 * @param ?string $filename The filename reported to the server,
-	 * when a Blob or File is passed as the second parameter. The default
-	 * filename for Blob objects is "blob". The default filename for File
-	 * objects is the file's filename.
-	 *
-	 * @see https://developer.mozilla.org/en-US/docs/Web/API/FormData/set
-	 */
 	public function set(
 		string $name,
-		Blob|FileUpload|string $value,
+		Blob|File|string $value,
 		?string $filename = null,
 	):void {
-
+		$this->setAnyValue($name, $value, $filename);
 	}
 
-	/**
-	 * The FormData.values() method returns an iterator which iterates
-	 * through all values contained in the FormData. The values are
-	 * strings or Blob objects.
-	 *
-	 * @return array<Blob|FileUpload|string>
-	 *
-	 * @see https://developer.mozilla.org/en-US/docs/Web/API/FormData/values
-	 */
-	public function values():array {
+	/** @return array<string, string|array<string>> */
+	private function extractKvpFromForm(DOMElement $form):array {
+		$kvp = [];
 
+		$xpath = new DOMXPath($form->ownerDocument);
+		$nameElementList = $xpath->query(".//*[@name]", $form);
+		if(!$nameElementList) {
+			return $kvp;
+		}
+
+		/** @var DOMNodeList<DOMElement> $nameElementList */
+		for($i = 0, $len = $nameElementList->length; $i < $len; $i++) {
+			/** @var DOMElement $item */
+			$item = $nameElementList->item($i);
+			if(!in_array($item->tagName, self::USER_INPUT_ELEMENTS)) {
+				continue;
+			}
+			$key = $item->getAttribute("name");
+			$value = "";
+
+			if($item->tagName === "textarea") {
+				$value = $item->nodeValue ?? "";
+			}
+			elseif($item->tagName === "select") {
+				$value = $this->getValueFromSelect($item);
+			}
+			else {
+				$value = $item->getAttribute("value");
+			}
+
+			if(isset($kvp[$key])) {
+				if(is_array($kvp[$key])) {
+					array_push($kvp[$key], $value);
+				}
+				else {
+					$kvp[$key] = [$kvp[$key], $value];
+				}
+			}
+			else {
+				$kvp[$key] = $value;
+			}
+		}
+
+		return $kvp;
+	}
+
+	private function getValueFromSelect(DOMElement $select):string {
+		$optionList = $select->getElementsByTagName("option");
+		for($j = 0, $optLen = $optionList->length; $j < $optLen; $j++) {
+			/** @var DOMElement $option */
+			$option = $optionList->item($j);
+			if($option->hasAttribute("selected")) {
+				return $option->getAttribute("value")
+					?: $option->nodeValue;
+			}
+		}
+
+		return "";
 	}
 }

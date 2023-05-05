@@ -12,6 +12,7 @@ use Stringable;
  * @property-read int $size The read-only URLSearchParams.size property
  * indicates the total number of search parameter entries.
  * @implements Iterator<string, string>
+ * @see https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams
  */
 class URLSearchParams extends KeyValuePairStore implements Stringable, Countable, Iterator {
 	use MagicProp;
@@ -41,7 +42,9 @@ class URLSearchParams extends KeyValuePairStore implements Stringable, Countable
 			$this->kvp = $query;
 		}
 		elseif($options instanceof FormData) {
-
+			foreach($options as $key => $value) {
+				$this->append($key, $value);
+			}
 		}
 		else {
 			$this->kvp = $options;
@@ -52,5 +55,13 @@ class URLSearchParams extends KeyValuePairStore implements Stringable, Countable
 
 	public function __prop_get_size():int {
 		return count($this);
+	}
+
+	public function append(string $name, string $value):void {
+		$this->appendAnyValue($name, $value);
+	}
+
+	public function set(string $name, string $value):void {
+		$this->setAnyValue($name, $value);
 	}
 }

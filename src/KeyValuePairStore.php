@@ -3,11 +3,12 @@ namespace Gt\Http;
 
 use Generator;
 
+/** @SuppressWarnings("TooManyPublicMethods") */
 abstract class KeyValuePairStore {
 	/** @var array<string, string|array<string>> */
 	protected array $kvp;
 	protected int $iteratorIndex;
-	/** @var array<int, array<string>> */
+	/** @var array<int, array<string|Blob>> */
 	protected array $iteratorCache;
 
 	/**
@@ -36,54 +37,18 @@ abstract class KeyValuePairStore {
 		return isset($this->iteratorCache[$this->iteratorIndex]);
 	}
 
-	public function current():string {
+	public function current():string|Blob {
 		return $this->iteratorCache[$this->iteratorIndex][1];
 	}
 
 	public function key():string {
-		return $this->iteratorCache[$this->iteratorIndex][0];
+		/** @var string $key */
+		$key = $this->iteratorCache[$this->iteratorIndex][0];
+		return $key;
 	}
 
 	public function next():void {
 		$this->iteratorIndex++;
-	}
-
-	/** @return array<int, array<string>> */
-	private function cacheIterator():array {
-		$cache = [];
-		foreach($this->entries() as $key => $value) {
-			array_push($cache, [$key, $value]);
-		}
-		return $cache;
-	}
-
-	/**
-	 * The append() method of the URLSearchParams interface appends a
-	 * specified key/value pair as a new search parameter.
-	 *
-	 * If the same key is appended multiple times it will appear in the
-	 * parameter string multiple times for each value.
-	 *
-	 * @param string $name The name of the parameter to append.
-	 * @param string $value The value of the parameter to append.
-	 *
-	 * @see https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams/append
-	 */
-	public function append(string $name, string $value):void {
-		if(is_array($this->kvp[$name])) {
-			array_push($this->kvp[$name], $value);
-		}
-		else {
-			if(isset($this->kvp[$name])) {
-				$this->kvp[$name] = [
-					$this->kvp[$name],
-					$value,
-				];
-			}
-			else {
-				$this->set($name, $value);
-			}
-		}
 	}
 
 	/**
@@ -111,7 +76,7 @@ abstract class KeyValuePairStore {
 	 * order as they appear in the query string. The key and value of each
 	 * pair are string objects.
 	 *
-	 * @return Generator<string, string>
+	 * @return Generator<string, string|Blob>
 	 *
 	 * @see https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams/entries
 	 */
@@ -234,21 +199,6 @@ abstract class KeyValuePairStore {
 	}
 
 	/**
-	 * The set() method of the URLSearchParams interface sets the value
-	 * associated with a given search parameter to the given value. If
-	 * there were several matching values, this method deletes the others.
-	 * If the search parameter doesn't exist, this method creates it.
-	 *
-	 * @param string $name The name of the parameter to set.
-	 * @param string $value The value of the parameter to set.
-	 *
-	 * @see https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams/set
-	 */
-	public function set(string $name, string $value):void {
-		$this->kvp[$name] = $value;
-	}
-
-	/**
 	 * The URLSearchParams.sort() method sorts all key/value pairs
 	 * contained in this object in place and returns undefined. The sort
 	 * order is according to unicode code points of the keys. This method
@@ -283,5 +233,43 @@ abstract class KeyValuePairStore {
 			}
 		}
 		return $values;
+	}
+
+	protected function appendAnyValue(
+		string $name,
+		mixed $value,
+		string $filename = null
+	):void {
+		if(is_array($this->kvp[$name])) {
+			array_push($this->kvp[$name], $value);
+		}
+		else {
+			if(isset($this->kvp[$name])) {
+				$this->kvp[$name] = [
+					$this->kvp[$name],
+					$value,
+				];
+			}
+			else {
+				$this->setAnyValue($name, $value);
+			}
+		}
+	}
+
+	protected function setAnyValue(
+		string $name,
+		mixed $value,
+		string $filename = null
+	):void {
+		$this->kvp[$name] = $value;
+	}
+
+	/** @return array<int, array<string|Blob>> */
+	private function cacheIterator():array {
+		$cache = [];
+		foreach($this->entries() as $key => $value) {
+			array_push($cache, [$key, $value]);
+		}
+		return $cache;
 	}
 }

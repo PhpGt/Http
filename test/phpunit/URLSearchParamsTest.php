@@ -1,9 +1,7 @@
 <?php
 namespace Gt\Http\Test;
 
-use Gt\Http\Test\Helper\MockedCaller;
 use Gt\Http\URLSearchParams;
-use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class URLSearchParamsTest extends TestCase {
