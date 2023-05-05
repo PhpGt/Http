@@ -2,9 +2,16 @@
 namespace Gt\Http;
 
 use DOMElement;
+use Generator;
 use Gt\TypeSafeGetter\NullableTypeSafeGetter;
+use Stringable;
+use Countable;
+use Iterator;
 
-class FormData {
+/**
+ * @implements Iterator<string, string|Blob|FileUpload>
+ */
+class FormData extends KeyValuePairStore implements Stringable, Countable, Iterator {
 	use NullableTypeSafeGetter;
 
 	/**
@@ -37,6 +44,8 @@ class FormData {
 				);
 			}
 		}
+
+		$this->rewind();
 	}
 
 	/**
@@ -58,6 +67,8 @@ class FormData {
 	 * a Blob or File is passed as the second parameter.
 	 * The default filename for Blob objects is "blob". The default
 	 * filename for File objects is the file's filename.
+	 *
+	 * @see https://developer.mozilla.org/en-US/docs/Web/API/FormData/append
 	 */
 	public function append(
 		string $name,
@@ -70,6 +81,8 @@ class FormData {
 	/**
 	 * The delete() method of the FormData interface deletes a key and its
 	 * value(s) from a FormData object.
+	 *
+	 * @see https://developer.mozilla.org/en-US/docs/Web/API/FormData/delete
 	 */
 	public function delete(string $name):void {
 
@@ -81,9 +94,22 @@ class FormData {
 	 * each pair is a string object, and the value is either a string
 	 * or a Blob.
 	 *
-	 * @return array<string|Blob|FileUpload>
+	 * @return array<string, string|Blob|FileUpload>
+	 *
+	 * @see https://developer.mozilla.org/en-US/docs/Web/API/FormData/entries
 	 */
-	public function entries():array {
+	public function entries():Generator {
+
+	}
+
+	/**
+	 * The forEach() method of the FormData interface allows
+	 * iteration through all values contained in this object via a
+	 * callback function.
+	 *
+	 * @see https://developer.mozilla.org/en-US/docs/Web/API/FormData/forEach
+	 */
+	public function forEach(callable $callback):void {
 
 	}
 
@@ -94,6 +120,8 @@ class FormData {
 	 * method instead.
 	 *
 	 * This class provides type-safe getters: getInt, getBool, etc.
+	 *
+	 * @see https://developer.mozilla.org/en-US/docs/Web/API/FormData/get
 	 */
 	public function get(string $name):mixed {
 
@@ -106,6 +134,8 @@ class FormData {
 	 * want to retrieve.
 	 *
 	 * @return array<string|Blob|FileUpload>
+	 *
+	 * @see https://developer.mozilla.org/en-US/docs/Web/API/FormData/getAll
 	 */
 	public function getAll(string $name):array {
 
@@ -117,6 +147,8 @@ class FormData {
 	 *
 	 * @param string $name A string representing the name of the key you
 	 * want to test for.
+	 *
+	 * @see https://developer.mozilla.org/en-US/docs/Web/API/FormData/has
 	 */
 	public function has(string $name):bool {
 
@@ -127,6 +159,8 @@ class FormData {
 	 * through all keys contained in the FormData. The keys are strings.
 	 *
 	 * @return array<string>
+	 *
+	 * @see https://developer.mozilla.org/en-US/docs/Web/API/FormData/keys
 	 */
 	public function keys():array {
 
@@ -151,6 +185,8 @@ class FormData {
 	 * when a Blob or File is passed as the second parameter. The default
 	 * filename for Blob objects is "blob". The default filename for File
 	 * objects is the file's filename.
+	 *
+	 * @see https://developer.mozilla.org/en-US/docs/Web/API/FormData/set
 	 */
 	public function set(
 		string $name,
@@ -166,6 +202,8 @@ class FormData {
 	 * strings or Blob objects.
 	 *
 	 * @return array<Blob|FileUpload|string>
+	 *
+	 * @see https://developer.mozilla.org/en-US/docs/Web/API/FormData/values
 	 */
 	public function values():array {
 
