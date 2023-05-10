@@ -1,10 +1,12 @@
 <?php
 namespace Gt\Http\Test;
 
+use Exception;
 use Gt\Http\Stream;
 use Gt\Http\StreamException;
 use Gt\Http\StreamNotOpenableException;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\TestStatus\Warning;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use SplFileInfo;
@@ -174,7 +176,25 @@ class SteamTest extends TestCase {
 	}
 
 	public function testNotOpenable() {
-		self::expectException(StreamNotOpenableException::class);
-		new Stream("http://example.com");
+		$warningList = [];
+		$exceptionList = [];
+
+		set_error_handler(static function(int $errNo, string $errStr)use(&$warningList):void {
+			array_push($warningList, $errStr);
+		}, E_WARNING);
+
+		try {
+			new Stream("http://example.com");
+		}
+		catch(Exception $exception) {
+			array_push($exceptionList, $exception);
+		}
+
+		self::assertCount(1, $warningList);
+		self::assertSame("fopen(http://example.com): Failed to open stream: HTTP wrapper does not support writeable connections", $warningList[0]);
+		self::assertCount(1, $exceptionList);
+		self::assertInstanceOf(StreamNotOpenableException::class, $exceptionList[0]);
+
+		restore_error_handler();
 	}
 }

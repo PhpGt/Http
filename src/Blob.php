@@ -1,6 +1,10 @@
 <?php
 namespace Gt\Http;
 
-class Blob {
+use Stringable;
 
+class Blob implements Stringable {
+	public function __toString():string {
+		return "";
+	}
 }

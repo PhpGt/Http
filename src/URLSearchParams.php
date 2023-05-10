@@ -43,7 +43,7 @@ class URLSearchParams extends KeyValuePairStore implements Stringable, Countable
 		}
 		elseif($options instanceof FormData) {
 			foreach($options as $key => $value) {
-				$this->append($key, $value);
+				$this->append($key, (string)$value);
 			}
 		}
 		else {

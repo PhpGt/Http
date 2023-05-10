@@ -240,7 +240,7 @@ abstract class KeyValuePairStore {
 		mixed $value,
 		string $filename = null
 	):void {
-		if(is_array($this->kvp[$name])) {
+		if(is_array($this->kvp[$name] ?? null)) {
 			array_push($this->kvp[$name], $value);
 		}
 		else {
