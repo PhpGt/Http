@@ -8,25 +8,6 @@ use Gt\Http\HttpException;
 use PHPUnit\Framework\TestCase;
 
 class FormDataTest extends TestCase {
-	const EXAMPLE_HTML = <<<HTML
-	<!doctype html>
-	<html lang="en">
-		<body>
-			<form>
-				<label>
-					<span>Your name</span>
-					<input name="your-name" value="Cody" required />
-				</label>
-				<label>
-					<span>Your email</span>
-					<input type="email" name="email" value="cody@g105b.com" required />
-				</label>
-				<button name="do" value="submit">Submit</button>
-			</form>
-		</body>
-	</html>
-	HTML;
-
 	public function testConstruct_submitterNotFoundInForm():void {
 		self::expectException(HttpException::class);
 		self::expectExceptionMessage("Submitter is not part of the form");
@@ -34,8 +15,26 @@ class FormDataTest extends TestCase {
 	}
 
 	public function testConstruct_submitterIncluded():void {
+		$html = <<<HTML
+		<!doctype html>
+		<html lang="en">
+			<body>
+				<form>
+					<label>
+						<span>Your name</span>
+						<input name="your-name" value="Cody" required />
+					</label>
+					<label>
+						<span>Your email</span>
+						<input type="email" name="email" value="cody@g105b.com" required />
+					</label>
+					<button name="do" value="submit">Submit</button>
+				</form>
+			</body>
+		</html>
+		HTML;
 		$document = new DOMDocument("1.0", "utf-8");
-		$document->loadHTML(self::EXAMPLE_HTML);
+		$document->loadHTML($html);
 		$form = $document->getElementsByTagName("form")[0];
 		$button = $document->getElementsByTagName("button")[0];
 		$sut = new FormData($form, $button);
@@ -72,10 +71,92 @@ class FormDataTest extends TestCase {
 	}
 
 	public function testToString_buttonsAreNotIncludedByDefault():void {
-		$html = self::EXAMPLE_HTML;
+		$html = <<<HTML
+		<!doctype html>
+		<html lang="en">
+			<body>
+				<form>
+					<label>
+						<span>Your name</span>
+						<input name="your-name" value="Cody" required />
+					</label>
+					<label>
+						<span>Your email</span>
+						<input type="email" name="email" value="cody@g105b.com" required />
+					</label>
+					<button name="do" value="submit">Submit</button>
+				</form>
+			</body>
+		</html>
+		HTML;
 		$form = self::mockForm($html);
 		$sut = new FormData($form);
 		self::assertSame("your-name=Cody&email=cody%40g105b.com", (string)$sut);
+	}
+
+	public function testToString_HtmlWithSelectButNoMatchingOptions():void {
+		$html = <<<HTML
+		<!doctype html>
+		<html lang="en">
+			<body>
+				<form>
+					<label>
+						<span>Your name</span>
+						<input name="your-name" value="Cody" required />
+					</label>
+					<label>
+						<span>Your email</span>
+						<input type="email" name="email" value="cody@g105b.com" required />
+					</label>
+					<label>
+						<span>Your colour</span>
+						<select name="colour">
+							<option>White</option>
+							<option>Black</option>
+							<option>Tabby</option>
+						</select>
+					</label>
+					<button name="do" value="submit">Submit</button>
+				</form>
+			</body>
+		</html>
+		HTML;
+		$form = self::mockForm($html);
+		$sut = new FormData($form);
+		self::assertSame("your-name=Cody&email=cody%40g105b.com&colour=", (string)$sut);
+	}
+
+	public function testToString_HtmlWithSelect():void {
+		$html = <<<HTML
+		<!doctype html>
+		<html lang="en">
+			<body>
+				<form>
+					<label>
+						<span>Your name</span>
+						<input name="your-name" value="Cody" required />
+					</label>
+					<label>
+						<span>Your email</span>
+						<input type="email" name="email" value="cody@g105b.com" required />
+					</label>
+					<label>
+						<span>Your colour</span>
+						<select name="colour">
+							<option>White</option>
+							<option>Black</option>
+							<option selected>Orange</option>
+							<option>Tabby</option>
+						</select>
+					</label>
+					<button name="do" value="submit">Submit</button>
+				</form>
+			</body>
+		</html>
+		HTML;
+		$form = self::mockForm($html);
+		$sut = new FormData($form);
+		self::assertSame("your-name=Cody&email=cody%40g105b.com&colour=Orange", (string)$sut);
 	}
 
 	public function testAppend():void {
