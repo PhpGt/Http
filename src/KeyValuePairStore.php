@@ -16,6 +16,10 @@ abstract class KeyValuePairStore {
 	 * empty string if no search parameters have been set.
 	 */
 	public function __toString():string {
+		if(!isset($this->kvp)) {
+			return "";
+		}
+
 		$string = http_build_query($this->kvp);
 		return preg_replace(
 			"/%5B(\d)%5D/",
@@ -81,6 +85,9 @@ abstract class KeyValuePairStore {
 	 * @see https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams/entries
 	 */
 	public function entries():Generator {
+		if(!isset($this->kvp)) {
+			return;
+		}
 		foreach($this->kvp as $key => $value) {
 			if(is_array($value)) {
 				foreach($value as $subValue) {

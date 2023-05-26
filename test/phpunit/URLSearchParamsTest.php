@@ -1,6 +1,7 @@
 <?php
 namespace Gt\Http\Test;
 
+use Gt\Http\FormData;
 use Gt\Http\URLSearchParams;
 use PHPUnit\Framework\TestCase;
 
@@ -44,6 +45,24 @@ class URLSearchParamsTest extends TestCase {
 		$sut = new URLSearchParams($kvp);
 		$expected = http_build_query($kvp);
 		self::assertSame($expected, (string)$sut);
+	}
+
+	public function testToString_formDataOptionsEmpty():void {
+		$formData = self::createMock(FormData::class);
+		$sut = new URLSearchParams($formData);
+		self::assertSame("", (string)$sut);
+	}
+
+	public function testToString_formDataOptions():void {
+		$formData = self::createMock(FormData::class);
+		$formData->method("valid")
+			->willReturnOnConsecutiveCalls(true, true, true, false);
+		$formData->method("key")
+			->willReturnOnConsecutiveCalls("testKey1", "testKey2", "testKey3");
+		$formData->method("current")
+			->willReturnOnConsecutiveCalls("value1", "value2", "value3");
+		$sut = new URLSearchParams($formData);
+		self::assertSame("testKey1=value1&testKey2=value2&testKey3=value3", (string)$sut);
 	}
 
 	public function testSize_empty():void {
