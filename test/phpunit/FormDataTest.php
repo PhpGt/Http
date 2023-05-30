@@ -41,6 +41,132 @@ class FormDataTest extends TestCase {
 		self::assertSame("your-name=Cody&email=cody%40g105b.com&do=submit", (string)$sut);
 	}
 
+	public function testConstruct_noFormFields():void {
+		$html = <<<HTML
+		<!doctype html>
+		<html lang="en">
+			<body>
+				<form>
+					<label>
+						<span>Your name</span>
+						<input id="name-field" />
+					</label>
+					<label>
+						<span>Your email</span>
+						<input type="email" id="email-field" />
+					</label>
+					<button>Submit</button>
+				</form>
+			</body>
+		</html>
+		HTML;
+		$document = new DOMDocument("1.0", "utf-8");
+		$document->loadHTML($html);
+		$form = $document->getElementsByTagName("form")[0];
+		$sut = new FormData($form);
+		$key = null;
+		foreach($sut as $key => $value) {
+// this line should never execute:
+			self::assertNull($key);
+		}
+
+		self::assertNull($key);
+	}
+
+	public function testConstruct_textArea():void {
+		$html = <<<HTML
+		<!doctype html>
+		<html lang="en">
+			<body>
+				<form>
+					<label>
+						<span>Your name</span>
+						<input name="name" />
+					</label>
+					<label>
+						<span>Your message</span>
+						<textarea name="message">Hello, PHP.Gt!</textarea>
+					</label>
+					<button name="do" value="submit">Submit</button>
+				</form>
+			</body>
+		</html>
+		HTML;
+		$document = new DOMDocument("1.0", "utf-8");
+		$document->loadHTML($html);
+		$form = $document->getElementsByTagName("form")[0];
+		$sut = new FormData($form);
+		self::assertSame("Hello, PHP.Gt!", $sut->getString("message"));
+	}
+
+	public function testConstruct_multiple():void {
+		$html = <<<HTML
+		<!doctype html>
+		<html lang="en">
+			<body>
+				<form>
+					<label>
+						<span>Address 1</span>
+						<input name="address" value="221B Baker Street, London" />
+					</label>
+					<label>
+						<span>Address 2</span>
+						<input name="address" value="32 Windsor Gardens, London" />
+					</label>
+					<label>
+						<span>Address 3</span>
+						<input name="address" value="30 Wellington Square in Chelsea, London" />
+					</label>
+				</form>
+			</body>
+		</html>
+		HTML;
+		$document = new DOMDocument("1.0", "utf-8");
+		$document->loadHTML($html);
+		$form = $document->getElementsByTagName("form")[0];
+		$sut = new FormData($form);
+		self::assertSame("221B Baker Street, London", $sut->getString("address"));
+// Should always return the first of the same value.
+		self::assertSame("221B Baker Street, London", $sut->getString("address"));
+		$allAddresses = $sut->getAll("address");
+		self::assertCount(3, $allAddresses);
+		self::assertSame("30 Wellington Square in Chelsea, London", $allAddresses[2]);
+	}
+
+	public function testConstruct_multipleSquareBrackets():void {
+		$html = <<<HTML
+		<!doctype html>
+		<html lang="en">
+			<body>
+				<form>
+					<label>
+						<span>Address 1</span>
+						<input name="address[]" value="221B Baker Street, London" />
+					</label>
+					<label>
+						<span>Address 2</span>
+						<input name="address[]" value="32 Windsor Gardens, London" />
+					</label>
+					<label>
+						<span>Address 3</span>
+						<input name="address[]" value="30 Wellington Square in Chelsea, London" />
+					</label>
+				</form>
+			</body>
+		</html>
+		HTML;
+		$document = new DOMDocument("1.0", "utf-8");
+		$document->loadHTML($html);
+		$form = $document->getElementsByTagName("form")[0];
+		$sut = new FormData($form);
+		self::assertSame("221B Baker Street, London", $sut->getString("address"));
+// Should always return the first of the same value.
+		self::assertSame("221B Baker Street, London", $sut->getString("address"));
+		$allAddresses = $sut->getAll("address");
+		self::assertCount(3, $allAddresses);
+		self::assertSame("30 Wellington Square in Chelsea, London", $allAddresses[2]);
+	}
+
 	public function testToString_empty():void {
 		$sut = new FormData();
 		self::assertSame("", (string)$sut);

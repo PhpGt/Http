@@ -116,7 +116,7 @@ class FormData extends KeyValuePairStore implements Stringable, Countable, Itera
 
 		$xpath = new DOMXPath($form->ownerDocument);
 		$nameElementList = $xpath->query(".//*[@name]", $form);
-		if(!$nameElementList) {
+		if($nameElementList->length === 0) {
 			return $kvp;
 		}
 
@@ -128,6 +128,9 @@ class FormData extends KeyValuePairStore implements Stringable, Countable, Itera
 				continue;
 			}
 			$key = $item->getAttribute("name");
+			if(str_ends_with($key, "[]")) {
+				$key = substr($key, 0, -2);
+			}
 			$value = "";
 
 			if($item->tagName === "textarea") {
