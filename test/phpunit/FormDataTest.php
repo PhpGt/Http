@@ -3,6 +3,8 @@ namespace Gt\Http\Test;
 
 use DOMDocument;
 use DOMElement;
+use Gt\Http\Blob;
+use Gt\Http\File;
 use Gt\Http\FormData;
 use Gt\Http\HttpException;
 use PHPUnit\Framework\TestCase;
@@ -502,6 +504,22 @@ class FormDataTest extends TestCase {
 		$sut->set("name", "Cody");
 		$sut->set("name", "Scarlett");
 		self::assertSame("name=Scarlett", (string)$sut);
+	}
+
+	public function testSet_fileFilename():void {
+		$sut = new FormData();
+		$sut->set("upload", new File([], "picture.jpg"));
+		self::assertSame("picture.jpg", $sut->getFile("upload")->name);
+		$sut->set("upload", new File([], "picture.jpg"), "updated.jpg");
+		self::assertSame("updated.jpg", $sut->getFile("upload")->name);
+	}
+
+	public function testSet_blobFilename():void {
+		$sut = new FormData();
+		$sut->set("upload", new Blob([]));
+		self::assertSame("blob", $sut->getBlob("upload")->name);
+		$sut->set("upload", new Blob([]), "updated.jpg");
+		self::assertSame("updated.jpg", $sut->getBlob("upload")->name);
 	}
 
 	public function testSort():void {

@@ -258,7 +258,7 @@ abstract class KeyValuePairStore {
 				];
 			}
 			else {
-				$this->setAnyValue($name, $value);
+				$this->setAnyValue($name, $value, $filename);
 			}
 		}
 	}
@@ -268,6 +268,12 @@ abstract class KeyValuePairStore {
 		mixed $value,
 		string $filename = null
 	):void {
+		if(!is_null($filename)) {
+			if($value instanceof Blob) {
+				$value->name = $filename;
+			}
+		}
+
 		$this->kvp[$name] = $value;
 	}
 

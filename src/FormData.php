@@ -72,6 +72,14 @@ class FormData extends KeyValuePairStore implements Stringable, Countable, Itera
 		$this->rewind();
 	}
 
+	public function getFile(string $name):?File {
+		return $this->getInstance($name, File::class);
+	}
+
+	public function getBlob(string $name):?Blob {
+		return $this->getInstance($name, Blob::class);
+	}
+
 	/**
 	 * The append() method of the FormData interface appends a new value
 	 * onto an existing key inside a FormData object, or adds the key if
@@ -110,7 +118,10 @@ class FormData extends KeyValuePairStore implements Stringable, Countable, Itera
 		$this->setAnyValue($name, $value, $filename);
 	}
 
-	/** @return array<string, string|array<string>> */
+	/**
+	 * @return array<string, string|array<string>>
+	 * @SuppressWarnings("CyclomaticComplexity")
+	 */
 	private function extractKvpFromForm(DOMElement $form):array {
 		$kvp = [];
 
