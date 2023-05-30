@@ -9,9 +9,6 @@ use Stringable;
  * @property-read string $type
  */
 class Blob implements Stringable {
-	const ENDINGS_TRANSPARENT = "transparent";
-	const ENDINGS_NATIVE = "transparent";
-
 	public string $name;
 	private string $type;
 	protected string $content;
