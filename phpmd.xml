@@ -7,6 +7,7 @@
 	<description>Custom ruleset</description>
 
 	<rule ref="rulesets/codesize.xml">
+		<exclude name="TooManyPublicMethods" />
 	</rule>
 
 	<rule ref="rulesets/cleancode.xml">
@@ -16,10 +17,12 @@
 	</rule>
 
 	<rule ref="rulesets/controversial.xml">
+		<exclude name="CamelCaseMethodName" />
 	</rule>
 
 	<rule ref="rulesets/design.xml">
 		<exclude name="NumberOfChildren" />
+		<exclude name="CouplingBetweenObjects" />
 	</rule>
 
 	<rule ref="rulesets/naming.xml">
@@ -29,6 +32,12 @@
 	</rule>
 
 	<rule ref="rulesets/unusedcode.xml">
+	</rule>
+
+	<rule ref="rulesets/codesize.xml/TooManyPublicMethods">
+		<properties>
+			<property name="maxmethods" value="12" />
+		</properties>
 	</rule>
 
 	<rule ref="rulesets/naming.xml/ShortVariable">

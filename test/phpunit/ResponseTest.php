@@ -5,7 +5,9 @@ use Gt\Http\Header\ResponseHeaders;
 use Gt\Http\Request;
 use Gt\Http\Response;
 use Gt\Http\StatusCode;
+use Gt\Http\Stream;
 use Gt\Http\Uri;
+use Gt\Json\JsonObject;
 use PHPUnit\Framework\TestCase;
 
 class ResponseTest extends TestCase {
@@ -98,5 +100,22 @@ class ResponseTest extends TestCase {
 		$sut->reloadWithoutQuery();
 		self::assertSame(StatusCode::SEE_OTHER, $sut->getStatusCode());
 		self::assertSame($expectedRelativePath, $sut->getHeaderLine("Location"));
+	}
+
+	public function testJson():void {
+		$jsonString = json_encode(["name" => "phpgt"]);
+
+		$actualJson = null;
+
+		$stream = new Stream();
+		$stream->write($jsonString);
+
+		$sut = (new Response())->withBody($stream);
+
+		$sut->json()->then(function(JsonObject $json) use(&$actualJson) {
+			$actualJson = $json;
+		});
+
+		self::assertSame("phpgt", $actualJson->getString("name"));
 	}
 }
