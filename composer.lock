@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "be27fb6a0a027f6ea490c9b7ec1c2713",
+    "content-hash": "afa459c231a6a5b34ee72c903a462d2b",
     "packages": [
         {
             "name": "phpgt/async",
@@ -3265,7 +3265,8 @@
     "prefer-lowest": false,
     "platform": {
         "php": ">=8.1",
-        "ext-dom": "*"
+        "ext-dom": "*",
+        "ext-curl": "*"
     },
     "platform-dev": [],
     "plugin-api-version": "2.3.0"

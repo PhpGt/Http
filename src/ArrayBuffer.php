@@ -7,7 +7,7 @@ use Stringable;
 
 /**
  * @property-read int $byteLength
- * @extends SplFixedArray<string>
+ * @extends SplFixedArray<int|string>
  */
 class ArrayBuffer extends SplFixedArray implements Stringable {
 	public function __toString():string {

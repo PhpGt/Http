@@ -1,10 +1,9 @@
-<?php
+<?php /** @noinspection PhpUnusedPrivateMethodInspection */
 namespace Gt\Http;
 
 use Gt\Async\Loop;
 use Gt\Curl\CurlInterface;
 use Gt\Http\Header\ResponseHeaders;
-use Gt\Json\JsonObject;
 use Gt\Json\JsonObjectBuilder;
 use Gt\Promise\Deferred;
 use Gt\Promise\Promise;
@@ -12,7 +11,6 @@ use Gt\Promise\PromiseState;
 use Gt\PropFunc\MagicProp;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\UriInterface;
-use SplFixedArray;
 
 /**
  * @property ResponseHeaders $headers
@@ -32,8 +30,6 @@ class Response implements ResponseInterface {
 	/** @var null|callable */
 	private $exitCallback;
 	private Deferred $deferred;
-	private PromiseState $deferredStatus;
-	private Loop $loop;
 	private CurlInterface $curl;
 
 	public function __construct(
@@ -58,6 +54,10 @@ class Response implements ResponseInterface {
 
 	/** @phpstan-ignore-next-line */
 	private function __prop_get_redirected():bool {
+		if(!isset($this->curl)) {
+			return false;
+		}
+
 		$redirectCount = $this->curl->getInfo(
 			CURLINFO_REDIRECT_COUNT
 		);
@@ -76,6 +76,9 @@ class Response implements ResponseInterface {
 
 	/** @phpstan-ignore-next-line */
 	private function __prop_get_uri():string {
+		if(!isset($this->curl)) {
+			return $this->request->getUri();
+		}
 		return $this->curl->getInfo(CURLINFO_EFFECTIVE_URL);
 	}
 
@@ -140,12 +143,9 @@ class Response implements ResponseInterface {
 	}
 
 	public function startDeferredResponse(
-		Loop $loop,
 		CurlInterface $curl
 	):Deferred {
-		$this->loop = $loop;
 		$this->deferred = new Deferred();
-		$this->deferredStatus = PromiseState::PENDING;
 		$this->curl = $curl;
 		return $this->deferred;
 	}
@@ -155,11 +155,8 @@ class Response implements ResponseInterface {
 		$this->stream->rewind();
 		$contents = $this->stream->getContents();
 		$this->stream->seek($position);
-
 		$this->checkIntegrity($integrity, $contents);
-
 		$this->deferred->resolve($contents);
-		$this->deferredStatus = PromiseState::RESOLVED;
 	}
 
 	/**
@@ -168,8 +165,6 @@ class Response implements ResponseInterface {
 	 *
 	 * Note: if no Async loop is set up, the returned Promise will resolve in a blocking way, always being
 	 * resolved or rejected. See https://www.php.gt/fetch for a complete async implementation.
-	 *
-	 * @return Promise<ArrayBuffer>
 	 */
 	public function arrayBuffer():Promise {
 		$promise = $this->deferred->getPromise();
@@ -192,8 +187,6 @@ class Response implements ResponseInterface {
 	 *
 	 * Note: if no Async loop is set up, the returned Promise will resolve in a blocking way, always being
 	 * resolved or rejected. See https://www.php.gt/fetch for a complete async implementation.
-	 *
-	 * @return Promise<Blob>
 	 */
 	public function blob():Promise {
 		$promise = $this->deferred->getPromise();
@@ -213,8 +206,6 @@ class Response implements ResponseInterface {
 	 *
 	 * Note: if no Async loop is set up, the returned Promise will resolve in a blocking way, always being
 	 * resolved or rejected. See https://www.php.gt/fetch for a complete async implementation.
-	 *
-	 * @return Promise<FormData>
 	 */
 	public function formData():Promise {
 		$newDeferred = new Deferred();
@@ -226,7 +217,10 @@ class Response implements ResponseInterface {
 			parse_str($resolvedValue, $bodyData);
 			$formData = new FormData();
 			foreach($bodyData as $key => $value) {
-				$formData->set($key, $value);
+				if(is_array($value)) {
+					$value = implode(",", $value);
+				}
+				$formData->set((string)$key, (string)$value);
 			}
 			$newDeferred->resolve($formData);
 		});
@@ -240,8 +234,6 @@ class Response implements ResponseInterface {
 	 *
 	 * Note: if no Async loop is set up, the returned Promise will resolve in a blocking way, always being
 	 * resolved or rejected. See https://www.php.gt/fetch for a complete async implementation.
-	 *
-	 * @return Promise<JsonObject>
 	 */
 	public function json(int $depth = 512, int $options = 0):Promise {
 		$promise = $this->getPromise();
@@ -260,8 +252,6 @@ class Response implements ResponseInterface {
 	 *
 	 * Note: if no Async loop is set up, the returned Promise will resolve in a blocking way, always being
 	 * resolved or rejected. See https://www.php.gt/fetch for a complete async implementation.
-	 *
-	 * @return Promise<string>
 	 */
 	public function text():Promise {
 		$promise = $this->deferred->getPromise();
