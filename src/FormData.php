@@ -6,6 +6,7 @@ use DOMNodeList;
 use DOMXPath;
 use Generator;
 use Gt\TypeSafeGetter\NullableTypeSafeGetter;
+use SplFileObject;
 use Stringable;
 use Countable;
 use Iterator;
@@ -104,17 +105,19 @@ class FormData extends KeyValuePairStore implements Stringable, Countable, Itera
 	 */
 	public function append(
 		string $name,
-		Blob|File|string $value,
+		Blob|File|SplFileObject|string $value,
 		string $filename = null
 	):void {
+		$value = $this->normaliseFileValue($value);
 		$this->appendAnyValue($name, $value, $filename);
 	}
 
 	public function set(
 		string $name,
-		Blob|File|string $value,
+		Blob|File|SplFileObject|string $value,
 		?string $filename = null,
 	):void {
+		$value = $this->normaliseFileValue($value);
 		$this->setAnyValue($name, $value, $filename);
 	}
 
@@ -182,5 +185,15 @@ class FormData extends KeyValuePairStore implements Stringable, Countable, Itera
 		}
 
 		return "";
+	}
+
+	private function normaliseFileValue(Blob|File|SplFileObject|string $value):Blob|File|string {
+		if(!$value instanceof SplFileObject) {
+			return $value;
+		}
+
+		/** @var SplFileObject $file */
+		$file = $value;
+		return new File($file, $file->getFilename());
 	}
 }

@@ -2,6 +2,7 @@
 namespace Gt\Http;
 
 use Generator;
+use SplFileObject;
 
 /** @SuppressWarnings("TooManyPublicMethods") */
 abstract class KeyValuePairStore {
