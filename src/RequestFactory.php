@@ -2,6 +2,7 @@
 namespace Gt\Http;
 
 use Gt\Http\Header\RequestHeaders;
+use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriInterface;
 
 class RequestFactory {
@@ -22,13 +23,14 @@ class RequestFactory {
 		array $get,
 		array $post,
 		string $inputPath = "php://input"
-	):Request {
+	):ServerRequestInterface {
 		$method = $server["REQUEST_METHOD"] ?? "";
 		$uri = $this->buildUri($server);
 
 		$headers = $this->buildRequestHeaders($server);
 
-		return $this->buildRequest(
+		/** @var ServerRequestInterface $serverRequest */
+		$serverRequest = $this->buildRequest(
 			$method,
 			$uri,
 			$headers,
@@ -38,6 +40,7 @@ class RequestFactory {
 			$post,
 			$inputPath
 		);
+		return $serverRequest;
 	}
 
 	/**
