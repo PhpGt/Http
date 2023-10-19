@@ -234,6 +234,8 @@ class Response implements ResponseInterface {
 	 *
 	 * Note: if no Async loop is set up, the returned Promise will resolve in a blocking way, always being
 	 * resolved or rejected. See https://www.php.gt/fetch for a complete async implementation.
+	 *
+	 * @param int<1, max> $depth
 	 */
 	public function json(int $depth = 512, int $options = 0):Promise {
 		$promise = $this->getPromise();
