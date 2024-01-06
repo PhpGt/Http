@@ -10,6 +10,7 @@ class HeaderLine {
 	protected $values;
 
 	public function __construct(string $name, string...$values) {
+		$name = str_replace("_", "-", $name);
 		$this->originalNameCase = $name;
 		$this->name = strtolower($name);
 		$this->values = $values;

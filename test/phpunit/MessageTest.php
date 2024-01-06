@@ -1,6 +1,7 @@
 <?php
 namespace Gt\Http\Test;
 
+use Gt\Http\Header\HeaderLine;
 use Gt\Http\Header\RequestHeaders;
 use Gt\Http\Request;
 use Gt\Http\RequestMethod;
@@ -44,6 +45,26 @@ class MessageTest extends TestCase {
 
 		$protocolVersion = $request->getProtocolVersion();
 		self::assertEquals($expected, $protocolVersion);
+	}
+
+	public function testGetHeaderLine() {
+		$headerName = "x-example";
+		$headerValue = uniqid();
+
+		$headerLine = self::createMock(HeaderLine::class);
+		$headerLine->expects(self::once())
+			->method("getValuesCommaSeparated")
+			->willReturn($headerValue);
+
+		$uri = self::createMock(Uri::class);
+		$headers = self::createMock(RequestHeaders::class);
+		$headers->expects(self::once())
+			->method("get")
+			->with($headerName)
+			->willReturn($headerLine);
+
+		$sut = new Request("GET", $uri, $headers);
+		self::assertSame($headerValue, $sut->getHeaderLine($headerName));
 	}
 
 	public static function data_request():array {

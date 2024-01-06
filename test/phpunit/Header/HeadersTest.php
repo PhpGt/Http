@@ -37,6 +37,7 @@ class HeadersTest extends TestCase {
 		$headers = new Headers(self::HEADER_ARRAY);
 		self::assertTrue($headers->contains("Etag"));
 		self::assertFalse($headers->contains("Ftag"));
+		self::assertTrue($headers->contains("content-type"));
 	}
 
 	public function testAdd() {
@@ -94,8 +95,8 @@ class HeadersTest extends TestCase {
 
 	public function testGet() {
 		$headers = new Headers(self::HEADER_ARRAY);
-		$h = $headers->get("Date");
-		self::assertEquals(self::HEADER_ARRAY["Date"], $h);
+		self::assertEquals(self::HEADER_ARRAY["Date"], $headers->get("date"));
+		self::assertEquals(self::HEADER_ARRAY["Content-Type"], $headers->get("content-type"));
 	}
 
 	public function testGetMultiple() {

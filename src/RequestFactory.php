@@ -49,7 +49,7 @@ class RequestFactory {
 	 * @param array<string, string> $get
 	 * @param array<string, string> $post
 	 */
-	private function buildRequest(
+	public function buildRequest(
 		string $method,
 		UriInterface $uri,
 		RequestHeaders $headers,
@@ -85,7 +85,7 @@ class RequestFactory {
 	/**
 	 * @param array<string, string> $server
 	 */
-	protected function buildRequestHeaders(array $server):RequestHeaders {
+	public function buildRequestHeaders(array $server):RequestHeaders {
 		$headers = new RequestHeaders();
 		foreach($server as $key => $value) {
 			if(str_starts_with($key, "HTTP_")) {
@@ -99,7 +99,7 @@ class RequestFactory {
 	/**
 	 * @param array<string, string> $server
 	 */
-	protected function buildUri(array $server):UriInterface {
+	public function buildUri(array $server):UriInterface {
 		$uri = new Uri($server["REQUEST_URI"] ?? null);
 
 		if($server["HTTPS"] ?? null) {
