@@ -100,4 +100,21 @@ class RequestFactoryTest extends TestCase {
 		], [], [], []);
 		self::assertEquals("1.1", $request->getProtocolVersion());
 	}
+
+	public function testBuildRequestHeaders_hyphenated():void {
+		$server = [
+			"HTTP_ACCEPT" => "application/json",
+			"HTTP_ACCEPT_LANGUAGE" => "en-GB",
+			"HTTP_X_KEY" => "abc123",
+		];
+
+		$sut = new RequestFactory();
+		$requestHeaders = $sut->buildRequestHeaders($server);
+
+		foreach($server as $key => $value) {
+			$keyWithoutHttp = substr($key, strlen("HTTP_"));
+			$keyHyphenated = str_replace("_", "-", $keyWithoutHttp);
+			self::assertEquals($value, $requestHeaders->get($keyHyphenated));
+		}
+	}
 }
