@@ -118,4 +118,40 @@ class ResponseTest extends TestCase {
 
 		self::assertSame("phpgt", $actualJson->getString("name"));
 	}
+
+	public function testAwaitJson():void {
+		$jsonString = json_encode(["name" => "phpgt"]);
+
+		$stream = new Stream();
+		$stream->write($jsonString);
+
+		$sut = (new Response())->withBody($stream);
+
+		$actualJson = $sut->awaitJson();
+		self::assertSame("phpgt", $actualJson->getString("name"));
+	}
+
+	public function testAwaitBlob():void {
+		$blobString = random_bytes(32);
+
+		$stream = new Stream();
+		$stream->write($blobString);
+
+		$sut = (new Response())->withBody($stream);
+
+		$actualBlob = $sut->awaitBlob();
+		self::assertSame($blobString, $actualBlob->getContent());
+	}
+
+	public function testAwaitText():void {
+		$responseText = uniqid("Test! ");
+
+		$stream = new Stream();
+		$stream->write($responseText);
+
+		$sut = (new Response())->withBody($stream);
+
+		$actualText = $sut->awaitText();
+		self::assertSame($responseText, $actualText);
+	}
 }

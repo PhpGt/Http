@@ -4,6 +4,7 @@ namespace Gt\Http;
 use Gt\Async\Loop;
 use Gt\Curl\CurlInterface;
 use Gt\Http\Header\ResponseHeaders;
+use Gt\Json\JsonObject;
 use Gt\Json\JsonObjectBuilder;
 use Gt\Promise\Deferred;
 use Gt\Promise\Promise;
@@ -167,7 +168,7 @@ class Response implements ResponseInterface {
 	 * resolved or rejected. See https://www.php.gt/fetch for a complete async implementation.
 	 */
 	public function arrayBuffer():Promise {
-		$promise = $this->deferred->getPromise();
+		$promise = $this->getPromise();
 		$promise->then(function(string $responseText) {
 			$bytes = strlen($responseText);
 			$arrayBuffer = new ArrayBuffer($bytes);
@@ -181,6 +182,16 @@ class Response implements ResponseInterface {
 		return $promise;
 	}
 
+	public function awaitArrayBuffer():ArrayBuffer {
+		$arrayBuffer = null;
+
+		$this->arrayBuffer()->then(function(ArrayBuffer $resolved) use(&$arrayBuffer) {
+			$arrayBuffer = $resolved;
+		});
+
+		return $arrayBuffer;
+	}
+
 	/**
 	 * Takes the Response's stream and reads it to completion. Returns a Promise which resolves with the result
 	 * as a Gt\Http\Blob.
@@ -189,15 +200,25 @@ class Response implements ResponseInterface {
 	 * resolved or rejected. See https://www.php.gt/fetch for a complete async implementation.
 	 */
 	public function blob():Promise {
-		$promise = $this->deferred->getPromise();
+		$promise = $this->getPromise();
 		$promise->then(function(string $responseText) {
 			$blobOptions = [
-				"type" => $this->getResponseHeaders()->get("content-type")->getValues()[0],
+				"type" => $this->getResponseHeaders()->get("content-type")?->getValues()[0],
 			];
 			$this->deferred->resolve(new Blob([$responseText], $blobOptions));
 		});
 
 		return $promise;
+	}
+
+	public function awaitBlob():Blob {
+		$blob = null;
+
+		$this->blob()->then(function(Blob $resolved) use(&$blob) {
+			$blob = $resolved;
+		});
+
+		return $blob;
 	}
 
 	/**
@@ -211,7 +232,7 @@ class Response implements ResponseInterface {
 		$newDeferred = new Deferred();
 		$newPromise = $newDeferred->getPromise();
 
-		$deferredPromise = $this->deferred->getPromise();
+		$deferredPromise = $this->getPromise();
 		$deferredPromise->then(function(string $resolvedValue)
 		use($newDeferred) {
 			parse_str($resolvedValue, $bodyData);
@@ -226,6 +247,16 @@ class Response implements ResponseInterface {
 		});
 
 		return $newPromise;
+	}
+
+	public function awaitFormData():FormData {
+		$formData = null;
+
+		$this->blob()->then(function(FormData $resolved) use(&$formData) {
+			$formData = $resolved;
+		});
+
+		return $formData;
 	}
 
 	/**
@@ -248,6 +279,17 @@ class Response implements ResponseInterface {
 		return $promise;
 	}
 
+	/** @param int<1, max> $depth */
+	public function awaitJson(int $depth = 512, int $options = 0):JsonObject {
+		$jsonObject = null;
+
+		$this->json($depth, $options)->then(function(JsonObject $resolved) use(&$jsonObject) {
+			$jsonObject = $resolved;
+		});
+
+		return $jsonObject;
+	}
+
 	/**
 	 * Takes the Response's stream and reads it to completion. Returns a Promise which resolves with the result
 	 * as a string.
@@ -256,12 +298,22 @@ class Response implements ResponseInterface {
 	 * resolved or rejected. See https://www.php.gt/fetch for a complete async implementation.
 	 */
 	public function text():Promise {
-		$promise = $this->deferred->getPromise();
+		$promise = $this->getPromise();
 		$promise->then(function(string $responseText) {
 			$this->deferred->resolve($responseText);
 		});
 
 		return $promise;
+	}
+
+	public function awaitText():string {
+		$text = null;
+
+		$this->text()->then(function(string $resolved) use(&$text) {
+			$text = $resolved;
+		});
+
+		return $text;
 	}
 
 	private function getPromise():Promise {
