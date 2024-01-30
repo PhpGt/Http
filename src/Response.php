@@ -23,6 +23,7 @@ use Psr\Http\Message\UriInterface;
  * @property-read UriInterface $uri
  * @property-read UriInterface $url
  * @SuppressWarnings("UnusedPrivateMethod")
+ * @SuppressWarnings("TooManyPublicMethods")
  */
 class Response implements ResponseInterface {
 	use Message;
