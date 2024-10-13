@@ -123,11 +123,13 @@ class Response implements ResponseInterface {
 		 */
 		$backtrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2);
 		$thisFile = __FILE__;
+		$tries = 0;
 		do {
 			$previousBacktrace = array_shift($backtrace);
 			$found = $previousBacktrace["file"] !== $thisFile;
+			$tries++;
 		}
-		while(!$found);
+		while(!$found && $tries <= 3);
 
 		$cwd = getcwd() ?: "";
 		$debugLocation = $previousBacktrace["file"];
