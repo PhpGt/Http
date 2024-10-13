@@ -114,6 +114,13 @@ class Response implements ResponseInterface {
 		string|UriInterface $uri,
 		int $statusCode = 303
 	):void {
+		/**
+		 * @var array{array{
+		 *         function: string,
+		 *         file: string,
+		 *         line: int,
+		 * }} $backtrace
+		 */
 		$backtrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2);
 		$thisFile = __FILE__;
 		do {
@@ -122,7 +129,7 @@ class Response implements ResponseInterface {
 		}
 		while(!$found);
 
-		$cwd = getcwd();
+		$cwd = getcwd() ?: "";
 		$debugLocation = $previousBacktrace["file"];
 		$debugLocation = str_replace($cwd, "", $debugLocation);
 		$debugLocation = trim($debugLocation, "/");
