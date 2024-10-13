@@ -154,4 +154,35 @@ class ResponseTest extends TestCase {
 		$actualText = $sut->awaitText();
 		self::assertSame($responseText, $actualText);
 	}
+
+	public function testRedirect_sendsFileLineDebug():void {
+		$sut = (new Response());
+		$sut->redirect("/somewhere");
+		$expectedLine = __LINE__ - 1;
+		$expectedFile = __FILE__;
+		$expectedFile = str_replace(getcwd(), "", $expectedFile);
+		$expectedFile = trim($expectedFile, "/");
+
+		$actualLocation = $sut->getHeaderLine("Location");
+		$actualDebugLocation = $sut->getHeaderLine(Response::DEBUG_LOCATION_HEADER);
+
+		self::assertSame("/somewhere", $actualLocation);
+		self::assertStringContainsString($expectedFile, $actualDebugLocation);
+		self::assertStringEndsWith($expectedLine, $actualDebugLocation);
+	}
+
+	public function testReload_sendsFileLineDebug():void {
+		$sut = (new Response());
+		$sut->reload();
+		$expectedLine = __LINE__ - 1;
+		$expectedFile = __FILE__;
+		$expectedFile = str_replace(getcwd(), "", $expectedFile);
+		$expectedFile = trim($expectedFile, "/");
+
+		$actualLocation = $sut->getHeaderLine("Location");
+		$actualDebugLocation = $sut->getHeaderLine(Response::DEBUG_LOCATION_HEADER);
+
+		self::assertSame("./", $actualLocation);
+		self::assertSame("$expectedFile:$expectedLine", $actualDebugLocation);
+	}
 }
