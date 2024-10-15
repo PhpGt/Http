@@ -46,6 +46,8 @@ class Parser {
 			$headerLine,
 			$matches
 		);
+		/** @var array<int|string, string> $matches */
+
 		return $matches[$matchName];
 	}
 }

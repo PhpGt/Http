@@ -29,6 +29,8 @@ class Response implements ResponseInterface {
 	use Message;
 	use MagicProp;
 
+	const DEBUG_LOCATION_HEADER = "X-Location-Sent-From";
+
 	/** @var null|callable */
 	private $exitCallback;
 	private Deferred $deferred;
@@ -99,7 +101,7 @@ class Response implements ResponseInterface {
 	}
 
 	public function reload():void {
-		$this->redirect($this->request?->getUri() ?? new Uri());
+		$this->redirect($this->request?->getUri() ?? new Uri("./"));
 	}
 
 	public function reloadWithoutQuery():void {
@@ -112,8 +114,31 @@ class Response implements ResponseInterface {
 		string|UriInterface $uri,
 		int $statusCode = 303
 	):void {
+		/**
+		 * @var array{array{
+		 *         function: string,
+		 *         file: string,
+		 *         line: int,
+		 * }} $backtrace
+		 */
+		$backtrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2);
+		$thisFile = __FILE__;
+		$tries = 0;
+		do {
+			$previousBacktrace = array_shift($backtrace);
+			$found = $previousBacktrace["file"] !== $thisFile;
+			$tries++;
+		}
+		while(!$found && $tries <= 3);
+
+		$cwd = getcwd() ?: "";
+		$debugLocation = $previousBacktrace["file"];
+		$debugLocation = str_replace($cwd, "", $debugLocation);
+		$debugLocation = trim($debugLocation, "/");
+		$debugLocation .= ":$previousBacktrace[line]";
 		$this->statusCode = $statusCode;
 		$this->headers->set("Location", (string)$uri);
+		$this->headers->set(self::DEBUG_LOCATION_HEADER, $debugLocation);
 		if(isset($this->exitCallback)) {
 			call_user_func($this->exitCallback);
 		}
