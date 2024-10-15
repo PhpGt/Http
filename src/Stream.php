@@ -127,7 +127,7 @@ class Stream implements StreamInterface {
 			throw new StreamException("Stream is not readable");
 		}
 
-		if($length < 0) {
+		if($length <= 0) {
 			throw new StreamException("Stream read length must be positive");
 		}
 
