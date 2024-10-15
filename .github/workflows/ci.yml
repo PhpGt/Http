@@ -107,7 +107,7 @@ jobs:
       - name: PHP Static Analysis
         uses: php-actions/phpstan@v3
         with:
-          version: 1.10
+          version: "1.12.6"
           php_version: ${{ matrix.php }}
           path: src/
           level: 7
